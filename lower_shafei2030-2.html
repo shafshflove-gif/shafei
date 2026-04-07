@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>نظام حصر الغياب</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --s1p:#e63946;--s1l:#fff0f1;--s1m:#ffd6d8;--s1d:#9d0208;
+  --s2p:#2a9d8f;--s2l:#e8faf8;--s2m:#b7e4df;--s2d:#1a6b61;
+  --s3p:#f4a261;--s3l:#fffbf0;--s3m:#fde8b2;--s3d:#b5742a;
+  --absent:#c1121f;--r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{font-family:'Tajawal',sans-serif;background:#eef0f5;min-height:100vh;color:#1a1a2e;overscroll-behavior:none;}
+body{padding:10px 8px 80px;}
+header{text-align:center;margin-bottom:10px;padding:14px;background:linear-gradient(120deg,#1a1a2e,#0f3460);border-radius:var(--r);box-shadow:0 4px 16px rgba(15,52,96,.25)}
+header h1{font-size:1.3rem;font-weight:900;color:#fff}
+header p{color:#a8c4e0;font-size:.75rem;margin-top:2px}
+.hd{display:inline-block;background:rgba(255,255,255,.12);color:#ffd166;font-size:.75rem;font-weight:700;padding:2px 12px;border-radius:20px;margin-top:5px}
+.sb{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:10px;padding:7px 12px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);flex-wrap:wrap;gap:4px}
+.ss{display:flex;align-items:center;gap:5px;font-size:.72rem;font-weight:700}
+.sd{width:7px;height:7px;border-radius:50%;background:#ccc;flex-shrink:0}
+.sd.synced{background:#2a9d8f;box-shadow:0 0 0 3px rgba(42,157,143,.2)}
+.sd.syncing{background:#f4a261;animation:bl 1s infinite}
+.sd.error{background:#e63946}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+.st{font-size:.65rem;color:#aaa}
+.srb{padding:5px 11px;border:none;border-radius:8px;background:#0f3460;color:#fff;font-family:'Tajawal',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer}
+.gs{background:#fff;border-radius:var(--r);box-shadow:0 2px 10px rgba(0,0,0,.06);padding:11px 13px;margin-bottom:10px}
+.gs h2{font-size:.82rem;font-weight:800;margin-bottom:8px}
+.sc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.sc{border-radius:10px;padding:9px;text-align:center}
+.sc.tot{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff}
+.sc.s1{background:linear-gradient(135deg,#fff0f1,#ffd6d8)}
+.sc.s2{background:linear-gradient(135deg,#e8faf8,#b7e4df)}
+.sc.s3{background:linear-gradient(135deg,#fffbf0,#fde8b2)}
+.sc .n{font-size:1.5rem;font-weight:900;line-height:1.1}
+.sc .l{font-size:.6rem;font-weight:700;opacity:.7;margin-top:1px}
+.sc .p{font-size:.6rem;font-weight:800;margin-top:2px;padding:1px 6px;border-radius:10px;display:inline-block}
+.sc.tot .n{color:#ffd166}.sc.tot .p{background:rgba(255,255,255,.15);color:#ffd166}
+.sc.s1 .n{color:var(--s1d)}.sc.s1 .p{background:rgba(230,57,70,.1);color:var(--s1d)}
+.sc.s2 .n{color:var(--s2d)}.sc.s2 .p{background:rgba(42,157,143,.1);color:var(--s2d)}
+.sc.s3 .n{color:var(--s3d)}.sc.s3 .p{background:rgba(244,162,97,.15);color:var(--s3d)}
+.stages{display:flex;flex-direction:column;gap:10px}
+.stb{border-radius:var(--r);overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);background:#fff}
+.sth{padding:10px 13px;font-size:.95rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.stage1 .sth{background:linear-gradient(90deg,var(--s1d),var(--s1p))}
+.stage2 .sth{background:linear-gradient(90deg,var(--s2d),var(--s2p))}
+.stage3 .sth{background:linear-gradient(90deg,var(--s3d),var(--s3p))}
+.si{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0}
+.sbg{margin-right:auto;background:rgba(255,255,255,.2);padding:2px 9px;border-radius:20px;font-size:.65rem;font-weight:700}
+.sarr{font-size:.75rem;transition:transform .2s}
+.sarr.open{transform:rotate(180deg)}
+.cls-body{display:none;padding:10px}
+.cls-body.open{display:block}
+.cls-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.cls-btn{border:none;border-radius:11px;padding:12px 8px;font-family:'Tajawal',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:transform .15s;position:relative}
+.cls-btn:active{transform:scale(.96)}
+.stage1 .cls-btn{background:var(--s1l);color:var(--s1d);box-shadow:0 2px 8px rgba(230,57,70,.12)}
+.stage2 .cls-btn{background:var(--s2l);color:var(--s2d);box-shadow:0 2px 8px rgba(42,157,143,.12)}
+.stage3 .cls-btn{background:var(--s3l);color:var(--s3d);box-shadow:0 2px 8px rgba(244,162,97,.12)}
+.cls-name{font-size:.8rem;font-weight:800}
+.cls-abs{font-size:.68rem;font-weight:600;opacity:.7}
+.cls-badge{position:absolute;top:6px;left:6px;background:var(--absent);color:#fff;font-size:.58rem;font-weight:800;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center}
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.popup-overlay.show{display:flex}
+.popup{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:520px;max-height:90vh;display:flex;flex-direction:column;animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.popup-head{padding:14px 16px 10px;border-bottom:1.5px solid #f0f0f0;flex-shrink:0;position:relative}
+.popup-title{font-size:1rem;font-weight:800;margin-bottom:2px}
+.popup-sub{font-size:.72rem;color:#999;display:flex;gap:8px;flex-wrap:wrap}
+.popup-close{position:absolute;top:12px;left:14px;width:28px;height:28px;border-radius:50%;background:#f0f0f0;border:none;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.week-bar{display:flex;align-items:center;gap:6px;padding:8px 14px;border-bottom:1.5px solid #f0f0f0;flex-shrink:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.day-chip{flex-shrink:0;padding:5px 10px;border-radius:20px;font-family:'Tajawal',sans-serif;font-size:.72rem;font-weight:700;border:none;cursor:pointer;background:#f0f0f0;color:#666;transition:background .15s;text-align:center;line-height:1.4}
+.day-chip.active{background:#1a1a2e;color:#fff}
+.student-list{flex:1;overflow-y:auto;padding:8px 12px;-webkit-overflow-scrolling:touch}
+.stu-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;margin-bottom:5px;background:#fafafa;cursor:pointer;transition:background .12s;user-select:none}
+.stu-row:active{background:#f0f0f0}
+.stu-row.absent{background:#fff0f0}
+.stu-num{font-size:.65rem;color:#bbb;font-weight:700;width:18px;flex-shrink:0;text-align:center}
+.stu-name{flex:1;font-size:.82rem;font-weight:600;line-height:1.3}
+.stu-abs-count{font-size:.68rem;font-weight:800;color:#fff;background:#e63946;padding:1px 7px;border-radius:10px;flex-shrink:0;min-width:22px;text-align:center}
+.stu-abs-count.zero{background:#e8faf2;color:#1b7a4e}
+.stu-check{width:26px;height:26px;border-radius:8px;background:#f0f0f0;border:2px solid transparent;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;flex-shrink:0}
+.stu-row.absent .stu-check{background:#fff0f0;color:var(--absent);border-color:#ffc8c8}
+.pop-summary{padding:6px 14px;background:#f8f8f8;border-bottom:1px solid #eee;font-size:.7rem;color:#777;display:flex;gap:12px;flex-shrink:0}
+.pop-summary b{color:#1a1a2e}
+.popup-foot{padding:10px 14px;border-top:1.5px solid #f0f0f0;display:flex;gap:8px;flex-shrink:0}
+.popup-foot button{flex:1;padding:10px;border:none;border-radius:11px;font-family:'Tajawal',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer}
+.btn-add-p{background:#e63946;color:#fff}
+.btn-edit-p{background:#2a9d8f;color:#fff}
+.btn-del-p{background:#eee;color:#555}
+.export-bar{display:flex;gap:7px;padding:8px 14px;border-top:1px solid #eee;flex-shrink:0}
+.exp-btn{flex:1;padding:8px;border:none;border-radius:9px;font-family:'Tajawal',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer;color:#fff}
+.exp-excel{background:#1d6f42}.exp-wa{background:#25d366}
+.today-card{background:#fff;border-radius:var(--r);box-shadow:0 2px 10px rgba(0,0,0,.06);padding:11px 13px;margin-bottom:10px;border-right:4px solid #f4a261}
+.today-card h2{font-size:.82rem;font-weight:800;margin-bottom:8px;color:#1a1a2e}
+.today-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.today-item{border-radius:9px;padding:7px 5px;text-align:center}
+.today-item.tot{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff}
+.today-item.s1{background:linear-gradient(135deg,#fff0f1,#ffd6d8)}
+.today-item.s2{background:linear-gradient(135deg,#e8faf8,#b7e4df)}
+.today-item.s3{background:linear-gradient(135deg,#fffbf0,#fde8b2)}
+.today-item .tn{font-size:1.3rem;font-weight:900;line-height:1}
+.today-item .tl{font-size:.55rem;font-weight:700;opacity:.7;margin-top:2px}
+.today-item.tot .tn{color:#ffd166}
+.today-item.s1 .tn{color:var(--s1d)}
+.today-item.s2 .tn{color:var(--s2d)}
+.today-item.s3 .tn{color:var(--s3d)}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:none;align-items:flex-end;justify-content:center}
+.mo.show{display:flex}
+.md{background:#fff;border-radius:18px 18px 0 0;padding:22px 18px 38px;width:100%;max-width:500px}
+.md h3{font-size:.95rem;font-weight:800;margin-bottom:10px}
+.md input{width:100%;padding:11px 13px;border:1.5px solid #ddd;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:.92rem;margin-bottom:12px;outline:none}
+.md input:focus{border-color:#e63946}
+.mdb{display:flex;gap:8px}
+.mdb button{flex:1;padding:10px;border:none;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer}
+.bc{background:#e63946;color:#fff}.bx{background:#eee;color:#444}
+.toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;color:#fff;padding:8px 18px;border-radius:24px;font-size:.8rem;font-weight:600;z-index:9999;transition:transform .28s;pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.action-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1.5px solid #eee;padding:9px 12px;display:flex;gap:7px;z-index:500;box-shadow:0 -2px 10px rgba(0,0,0,.07)}
+.action-bar button{flex:1;padding:9px;border:none;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px}
+.btn-add{background:#e63946;color:#fff}
+.btn-edit{background:#2a9d8f;color:#fff}
+.btn-del{background:#555;color:#fff}
+</style>
+</head>
+<body>
+<header>
+  <h1>📋 نظام حصر الغياب</h1>
+  <p>مشترك بين جميع المعلمين • يتحدث تلقائياً</p>
+  <div class="hd" id="hDate">...</div>
+</header>
+<div class="sb">
+  <div class="ss"><div class="sd syncing" id="sDot"></div><span id="sTxt">جارٍ الاتصال...</span></div>
+  <span class="st" id="sTime"></span>
+  <button class="srb" onclick="manualRefresh()">🔄 تحديث</button>
+</div>
+<div class="today-card">
+  <h2>📅 غياب اليوم — <span id="todayName">...</span></h2>
+  <div class="today-grid">
+    <div class="today-item tot"><div class="tn" id="tdAll">0</div><div class="tl">الإجمالي</div></div>
+    <div class="today-item s1"><div class="tn" id="tdS1">0</div><div class="tl">الأول</div></div>
+    <div class="today-item s2"><div class="tn" id="tdS2">0</div><div class="tl">الثاني</div></div>
+    <div class="today-item s3"><div class="tn" id="tdS3">0</div><div class="tl">الثالث</div></div>
+  </div>
+</div>
+<div class="gs">
+  <h2>📊 إجمالي الغياب</h2>
+  <div class="sc-grid">
+    <div class="sc tot"><div class="n" id="gAll">0</div><div class="l">الإجمالي الكلي</div><div class="p" id="gPct">0%</div></div>
+    <div class="sc s1"><div class="n" id="gS1">0</div><div class="l">الأول ابتدائي</div><div class="p" id="pS1">0%</div></div>
+    <div class="sc s2"><div class="n" id="gS2">0</div><div class="l">الثاني ابتدائي</div><div class="p" id="pS2">0%</div></div>
+    <div class="sc s3"><div class="n" id="gS3">0</div><div class="l">الثالث ابتدائي</div><div class="p" id="pS3">0%</div></div>
+  </div>
+</div>
+<div class="stages" id="stg"></div>
+
+<div class="popup-overlay" id="popOverlay" onclick="closePopupOutside(event)">
+  <div class="popup" id="popup">
+    <div class="popup-head">
+      <button class="popup-close" onclick="closePopup()">✕</button>
+      <div class="popup-title" id="popTitle">الفصل</div>
+      <div class="popup-sub" id="popSub"></div>
+    </div>
+    <div class="week-bar" id="weekBar"></div>
+    <div class="pop-summary" id="popSummary"></div>
+    <div class="student-list" id="studentList"></div>
+    <div class="export-bar">
+      <button class="exp-btn exp-excel" id="btnExcel">📊 Excel</button>
+      <button class="exp-btn exp-wa" id="btnWA">💬 واتساب</button>
+    </div>
+    <div class="popup-foot">
+      <button class="btn-del-p" onclick="actionBarDelete()">🗑️ حذف</button>
+      <button class="btn-edit-p" onclick="actionBarEdit()">✏️ تعديل</button>
+      <button class="btn-add-p" onclick="actionBarAdd()">➕ إضافة</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mo">
+  <div class="md">
+    <h3 id="mT"></h3>
+    <input type="text" id="mI" placeholder="أدخل الاسم...">
+    <div class="mdb">
+      <button class="bx" id="mC">إلغاء</button>
+      <button class="bc" id="mO">تأكيد</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="tst"></div>
+
+<div class="action-bar">
+  <button class="btn-del" onclick="actionBarDelete()">🗑️ حذف</button>
+  <button class="btn-edit" onclick="actionBarEdit()">✏️ تعديل</button>
+  <button class="btn-add" onclick="actionBarAdd()">➕ إضافة طالب</button>
+</div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getDatabase,ref,set,get,onValue}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+const app=initializeApp({apiKey:"key",databaseURL:"https://school-attendance-24215-default-rtdb.firebaseio.com",projectId:"school-attendance-24215"});
+const db=getDatabase(app);
+
+const SM=[
+  {id:'s1',name:'الأول ابتدائي',color:'stage1',icon:'🔴',cls:['الفصل الأول','الفصل الثاني','الفصل الثالث','الفصل الرابع']},
+  {id:'s2',name:'الثاني ابتدائي',color:'stage2',icon:'🟢',cls:['الفصل الأول','الفصل الثاني','الفصل الثالث','الفصل الرابع']},
+  {id:'s3',name:'الثالث ابتدائي',color:'stage3',icon:'🟡',cls:['الفصل الأول','الفصل الثاني','الفصل الثالث','الفصل الرابع']}
+];
+const WD=5,DN=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس'];
+
+const DS={s1:{c0:["ADEEB MUHAMMAD QASIMALI KALAMIAN","BASIL ISMAIL MAQBOL AHMED AZIZURRAHMAN","HAMAD NOOR ALISLAM MOHAMMED SULTAN ABU","MOHAMMAD JMEAL MOUHAMMD ALAM MOHAMMAD ISMEL","OMAIR ABDULLAH MAULVISYED ABDULJABBAR","ABU SHAMA SUTAAM SALIM","TAMER ABDULLAH AMIR BAKHSH ALI DAD","آسر سليمان محمد بادبيان","أحمد جعفر أحمد عيدروس","أمير فهد محمد ظمد","تميم محمد حسن فطاني","زايد خضر فوزي المولد","سايم سلطان الاسلام أشرف الزمان سلطان","سيف فيصل هشام الهباش","عزام محمد حميد مصلح","علي محمد علوي العطاس","عمر ابراهيم محمد السقاف","عمر عبد العزيز مسلم بانبيله","عمرو صالح جميل بخش","مؤيد صالح العبد طالب","محمد حسين قاسم محمد كريم","محمد رائد عبدالقوي صالح","معاذ مازن محمود ابولبن","يزن صديق علي قايد"],c1:["KASSIGUE AHMAD ABDOULSAMAD","AHMED ABDULLAH KAREEM ALLAH","HAMAD MOHAMMAD GORAMIAN","JIHAD JAFAR ALAM SYED AMEEN","OMAIR SALEEM MOHAMMAD","أوس ماجد عبدالله باجحزر","اياد فيصل حسن بخش","حسان ساعد سعيد الجحدلي","خالد سعيد علي الغامدي","خليفة فواز رشيد الحزمي","سيف وليد احمد سيف","صقر فهد سيف غالب الوانلي","طلال رامز بن مصطفى رماني","عبدالعزيز محمد ظيف الله واصلي","عز معتصم محمد محمد","عزام يوسف عادل الهندي","علي عثمان على فلاته","فهد نايف فهد الخضري","محمد حسن عبدالملك محمد","محمد صابر الحاج لقمان اشرف علي","محمد صبري احمد عبدالله","معاذ عادل سلامة الله احمد عليم الدين","موفق سيدي الامين","واسل احمد بن محمد عابد"],c2:["ABDALLAH ABOUBACAR MOUSLIM","JAWAD ABDULAZIZ ABULFAIZ","MOAAZ MOHAMMED SAED ULLAH","RAAD ABDULMAJEED MUHAMMADSALIM YAQOOB","TURKI UMAIR MOHAMMAD ILYAS","أمير نايف عبدالله ناجي راجح","أنس حمزه عبدالله الجفري","بلال انس مراد الحسن","جسار محمد عبيدالله المحمادي","جمال سعيد جمال خضرى","خالد غنام بن محسن العلياني","زيد عبدالوهاب عبدالرحمن الزهراني","سلطان احمد بن حسين شراحيلي","عبدالقادر احمد علوي العطاس","عمران عبدالاله عبدالله باطويل","عواد عبدالرحيم شفيع عالم شفيع الرحمن","غسان ادم يحي علي","غيث عادل محمد الغامدي","مؤتمن عبدالمنعم حسب الله طلحة بابكر","محمد عبدالرحمن عبدالله الغامدي","محمد عمار عبده احمد الجبالي","وسيم زكريا هارون بوكار","يزن بلال سعيد سعيد"],c3:["AZOZ SHAMS MUBIN ABDULLAH","HAMAD MOHAMMED MAHMOODOLLAH YULEMIAH","JIHAD MOOSA ALI HUSSAIN WALI","MOHAMMAD JAHANGIR KALAKHAN","SOHAIL WAHEED ABDULQASIM","ZIAD NOOR ALISLAM MOHAMMEDHUSSAIN","تركي عبدالرحمن عوض الوذيناني","رائف محمد بن عبدالله عطيه","سعد احمد جعفر بلو","سمير سامر سمير الشاذلي","عبدالرحمن عبدالله احمد بازهير","عبدالقادر ابراهيم عبدالقادر احمد محمد","عبدالوهاب محمان موسى عبدالله","علي عبدالعزيز علي برناوي","غيث عوده بن سعيد الفهمي","كنان احمد امين نصر","محمد هايل زين العابدين نجار","وسام احمد علي نواز بخش","ياسر عادل عايض العتيبي","يزن فواز مدهش علي المخلافي","يزيد علاء عدنان علي"]},s2:{c0:["ABDALMALIK ABDUL MANAN ISHAQ AHMED WALI","RAID MOUSSA ABASS IDRISS","البراء جعفر بلخي","ابراهيم يحيي احمد الكبش","احمد عبدالعزيز بن مرشود الصاعدي","حمد عبدالله احمد العمودي","الياس محمد سرحان القرني","باسل محمد مساعد المالكي","جواد عبدالمنعم بن مرشود الصاعدي","سعود علي بن احمد شراحيلي","عبدالعزيز غازي بن حامد المجنوني","عبدالله احمد عبده البهري","عبدالملك محمد مسلم الفهمي","عثمان عمر بن محمد هوساوي","علاء عبدالعزيز علي برناوي","عمر معاذ كامل محمد العبيدي","فارس عبدالله عطيه الرحيلي","فيصل ماجد بن علي الجعيد","كرم عبدالرحمن ابراهيم عسيري","كنان عمر عبدالله الصاعدي","مؤيد اسماعيل تركي الشرقي","مجاهد محمد امير احمد ابو القاسم","محمد عبدالرحمن علي القرني","محمد محسن محمد الحارثي","مهند زاند سلطان القاهري","مياد محمد احمد الحربي","اسر بن ماجد بن محسن الصاعدي","يوسف البراء جعفر بلخي"],c1:["FARES ABDOUCHACKOUR","MAHMOUD TRAORE","احمد الحسين احمد عبدالعظيم","احمد بسام عبده صدام","آدم المولد","ايهم احمد عبده سيف","رائف احمد عمر رحيم","رواف عبدالله بن محمد المولد","زياد باسم معتق الصبحي","زين الدين ايمن عبدالمنعم بانه","سعود عبدالرحمن مطير الخزاعي","عادي عبدالصمد عبدالستار بنقالي","عبدالعزيز احمد عبدالعزيز بخش","عبدالعزيز عمر عايش المروعي","عز محمد علي عسيري","عزام عبدالعزيز محمد حسين مشرف علي","علاء محمد علي عبدالرحمن","عمار حسين حسن المنهالي","فارس هليل عبيد العميري","فهد محمد عبده عبدالله","قصي خالد محمد بادويلان","قصي سام عبدالله سعيد","كريم عمار ابراهيم السيد","ماجد رضوان بن محمد نور هوساوي","محمد عبدالرحمن محمد العتيبي","محمود علي بن صالح حداد","نبراس حامد فهد القرشي","بندر عبدالخبير عقلان","هيث علوي يحي السقاف","اسر احمد بن سالم الحربي","يزن يوسف عبدالرحمن باحاج"],c2:["HANI YASEEN ABU SIDDIQ HUSSAIN","احمد امين احمد الأبيبي","حمد صفوان سعيد الدعيس","بسام حسن عمر ادم","جواد صديق علي محمد","خالد عبدالرحيم البلوشي","رعد محمد بن سليم اللهيبي","عبدالاله شاكر منصور مهدي علي","عبدالرحمن هيثم حسن الحارثي","عبدالله حسان عبدالله زيلع","عزام علي بن قائد الزبيدي","عزام هزاع صالح باحاج","عماد عبدالعزيز عدنان علي","عمر علي عبدالعزيز بيطار","فراس ياسر محمد عياش","فهد مشاري سعود الحربي","فوزان محمد فرج بايوسف","قصي محمد فواد محمد السري","كرم احمد مصطفى سيف الدين","كنان احمد قائد ناجي","محبوب عبيد مهدي المالكي","محمد وليد محمد الزايري","عمر محمد فهد القرشي","وسيم يوسف ابراهيم عمر","يامن محمد عبدالرحمن العباسي","يزن محمد احمد اسماعيل","يوسف مرزوقي عبدالرحمن حميدي"],c3:["حمد شهاب الدين الشامي عثمان","أوس يحيى محمد حمدي","اصيل بدر عوض احمد شرف","البراء كرم سعيد الدعيس","رائد فواد علي الصبياني","زين علي بن حسن معاش","سالم صلاح سعيد داود","سلطان حمدي سلطان عبده","طاهر محمد حسن نور احمد","عبدالله محمد بن عبدالله الزهيري","عبدالله محمد علي سالم","عبدالمجيد ايمن بن عبدالحميد بخش","علي ايمن علي بلخير","علي خالد بن علي باسلوم","عمار ياسر مصطفى قائد","عمر حسين عبدالهادي بشناق","عمر مامون بن محمد الجيش","فارس عبدالله مقبل محمد","فهد بن عبده محمد رسيدي","فيصل سعيد صالح زهراني","قاسم محمد ابو الهاشم عبدالصمد","كنان ماجد عبدالله العماري","كنان محمد عويش الصبياني","معتز احمد عوض شرف","ميسر سيد سيدي الامين","يامن حسن حمد بخش","يزن ياسر شحات رحيله","يونس يوسف علي حسين محمد علي"]},s3:{c0:["MOHAMMAD USMAN","HABIBULLAH SYED ALI","أمار عبدالرحيم عبدالعزيز الشمري","بتال رائد محمد العوبثاني","البراء بندر جعفر بلو","تميم وليد منير الهذلي","حازم زهير بن مصطفى سمنودي","خالد نادر بن فهد الانصاري","خالد وليد عثمان العمودي","خلف فواز رشيد الحزمي","هاني عبدالصمد احمد كسوكا","اياد احمد منصور خوجه","سعود احمد مصطفى سناري","سليمان عبدالرحمن يحيى الاهدل","عبدالعزيز اسماعيل عبدالرزاق صديق","عبدالله سامي بن عبدالله الغامدي","علي حسين زيد الحامد","قصي عبدالرحمن محمد فلمبان","كنان احمد بن يحيى صعيدي","مؤيد وجدي عريش رعيدي","محمد ابوبكر عبدالرحمن باموسي العمودي","محمد عبدالرحمن محمد العمودي","محمد عثمان علي فلاته","محمد معتصم محمد البركاتي","محمد موسى ابراهيم الجعيدي","محمد وسام محمد قناديلي","محمد ياسين بن محمد غزاوي","مشعل صالح العبد طالب","هاشم حسين سالم العطاس","وسام محمد بن جميل الحربي","يامن حسين سعد اليماني","يحيى عبدالقادر نظام ادريس","يزن هيثم عبدالله العاصمي","يعقوب مرتضى يعقوب محمد","يوسف صابر صديق لشكر"],c1:["ZEYAD YOUNEAS","ABDOULHKEAM","ABDOULBSHER","احمد محمد حسن الحداد","امير ممدوح حسن السلمي","أوس وليد ادم احمد","ابراهيم محمد ابراهيم اليماني","أوس خالد محمد شملان","بسام عثمان فيصل الغامدي","جاسر عمر سراج فقيه","جلال الدين احمد محمد البعداني","جواد بندر عبدالله الغامدي","حسام زياد عوض الرحيلي","حسين حسن بن سالم عبيري","حمد عبدالرحمن محمد حسن","زياد محمد احمد القرني","صالح محمد صالح ناير","صالح وهيب احمد باماجد","عبدالعزيز سلطان مبارك بارباع","عبدالرحمن بدر حميد سلامي","عبدالله محمد سهل الشريف","عبدالله ياسر عبدالله الزهيري","عدنان عباس احمد كريم بخش","علي محمد عبده صالح محمد","عماد فهد ماطر المسفري","عمر جابر محمد عمار","عمار محمد حسن الحداد","عمر امين علي السقاف","عمر فهد بن عمر باحسن","قصي احمد ابراهيم جعفري","مؤيد وليد بن محمد بكاوي","ماجد عبدالرحيم سعد الشمبري","هند اسامة مدهش قاسم","نوار خالد نور الاسلام حافظ","هاشر عمر","طاهر ابراهيم محمد","وليد ساعد سعيد الجحدلي","يوسف احمد عبده المصباحي"],c2:["احمد السيد السيد نحله","امير محمد يعقوب امير احمد عمر","امير مهند محمد عوض","باسم بكر حامد جبريل","بتال متعب سعد القثامي","براء ابراهيم جابر الزبيدي","تركي احمد مصلح الثقفي","تميم احمد محمد محمد","تيم محمد حميد القدسي","حسام عادل احمد ردمان","حسن وانل حسن حسن","حمزة احمد مصطفى علي","رائد ايمن حسين الجيزاني","رواد اديب بن احمد العلاوي","ريان مهند بن معروف باجمال","سعود مشاري سعود الحربي","سفيان عبدالله يحيى جعدول","سلطان محمود محمد القماني","طه صالح عبدالكريم صالح","طه محمد توفيق عريف","عبدالعزيز محمد عبدالرحمن الدوبي","عبدالمجيد عصام بن عبدالباسط عبدالله","عزام بندر ضيف الله المعلوي","عمار مجدي حسن بن سلم","عمر احمد عبدالرحمن الحربي","فارس عدنان سعيد الصاعدي","فراس معتز حميد القدسي","فيصل بن عبدالحليم بن مرشود الصاعدي","مالك عماد بن سليمان خيروا","محمد حسين عمر الحبشي","محمد عبدالله جعفر الحداد","ملهم فيصل حبيب الله بخش","ممدوح نواف بن عبدالعزيز الخزاعي","نائف حسن خليل الخيبري","وهيب عادل معراج سليماني","يحيى سمير سعيد صالح","يزيد يحيى بن محمد شقيقي"],c3:["احمد ازي محمد السبعي","انس ابراهيم امادو تراوري","اياد بندر صلاح الافعي","براء بكر بن ابراهيم فلاته","تركي محمد نور احمد ابوالخير","حامد طه محمد البار","خالد عمار عبده احمد","راغد عمر حسن التكروني","سعد سليمان سلطان مولوي","سمير عماد حافظ بشير","صالح احمد صالح باحاج","عامر سليم سعيد عبدالعزيز","سعيد حمزة الغامدي","عبدالله مدهير مادي اتا جابي","عبدالملك ختام دخيل الله الحارثي","عبدالوهاب عبدالله سالي جبرين","علي عبدالرحمن علي القرني","فهد عمر صهيب الهذلي","قاسم حسن سعيد هزاز","قصي سلطان سمير عطار","قصي عبدالعزيز محمد قفاص","كنان فايز حيدر الحداد","محمد اسماعيل تركي الشرقي","محمد طه محمد مطهر","محمد عبدالرحمن بن قاسم فلاته","محمد عبدالله سراج فضل","هاني عدنان عقيل بوشه","حسن ثامر احمد المغربي","يحيى يوسف بن محمد الشريف","يزن احمد حرب ابو العراج","يزن مسامح احمد المالكي","زيد عيسى سليماني ديالو","يسار جمال دخيل الحربي","يعقوب ابراهيم سالم باوزير"]}};
+
+function toH(d){const y=d.getFullYear(),m=d.getMonth()+1,dd=d.getDate();const jd=Math.floor((1461*(y+4800+Math.floor((m-14)/12)))/4)+Math.floor((367*(m-2-12*Math.floor((m-14)/12)))/12)-Math.floor((3*(Math.floor((y+4900+Math.floor((m-14)/12))/100)))/4)+dd-32075;let l=jd-1948440+10632;const n=Math.floor((l-1)/10631);l=l-10631*n+354;const j=(Math.floor((10985-l)/5316))*(Math.floor((50*l)/17719))+(Math.floor(l/5670))*(Math.floor((43*l)/15238));l=l-(Math.floor((30-j)/15))*(Math.floor((17719*j)/50))-(Math.floor(j/16))*(Math.floor((15238*j)/43))+29;const hm=Math.floor((24*l)/709);return{y:30*n+j-30,m:hm,d:l-Math.floor((709*hm)/24)};}
+function hMo(m){return['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'][m-1]||'';}
+function gWD(){const now=new Date();const sun=new Date(now);sun.setDate(now.getDate()-now.getDay());const d=[];for(let i=0;i<5;i++){const x=new Date(sun);x.setDate(sun.getDate()+i);d.push(x);}return d;}
+function dk(d){return`${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;}
+function wk(dates){return`w_${dk(dates[0])}`;}
+
+let A={wk:'',st:{},att:{},wd:[]},sv=false;
+let curPopup={sg:null,k:null,dayIdx:0};
+let selStudent=null;
+let fbListener=null;
+
+function setSUI(s,m){document.getElementById('sDot').className='sd '+s;document.getElementById('sTxt').textContent=m;if(s==='synced')document.getElementById('sTime').textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar');}
+async function fbS(){if(sv)return;sv=true;setSUI('syncing','جارٍ الحفظ...');try{await set(ref(db,A.wk),{students:A.st,att:A.att});setSUI('synced','محفوظ ✅');}catch(e){setSUI('error','خطأ في الحفظ');}finally{sv=false;}}
+
+async function fbL(){
+  setSUI('syncing','جارٍ التحميل...');
+  const wd=gWD();const wkey=wk(wd);
+  const bSt=()=>{const s={};SM.forEach((sg,si)=>{s[sg.id]={};sg.cls.forEach((_,ci)=>{s[sg.id][`c${ci}`]=(DS[sg.id][`c${ci}`]||[]).map((n,i)=>({id:`s${si}c${ci}i${i}`,name:n}));});});return s;};
+  const bAt=()=>{const a={};SM.forEach(sg=>{a[sg.id]={};sg.cls.forEach((_,ci)=>{a[sg.id][`c${ci}`]={};});});return a;};
+  try{
+    const snap=await get(ref(db,wkey));
+    if(snap.exists()){const data=snap.val();A={wk:wkey,st:data.students||bSt(),att:data.att||bAt(),wd};setSUI('synced','متزامن ✅');}
+    else{A={wk:wkey,st:bSt(),att:bAt(),wd};await fbS();}
+  }catch(e){setSUI('error','تعذر الاتصال');A={wk:wkey,st:bSt(),att:bAt(),wd};}
+  renderAll();
+}
+
+function fbLs(){
+  if(fbListener)fbListener();
+  fbListener=onValue(ref(db,A.wk),(snap)=>{
+    if(!snap.exists()||sv)return;
+    const data=snap.val();
+    A.st=data.students||A.st;A.att=data.att||A.att;
+    setSUI('synced','متزامن ✅');updS();updTodayStats();updClsBtns();
+    if(curPopup.sg)renderPopupList();
+  });
+}
+
+window.manualRefresh=async()=>{await fbL();fbLs();showT('تم التحديث ✅');};
+function clsAbsCount(sid,k){const att=A.att[sid][k]||{};let t=0;for(const id in att)t+=Object.values(att[id]||{}).filter(v=>v).length;return t;}
+function stA(sid){let t=0;SM.find(s=>s.id===sid).cls.forEach((_,ci)=>{t+=clsAbsCount(sid,`c${ci}`);});return t;}
+
+function updTodayStats(){
+  const today=new Date();const ds=dk(today);const dayName=DN[today.getDay()]||'';
+  document.getElementById('todayName').textContent=dayName;
+  let total=0;
+  SM.forEach((sg,si)=>{
+    let cnt=0;
+    sg.cls.forEach((_,ci)=>{
+      const att=A.att[sg.id][`c${ci}`]||{};const sts=A.st[sg.id][`c${ci}`]||[];
+      sts.forEach(s=>{if((att[s.id]||{})[ds]===true)cnt++;});
+    });
+    total+=cnt;
+    const el=document.getElementById(`tdS${si+1}`);if(el)el.textContent=cnt;
+  });
+  const allEl=document.getElementById('tdAll');if(allEl)allEl.textContent=total;
+}
+function updS(){
+  let g=0,gp=0;
+  SM.forEach((sg,si)=>{const abs=stA(sg.id);const s=A.st[sg.id]||{};let n=0;for(const k in s)n+=(s[k]||[]).length;const poss=n*WD;const pct=poss>0?Math.round(abs/poss*100):0;g+=abs;gp+=poss;const idx=si+1;const gEl=document.getElementById(`gS${idx}`);const pEl=document.getElementById(`pS${idx}`);if(gEl)gEl.textContent=abs;if(pEl)pEl.textContent=pct+'%';});
+  document.getElementById('gAll').textContent=g;document.getElementById('gPct').textContent=(gp>0?Math.round(g/gp*100):0)+'%';
+}
+
+function updClsBtns(){
+  SM.forEach(sg=>{sg.cls.forEach((_,ci)=>{const k=`c${ci}`;const cnt=clsAbsCount(sg.id,k);const badge=document.getElementById(`badge_${sg.id}_${k}`);if(badge){badge.textContent=cnt;badge.style.display=cnt>0?'block':'none';}const absEl=document.getElementById(`clsabs_${sg.id}_${k}`);if(absEl)absEl.textContent=`غياب: ${cnt}`;});const bgEl=document.getElementById(`bg_${sg.id}`);if(bgEl)bgEl.textContent=`غياب: ${stA(sg.id)}`;});
+}
+
+function renderAll(){
+  const now=new Date();const h=toH(now);
+  document.getElementById('hDate').textContent=`${DN[now.getDay()]} ${h.d} ${hMo(h.m)} ${h.y}هـ`;
+  updS();updTodayStats();const cont=document.getElementById('stg');cont.innerHTML='';
+  SM.forEach((sg,si)=>{
+    const block=document.createElement('div');block.className=`stb ${sg.color}`;
+    let clsBtns='';
+    sg.cls.forEach((cls,ci)=>{const k=`c${ci}`;const cnt=clsAbsCount(sg.id,k);clsBtns+=`<button class="cls-btn" onclick="openPopup('${sg.id}','${k}')"><span class="cls-badge" id="badge_${sg.id}_${k}" style="display:${cnt>0?'block':'none'}">${cnt}</span><span class="cls-name">${cls}</span><span class="cls-abs" id="clsabs_${sg.id}_${k}">غياب: ${cnt}</span></button>`;});
+    block.innerHTML=`<div class="sth" onclick="toggleStage('body_${sg.id}','arr_${sg.id}')"><span class="si">${sg.icon}</span>المرحلة ${sg.name}<span class="sbg" id="bg_${sg.id}">غياب: ${stA(sg.id)}</span><span class="sarr open" id="arr_${sg.id}">▾</span></div><div class="cls-body ${si===0?'open':''}" id="body_${sg.id}"><div class="cls-grid">${clsBtns}</div></div>`;
+    cont.appendChild(block);
+  });
+}
+
+window.toggleStage=function(bodyId,arrId){const body=document.getElementById(bodyId);const arr=document.getElementById(arrId);if(body.classList.contains('open')){body.classList.remove('open');arr.classList.remove('open');}else{body.classList.add('open');arr.classList.add('open');}};
+
+window.openPopup=function(sid,k){
+  const sg=SM.find(s=>s.id===sid);
+  const today=new Date().getDay();
+  curPopup={sg,k,dayIdx:today===0?0:Math.min(today,4)};
+  selStudent=null;
+  document.getElementById('popTitle').textContent=`${sg.name} — ${sg.cls[parseInt(k.slice(1))]}`;
+  renderWeekBar();renderPopupList();renderPopSummary();
+  document.getElementById('btnExcel').onclick=()=>exportExcel(sg,k);
+  document.getElementById('btnWA').onclick=()=>exportWA(sg,k);
+  document.getElementById('popOverlay').classList.add('show');
+};
+window.closePopup=function(){document.getElementById('popOverlay').classList.remove('show');curPopup={sg:null,k:null,dayIdx:0};selStudent=null;};
+window.closePopupOutside=function(e){if(e.target===document.getElementById('popOverlay'))closePopup();};
+
+function renderWeekBar(){
+  const bar=document.getElementById('weekBar');bar.innerHTML='';
+  A.wd.forEach((d,i)=>{const h=toH(d);const btn=document.createElement('button');btn.className=`day-chip${i===curPopup.dayIdx?' active':''}`;btn.innerHTML=`${DN[i]}<br><small>${h.d}/${h.m}</small>`;btn.onclick=()=>{curPopup.dayIdx=i;renderWeekBar();renderPopupList();renderPopSummary();};bar.appendChild(btn);});
+}
+
+function renderPopupList(){
+  if(!curPopup.sg)return;
+  const{sg,k,dayIdx}=curPopup;const sts=A.st[sg.id][k]||[];const att=A.att[sg.id][k]||{};const ds=dk(A.wd[dayIdx]);
+  const list=document.getElementById('studentList');list.innerHTML='';
+  sts.forEach((s,idx)=>{
+    const sa=att[s.id]||{};const ab=sa[ds]===true;const totalAbs=Object.values(sa).filter(v=>v).length;const isSelected=selStudent&&selStudent.stid===s.id;
+    const row=document.createElement('div');row.className=`stu-row${ab?' absent':''}`;if(isSelected)row.style.outline='2px solid #e63946';
+    row.innerHTML=`<span class="stu-num">${idx+1}</span><span class="stu-name">${s.name}</span><span class="stu-abs-count${totalAbs===0?' zero':''}">${totalAbs}</span><div class="stu-check">${ab?'غ':''}</div>`;
+    row.onclick=()=>tglStudent(sg.id,k,s.id,ds,row);
+    let lpT=null;
+    row.addEventListener('touchstart',()=>{lpT=setTimeout(()=>{selectStudent(sg.id,k,s.id);},600);},{passive:true});
+    row.addEventListener('touchend',()=>{if(lpT)clearTimeout(lpT);},{passive:true});
+    list.appendChild(row);
+  });
+}
+
+function renderPopSummary(){
+  if(!curPopup.sg)return;
+  const{sg,k,dayIdx}=curPopup;const sts=A.st[sg.id][k]||[];const att=A.att[sg.id][k]||{};const ds=dk(A.wd[dayIdx]);
+  const todayAbs=sts.filter(s=>(att[s.id]||{})[ds]===true).length;const weekAbs=clsAbsCount(sg.id,k);
+  document.getElementById('popSummary').innerHTML=`<span>اليوم: <b>${todayAbs}</b> غائب</span><span>الأسبوع: <b>${weekAbs}</b></span><span>المجموع: <b>${sts.length}</b> طالب</span>`;
+}
+
+async function tglStudent(sid,k,stid,ds,row){
+  const att=A.att[sid][k];if(!att[stid])att[stid]={};att[stid][ds]=!att[stid][ds];const ab=att[stid][ds];
+  row.classList.toggle('absent',ab);row.querySelector('.stu-check').textContent=ab?'غ':'';
+  const sa=att[stid]||{};const total=Object.values(sa).filter(v=>v).length;
+  const cnt=row.querySelector('.stu-abs-count');cnt.textContent=total;cnt.className=`stu-abs-count${total===0?' zero':''}`;
+  updS();updTodayStats();updClsBtns();renderPopSummary();await fbS();
+}
+
+function selectStudent(sid,k,stid){selStudent={sid,k,stid};renderPopupList();showT('✅ تم التحديد — استخدم أزرار الأسفل');}
+
+window.actionBarAdd=function(){if(!curPopup.sg){showT('افتح فصلاً أولاً');return;}showAdd(curPopup.sg.id,curPopup.k);};
+window.actionBarEdit=function(){if(!selStudent){showT('اضغط مطولاً على اسم الطالب');return;}const{sid,k,stid}=selStudent;const s=A.st[sid][k].find(x=>x.id===stid);if(!s)return;shEdit(sid,k,stid,s.name);};
+window.actionBarDelete=function(){if(!selStudent){showT('اضغط مطولاً على اسم الطالب');return;}const{sid,k,stid}=selStudent;if(confirm('هل تريد حذف هذا الطالب؟')){A.st[sid][k]=A.st[sid][k].filter(s=>s.id!==stid);delete(A.att[sid][k]||{})[stid];fbS();selStudent=null;if(curPopup.sg)renderPopupList();updS();updClsBtns();showT('تم الحذف ✅');}};
+
+function exportExcel(sg,k){const sts=A.st[sg.id][k]||[];const att=A.att[sg.id][k]||{};const dates=A.wd;let csv='#,اسم الطالب,'+dates.map((_,i)=>DN[i]).join(',')+',غياب\n';sts.forEach((s,idx)=>{const sa=att[s.id]||{};let cnt=0;const cells=dates.map(d=>{const ab=sa[dk(d)]===true;if(ab)cnt++;return ab?'غ':'';});csv+=`${idx+1},${s.name},${cells.join(',')},${cnt}\n`;});const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`غياب_${sg.name}.csv`;a.click();URL.revokeObjectURL(url);showT('تم التصدير ✅');}
+function exportWA(sg,k){const sts=A.st[sg.id][k]||[];const att=A.att[sg.id][k]||{};const dates=A.wd;const h0=toH(dates[0]);const h4=toH(dates[4]);let msg=`📋 *غياب ${sg.name} - ${sg.cls[parseInt(k.slice(1))]}*\n📅 ${h0.d}/${h0.m} - ${h4.d}/${h4.m} هـ\n\n`;let has=false;sts.forEach((s,idx)=>{const sa=att[s.id]||{};const days=dates.filter(d=>sa[dk(d)]===true).map((_,i)=>DN[i]);if(days.length>0){msg+=`${idx+1}. ${s.name}: ${days.join('، ')}\n`;has=true;}});if(!has)msg+='لا يوجد غياب ✅';window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');}
+
+let mM=null,mT2=null;
+function showAdd(sid,k){mM='add';mT2={sid,k};document.getElementById('mT').textContent='إضافة طالب';document.getElementById('mI').value='';document.getElementById('mo').classList.add('show');setTimeout(()=>document.getElementById('mI').focus(),100);}
+function shEdit(sid,k,stid,name){mM='edit';mT2={sid,k,stid};document.getElementById('mT').textContent='تعديل الاسم';document.getElementById('mI').value=name;document.getElementById('mo').classList.add('show');setTimeout(()=>document.getElementById('mI').focus(),100);}
+document.getElementById('mO').onclick=async()=>{const v=document.getElementById('mI').value.trim();if(!v){showT('يرجى إدخال اسم');return;}if(mM==='add')A.st[mT2.sid][mT2.k].push({id:`s_${Date.now()}`,name:v});else{const s=A.st[mT2.sid][mT2.k].find(x=>x.id===mT2.stid);if(s)s.name=v;}await fbS();selStudent=null;if(curPopup.sg)renderPopupList();updS();updClsBtns();showT(mM==='add'?'تمت الإضافة ✅':'تم التعديل ✅');document.getElementById('mo').classList.remove('show');};
+document.getElementById('mC').onclick=()=>document.getElementById('mo').classList.remove('show');
+document.getElementById('mI').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('mO').click();});
+function showT(msg){const t=document.getElementById('tst');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
+
+await fbL();fbLs();
+setInterval(async()=>{const nd=gWD();if(wk(nd)!==A.wk){await fbL();fbLs();}},60000);
+</script>
+</body>
+</html>
