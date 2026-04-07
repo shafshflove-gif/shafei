@@ -237,9 +237,15 @@ function renderAll(){
 window.toggleSt=function(bid){const b=document.getElementById(bid);const sid=bid.replace('b_','');const arr=document.getElementById(`arr_${sid}`);if(b.classList.contains('open')){b.classList.remove('open');arr.textContent='▾';}else{b.classList.add('open');arr.textContent='▴';}};
 
 window.openPop=function(sid,k){
-  try{curPop={sg:SM.find(s=>s.id===sid),k};selStu=null;document.getElementById('popTitle').textContent=`${curPop.sg.name} — ${curPop.sg.cls[parseInt(k.slice(1))]}`;renderPopList();renderPopSum();document.getElementById('popOv').classList.add('show');}
+  try{curPop={sg:SM.find(s=>s.id===sid),k};selStu=null;document.getElementById('popTitle').textContent=`${curPop.sg.name} — ${curPop.sg.cls[parseInt(k.slice(1))]}`;renderPopList();renderPopSum();document.getElementById('popOv').classList.add('show');history.pushState({popup:true},'');}
   catch(e){showT('حاول مجدداً');}
 };
+
+window.addEventListener('popstate',function(e){
+  if(document.getElementById('popOv').classList.contains('show')){
+    document.getElementById('popOv').classList.remove('show');
+  }
+});
 window.closePop=function(e){if(e.target===document.getElementById('popOv'))document.getElementById('popOv').classList.remove('show');};
 
 function renderPopList(){
