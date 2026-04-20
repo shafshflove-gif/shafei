@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة الغياب – المسؤول</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Tajawal',sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh;}
+header{background:linear-gradient(120deg,#1a1a2e,#0f3460);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+header h1{color:#fff;font-size:1.3rem;font-weight:900;}
+header p{color:#a8c4e0;font-size:.78rem;margin-top:3px;}
+.hd{background:rgba(255,255,255,.12);color:#ffd166;font-size:.78rem;font-weight:700;padding:3px 14px;border-radius:20px;}
+.top-bar{display:flex;gap:10px;padding:14px 20px;background:#fff;border-bottom:1.5px solid #eee;flex-wrap:wrap;align-items:center;}
+.top-bar .status{display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;}
+.sd{width:8px;height:8px;border-radius:50%;background:#ccc;}
+.sd.synced{background:#2a9d8f;box-shadow:0 0 0 3px rgba(42,157,143,.2);}
+.sd.syncing{background:#f4a261;animation:bl 1s infinite;}
+.sd.error{background:#e63946;}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+.btn{padding:8px 18px;border:none;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;}
+.btn-refresh{background:#0f3460;color:#fff;}
+.btn-excel{background:#1b5e20;color:#fff;}
+.btn-week{background:#4a0080;color:#fff;}
+.main{padding:20px;display:flex;flex-direction:column;gap:16px;}
+.day-summary{background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.day-summary h2{font-size:.95rem;font-weight:800;margin-bottom:12px;color:#1a1a2e;}
+.stats-row{display:flex;gap:10px;flex-wrap:wrap;}
+.stat-card{border-radius:12px;padding:12px 18px;text-align:center;min-width:100px;}
+.stat-card.tot{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff;}
+.stat-card.lower{background:linear-gradient(135deg,#fff0f1,#ffd6d8);color:#9d0208;}
+.stat-card.upper{background:linear-gradient(135deg,#e8f5e9,#a5d6a7);color:#1b4332;}
+.stat-n{font-size:2rem;font-weight:900;line-height:1;}
+.stat-l{font-size:.7rem;font-weight:700;opacity:.75;margin-top:4px;}
+.week-nav{display:flex;align-items:center;gap:12px;background:#fff;border-radius:12px;padding:10px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.week-nav button{background:#f0f0f0;border:none;border-radius:8px;padding:6px 14px;font-family:'Tajawal',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;}
+.week-nav button:hover{background:#ddd;}
+.week-label{flex:1;text-align:center;font-size:.88rem;font-weight:800;}
+.day-tabs{display:flex;gap:6px;flex-wrap:wrap;}
+.day-tab{padding:6px 14px;border:none;border-radius:20px;font-family:'Tajawal',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;}
+.day-tab.active{background:#0f3460;color:#fff;}
+.sections{display:flex;flex-direction:column;gap:12px;}
+.section-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.section-head{padding:12px 16px;color:#fff;font-size:.92rem;font-weight:800;display:flex;align-items:center;justify-content:space-between;}
+.section-head.lower{background:linear-gradient(90deg,#9d0208,#e63946);}
+.section-head.upper{background:linear-gradient(90deg,#1b4332,#2d6a4f);}
+.section-body{padding:12px;}
+.cls-block{margin-bottom:12px;}
+.cls-title{font-size:.82rem;font-weight:800;color:#1a1a2e;margin-bottom:6px;padding:4px 10px;background:#f5f5f5;border-radius:8px;display:flex;justify-content:space-between;}
+.cls-title span{color:#888;font-weight:600;}
+.no-absent{color:#2a9d8f;font-size:.8rem;font-weight:700;padding:6px 10px;}
+.confirmed-no-absent{color:#2a9d8f;font-size:.8rem;font-weight:700;padding:6px 10px;display:flex;align-items:center;gap:5px;}
+.stu-item{padding:5px 10px;font-size:.82rem;border-bottom:1px solid #f5f5f5;display:flex;align-items:center;gap:8px;}
+.stu-item:last-child{border-bottom:none;}
+.stu-num{color:#bbb;font-size:.7rem;font-weight:700;min-width:20px;}
+.empty-day{text-align:center;padding:40px;color:#aaa;font-size:.9rem;}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;color:#fff;padding:10px 22px;border-radius:24px;font-size:.85rem;font-weight:600;z-index:9999;transition:transform .28s;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.week-export-btn{display:flex;gap:8px;align-items:center;}
+.not-reported{color:#f4a261;font-size:.78rem;font-style:italic;padding:4px 10px;}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>📊 لوحة الغياب – المسؤول</h1>
+    <p>متابعة غياب المرحلة الدنيا والعليا</p>
+  </div>
+  <div class="hd" id="hDate">...</div>
+</header>
+
+<div class="top-bar">
+  <div class="status"><div class="sd syncing" id="sDot"></div><span id="sTxt">جارٍ التحميل...</span></div>
+  <button class="btn btn-refresh" onclick="loadAll()">🔄 تحديث</button>
+  <div class="week-export-btn">
+    <button class="btn btn-excel" onclick="exportTodayExcel()">📥 تصدير اليوم Excel</button>
+    <button class="btn btn-week" onclick="exportWeekExcel()">📅 تصدير الأسبوع Excel</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="day-summary">
+    <h2>📈 إجمالي اليوم</h2>
+    <div class="stats-row">
+      <div class="stat-card tot"><div class="stat-n" id="gAll">0</div><div class="stat-l">إجمالي الغياب</div></div>
+      <div class="stat-card lower"><div class="stat-n" id="gLower">0</div><div class="stat-l">المرحلة الدنيا</div></div>
+      <div class="stat-card upper"><div class="stat-n" id="gUpper">0</div><div class="stat-l">المرحلة العليا</div></div>
+    </div>
+  </div>
+
+  <div class="week-nav">
+    <button onclick="changeWeek(-1)">◀ الأسبوع السابق</button>
+    <div class="week-label" id="weekLabel">...</div>
+    <button onclick="changeWeek(1)">الأسبوع التالي ▶</button>
+  </div>
+
+  <div class="day-tabs" id="dayTabs"></div>
+
+  <div class="sections" id="sections">
+    <div class="empty-day">جارٍ التحميل...</div>
+  </div>
+</div>
+
+<div class="toast" id="tst"></div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getDatabase,ref,get}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const app=initializeApp({apiKey:"key",databaseURL:"https://school-attendance-24215-default-rtdb.firebaseio.com",projectId:"school-attendance-24215"});
+const db=getDatabase(app);
+
+// ===== بيانات المراحل =====
+const SM_LOWER=[
+  {id:'s1',name:'الأول ابتدائي',cls:['الصف الأول / 1','الصف الأول / 2','الصف الأول / 3','الصف الأول / 4']},
+  {id:'s2',name:'الثاني ابتدائي',cls:['الصف الثاني / 1','الصف الثاني / 2','الصف الثاني / 3','الصف الثاني / 4']},
+  {id:'s3',name:'الثالث ابتدائي',cls:['الصف الثالث / 1','الصف الثالث / 2','الصف الثالث / 3','الصف الثالث / 4']}
+];
+const SM_UPPER=[
+  {id:'s4',name:'الرابع ابتدائي',cls:['الصف الرابع / 1','الصف الرابع / 2','الصف الرابع / 3','الصف الرابع / 4','الصف الرابع / 5']},
+  {id:'s5',name:'الخامس ابتدائي',cls:['الصف الخامس / 1','الصف الخامس / 2','الصف الخامس / 3','الصف الخامس / 4']},
+  {id:'s6',name:'السادس ابتدائي',cls:['الصف السادس / 1','الصف السادس / 2','الصف السادس / 3','الصف السادس / 4']}
+];
+
+const DN=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس'];
+const DN_KEYS=['sun','mon','tue','wed','thu'];
+
+// متغيرات الحالة
+let currentWeekOffset=0;
+let currentDayIndex=0;
+let weekDays=[];
+let allData={};// {dayKey: {lower:{ST,ATT,noAbsent}, upper:{ST,ATT,noAbsent}}}
+
+function setSUI(s,m){
+  document.getElementById('sDot').className='sd '+s;
+  document.getElementById('sTxt').textContent=m;
+}
+
+function toH(date){
+  const y=date.getFullYear(),m=date.getMonth()+1,d=date.getDate();
+  const jd=Math.floor((1461*(y+4800+Math.floor((m-14)/12)))/4)+Math.floor((367*(m-2-12*(Math.floor((m-14)/12))))/12)-Math.floor((3*(Math.floor((y+4900+Math.floor((m-14)/12))/100)))/4)+d-32075;
+  let l=jd-1948440+10632;
+  const n=Math.floor((l-1)/10631);l=l-10631*n+354;
+  const j=(Math.floor((10985-l)/5316))*(Math.floor((50*l)/17719))+(Math.floor(l/5670))*(Math.floor((43*l)/15238));
+  l=l-(Math.floor((30-j)/15))*(Math.floor((17719*j)/50))-(Math.floor(j/16))*(Math.floor((15238*j)/43))+29;
+  const hm=Math.floor((24*l)/709);const hd=l-Math.floor((709*hm)/24)-2;
+  return{y:30*n+j-30,m:hm,d:hd<1?1:hd};
+}
+function hMo(m){return['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'][m-1]||'';}
+
+function getWeekDays(offset){
+  const now=new Date();
+  const day=now.getDay();
+  // أول يوم الأسبوع (الأحد)
+  const sunday=new Date(now);
+  sunday.setDate(now.getDate()-day+(offset*7));
+  const days=[];
+  for(let i=0;i<5;i++){
+    const d=new Date(sunday);
+    d.setDate(sunday.getDate()+i);
+    days.push(d);
+  }
+  return days;
+}
+
+function dateKey(d){return`${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;}
+function lowerKey(d){return`lower_d_${dateKey(d)}`;}
+function upperKey(d){return`upper_d_${dateKey(d)}`;}
+function lowerStudentsKey(){return'lower_students_v1';}
+function upperStudentsKey(){return'upper_students_v1';}
+
+// تحميل بيانات الطلاب مرة واحدة
+let ST_LOWER={};
+let ST_UPPER={};
+
+async function loadStudents(){
+  try{
+    const [lSnap,uSnap]=await Promise.all([
+      get(ref(db,lowerStudentsKey())),
+      get(ref(db,upperStudentsKey()))
+    ]);
+    if(lSnap.exists())ST_LOWER=lSnap.val();
+    if(uSnap.exists())ST_UPPER=uSnap.val();
+  }catch(e){console.error('خطأ في تحميل الطلاب',e);}
+}
+
+async function loadDayData(date){
+  const dk=dateKey(date);
+  if(allData[dk])return allData[dk];
+  try{
+    const [lSnap,uSnap,lNoSnap,uNoSnap]=await Promise.all([
+      get(ref(db,lowerKey(date))),
+      get(ref(db,upperKey(date))),
+      get(ref(db,`lower_no_absent_${dk}`)),
+      get(ref(db,`upper_no_absent_${dk}`))
+    ]);
+    allData[dk]={
+      lower:{ATT:lSnap.exists()?lSnap.val():{},noAbsent:lNoSnap.exists()?lNoSnap.val():{}},
+      upper:{ATT:uSnap.exists()?uSnap.val():{},noAbsent:uNoSnap.exists()?uNoSnap.val():{}}
+    };
+  }catch(e){allData[dk]={lower:{ATT:{},noAbsent:{}},upper:{ATT:{},noAbsent:{}}};}
+  return allData[dk];
+}
+
+function getAbsentList(ST,ATT,sm){
+  const result={};
+  sm.forEach(sg=>{
+    result[sg.id]={name:sg.name,classes:{}};
+    sg.cls.forEach((cls,ci)=>{
+      const k=`c${ci}`;
+      const sts=ST[sg.id]?ST[sg.id][k]||[]:[];
+      const att=ATT[sg.id]?ATT[sg.id][k]||{}:{};
+      const absent=sts.filter(s=>att[s.id]===true);
+      result[sg.id].classes[k]={name:cls,students:absent};
+    });
+  });
+  return result;
+}
+
+window.loadAll=async function(){
+  setSUI('syncing','جارٍ التحميل...');
+  weekDays=getWeekDays(currentWeekOffset);
+  
+  // تحديد اليوم الحالي
+  const today=new Date();
+  const todayDk=dateKey(today);
+  
+  // تحميل الطلاب
+  await loadStudents();
+  
+  // تحميل بيانات الأسبوع
+  for(const d of weekDays){await loadDayData(d);}
+  
+  // تحديد اليوم النشط
+  const todayIdx=weekDays.findIndex(d=>dateKey(d)===todayDk);
+  if(currentWeekOffset===0&&todayIdx>=0)currentDayIndex=todayIdx;
+  else if(currentDayIndex>=weekDays.length)currentDayIndex=0;
+  
+  setSUI('synced','محدّث ✅');
+  renderWeekNav();
+  renderDayTabs();
+  renderDay(currentDayIndex);
+  renderHeader();
+};
+
+function renderHeader(){
+  const now=new Date();
+  const h=toH(now);
+  document.getElementById('hDate').textContent=`${DN[now.getDay()]} ${h.d} ${hMo(h.m)} ${h.y}هـ`;
+}
+
+function renderWeekNav(){
+  const first=weekDays[0];
+  const last=weekDays[4];
+  const fmt=d=>`${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+  document.getElementById('weekLabel').textContent=
+    currentWeekOffset===0?`الأسبوع الحالي (${fmt(first)} – ${fmt(last)})`:
+    currentWeekOffset<0?`أسبوع سابق (${fmt(first)} – ${fmt(last)})`:
+    `أسبوع قادم (${fmt(first)} – ${fmt(last)})`;
+}
+
+function renderDayTabs(){
+  const tabs=document.getElementById('dayTabs');
+  tabs.innerHTML='';
+  weekDays.forEach((d,i)=>{
+    const btn=document.createElement('button');
+    btn.className=`day-tab${i===currentDayIndex?' active':''}`;
+    btn.textContent=`${DN[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`;
+    btn.onclick=()=>{currentDayIndex=i;renderDayTabs();renderDay(i);};
+    tabs.appendChild(btn);
+  });
+}
+
+function renderDay(idx){
+  const date=weekDays[idx];
+  const dk=dateKey(date);
+  const data=allData[dk]||{lower:{ATT:{},noAbsent:{}},upper:{ATT:{},noAbsent:{}}};
+  
+  const lAbsent=getAbsentList(ST_LOWER,data.lower.ATT,SM_LOWER);
+  const uAbsent=getAbsentList(ST_UPPER,data.upper.ATT,SM_UPPER);
+  
+  // حساب الإجمالي
+  let totalLower=0,totalUpper=0;
+  SM_LOWER.forEach(sg=>{Object.values(lAbsent[sg.id].classes).forEach(c=>{totalLower+=c.students.length;});});
+  SM_UPPER.forEach(sg=>{Object.values(uAbsent[sg.id].classes).forEach(c=>{totalUpper+=c.students.length;});});
+  
+  document.getElementById('gAll').textContent=totalLower+totalUpper;
+  document.getElementById('gLower').textContent=totalLower;
+  document.getElementById('gUpper').textContent=totalUpper;
+  
+  const cont=document.getElementById('sections');
+  cont.innerHTML='';
+  
+  // المرحلة الدنيا
+  const lCard=document.createElement('div');lCard.className='section-card';
+  let lBody='';
+  SM_LOWER.forEach(sg=>{
+    lBody+=`<div class="cls-block">`;
+    sg.cls.forEach((cls,ci)=>{
+      const k=`c${ci}`;
+      const info=lAbsent[sg.id].classes[k];
+      const noAbs=data.lower.noAbsent&&data.lower.noAbsent[sg.id]&&data.lower.noAbsent[sg.id][k];
+      lBody+=`<div class="cls-title">${cls} <span>غياب: ${info.students.length}</span></div>`;
+      if(noAbs){
+        lBody+=`<div class="confirmed-no-absent">✅ لا يوجد غياب (مؤكد)</div>`;
+      }else if(info.students.length===0){
+        lBody+=`<div class="not-reported">لم يُرسل بعد</div>`;
+      }else{
+        info.students.forEach((s,i)=>{lBody+=`<div class="stu-item"><span class="stu-num">${i+1}</span>${s.name}</div>`;});
+      }
+    });
+    lBody+=`</div>`;
+  });
+  lCard.innerHTML=`<div class="section-head lower">📚 المرحلة الدنيا (1-3) <span>غياب: ${totalLower}</span></div><div class="section-body">${lBody}</div>`;
+  cont.appendChild(lCard);
+  
+  // المرحلة العليا
+  const uCard=document.createElement('div');uCard.className='section-card';
+  let uBody='';
+  SM_UPPER.forEach(sg=>{
+    uBody+=`<div class="cls-block">`;
+    sg.cls.forEach((cls,ci)=>{
+      const k=`c${ci}`;
+      const info=uAbsent[sg.id].classes[k];
+      const noAbs=data.upper.noAbsent&&data.upper.noAbsent[sg.id]&&data.upper.noAbsent[sg.id][k];
+      uBody+=`<div class="cls-title">${cls} <span>غياب: ${info.students.length}</span></div>`;
+      if(noAbs){
+        uBody+=`<div class="confirmed-no-absent">✅ لا يوجد غياب (مؤكد)</div>`;
+      }else if(info.students.length===0){
+        uBody+=`<div class="not-reported">لم يُرسل بعد</div>`;
+      }else{
+        info.students.forEach((s,i)=>{uBody+=`<div class="stu-item"><span class="stu-num">${i+1}</span>${s.name}</div>`;});
+      }
+    });
+    uBody+=`</div>`;
+  });
+  uCard.innerHTML=`<div class="section-head upper">📚 المرحلة العليا (4-6) <span>غياب: ${totalUpper}</span></div><div class="section-body">${uBody}</div>`;
+  cont.appendChild(uCard);
+}
+
+window.changeWeek=function(dir){
+  currentWeekOffset+=dir;
+  currentDayIndex=0;
+  allData={};
+  loadAll();
+};
+
+// ===== تصدير Excel اليوم =====
+window.exportTodayExcel=function(){
+  const date=weekDays[currentDayIndex];
+  const dk=dateKey(date);
+  const data=allData[dk]||{lower:{ATT:{},noAbsent:{}},upper:{ATT:{},noAbsent:{}}};
+  const wb=XLSX.utils.book_new();
+  const dayName=`${DN[date.getDay()]} ${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`;
+
+  // كل فصل ورقة
+  [...SM_LOWER,...SM_UPPER].forEach(sg=>{
+    const isLower=SM_LOWER.find(s=>s.id===sg.id);
+    const ST=isLower?ST_LOWER:ST_UPPER;
+    const ATT=isLower?data.lower.ATT:data.upper.ATT;
+    const noAbsent=isLower?data.lower.noAbsent:data.upper.noAbsent;
+
+    sg.cls.forEach((cls,ci)=>{
+      const k=`c${ci}`;
+      const sts=ST[sg.id]?ST[sg.id][k]||[]:[];
+      const att=ATT[sg.id]?ATT[sg.id][k]||{}:{};
+      const noAbs=noAbsent&&noAbsent[sg.id]&&noAbsent[sg.id][k];
+      const absent=sts.filter(s=>att[s.id]===true);
+
+      const rows=[['#','اسم الطالب','الملاحظة']];
+      if(noAbs){rows.push(['—','لا يوجد غياب','مؤكد من المعلم']);}
+      else if(absent.length===0){rows.push(['—','لا يوجد غياب مسجل','']);}
+      else{absent.forEach((s,i)=>rows.push([i+1,s.name,dayName]));}
+
+      const ws=XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols']=[{wch:5},{wch:40},{wch:20}];
+      const sheetName=cls.replace(/\//g,'-').slice(0,31);
+      XLSX.utils.book_append_sheet(wb,ws,sheetName);
+    });
+  });
+
+  XLSX.writeFile(wb,`غياب_${DN[date.getDay()]}_${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}.xlsx`);
+  showT('تم تصدير ملف Excel ✅');
+};
+
+// ===== تصدير Excel الأسبوع =====
+window.exportWeekExcel=async function(){
+  showT('جارٍ تجهيز ملف الأسبوع...');
+  // تأكد من تحميل كل الأيام
+  for(const d of weekDays){await loadDayData(d);}
+
+  const wb=XLSX.utils.book_new();
+  const allClasses=[];
+  SM_LOWER.forEach(sg=>sg.cls.forEach((cls,ci)=>allClasses.push({sg,ci,cls,isLower:true})));
+  SM_UPPER.forEach(sg=>sg.cls.forEach((cls,ci)=>allClasses.push({sg,ci,cls,isLower:false})));
+
+  allClasses.forEach(({sg,ci,cls,isLower})=>{
+    const k=`c${ci}`;
+    const ST=isLower?ST_LOWER:ST_UPPER;
+    const sts=ST[sg.id]?ST[sg.id][k]||[]:[];
+
+    // أعمدة: الاسم + كل يوم
+    const header=['#','اسم الطالب'];
+    weekDays.forEach(d=>header.push(`${DN[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`));
+    header.push('إجمالي الغياب');
+
+    const rows=[header];
+    sts.forEach((s,idx)=>{
+      const row=[idx+1,s.name];
+      let total=0;
+      weekDays.forEach(d=>{
+        const dk=dateKey(d);
+        const data=allData[dk]||{lower:{ATT:{},noAbsent:{}},upper:{ATT:{},noAbsent:{}}};
+        const ATT=isLower?data.lower.ATT:data.upper.ATT;
+        const att=ATT[sg.id]?ATT[sg.id][k]||{}:{};
+        const absent=att[s.id]===true;
+        if(absent)total++;
+        row.push(absent?'غ':'');
+      });
+      row.push(total);
+      rows.push(row);
+    });
+
+    // سطر إجمالي
+    const totRow=['','الإجمالي'];
+    weekDays.forEach(d=>{
+      const dk=dateKey(d);
+      const data=allData[dk]||{lower:{ATT:{},noAbsent:{}},upper:{ATT:{},noAbsent:{}}};
+      const ATT=isLower?data.lower.ATT:data.upper.ATT;
+      const att=ATT[sg.id]?ATT[sg.id][k]||{}:{};
+      totRow.push(sts.filter(s=>att[s.id]===true).length);
+    });
+    totRow.push('');
+    rows.push(totRow);
+
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:5},{wch:40},...weekDays.map(()=>({wch:14})),{wch:14}];
+    const sheetName=cls.replace(/\//g,'-').slice(0,31);
+    XLSX.utils.book_append_sheet(wb,ws,sheetName);
+  });
+
+  const first=weekDays[0];
+  const last=weekDays[4];
+  XLSX.writeFile(wb,`غياب_أسبوعي_${first.getDate()}-${first.getMonth()+1}_إلى_${last.getDate()}-${last.getMonth()+1}-${last.getFullYear()}.xlsx`);
+  showT('تم تصدير ملف الأسبوع ✅');
+};
+
+function showT(msg){const t=document.getElementById('tst');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// تشغيل
+loadAll();
+// تحديث تلقائي كل 5 دقائق
+setInterval(()=>{allData={};loadAll();},5*60*1000);
+</script>
+</body>
+</html>
