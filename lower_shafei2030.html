@@ -4,15 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <title>حصر الغياب – المرحلة الدنيا</title>
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e63946'/><text y='72' x='50' text-anchor='middle' font-size='75' font-family='Arial'>👦</text></svg>">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e63946'/><text y='72' x='50' text-anchor='middle' font-size='75' font-family='Arial'>👦</text></svg>">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="غياب الدنيا">
-<meta name="mobile-web-app-capable" content="yes">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Tajawal',sans-serif;background:#f0f2f5;min-height:100vh;color:#1a1a2e;padding:10px 8px 80px;}
@@ -77,17 +74,19 @@ header p{color:#a8c4e0;font-size:.72rem;margin-top:2px}
 .stu-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;margin-bottom:5px;background:#fafafa;cursor:pointer;user-select:none}
 .stu-row.absent{background:#fff0f0}
 .stu-row.selected{outline:2px solid #e63946}
-.stu-row:active{background:#f0f0f0}
 .stu-num{font-size:.65rem;color:#bbb;font-weight:700;width:18px;text-align:center;flex-shrink:0}
 .stu-name{flex:1;font-size:.82rem;font-weight:600;line-height:1.3}
 .stu-chk{width:28px;height:28px;border-radius:8px;background:#f0f0f0;border:2px solid transparent;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:900;flex-shrink:0}
 .stu-row.absent .stu-chk{background:#fff0f0;color:#c1121f;border-color:#ffc8c8}
-.pop-foot{padding:10px 14px;border-top:1.5px solid #f0f0f0;display:flex;gap:8px;flex-shrink:0}
+.pop-foot{padding:10px 14px;border-top:1.5px solid #f0f0f0;display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;}
 .pop-foot button{flex:1;padding:10px;border:none;border-radius:11px;font-family:'Tajawal',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer}
 .btn-wa{background:#25d366;color:#fff}
 .btn-add{background:#e63946;color:#fff}
 .btn-edit{background:#2a9d8f;color:#fff}
 .btn-del{background:#eee;color:#555}
+.btn-noabsent{background:#e8faf8;color:#1a6b61;width:100%!important;margin-top:4px;}
+.btn-noabsent.confirmed{background:#2a9d8f;color:#fff;}
+.btn-excel{background:#1b5e20;color:#fff;width:100%!important;margin-top:4px;}
 .mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:none;align-items:flex-end;justify-content:center}
 .mo.show{display:flex}
 .md{background:#fff;border-radius:18px 18px 0 0;padding:22px 18px 38px;width:100%;max-width:500px}
@@ -158,6 +157,8 @@ header p{color:#a8c4e0;font-size:.72rem;margin-top:2px}
       <button class="btn-edit" onclick="actionEdit()">✏️</button>
       <button class="btn-add" onclick="actionAdd()">➕</button>
       <button class="btn-wa" onclick="sendWA()">💬 واتساب</button>
+      <button class="btn-noabsent" id="btnNoAbsent" onclick="confirmNoAbsent()">✅ لا يوجد غياب اليوم</button>
+      <button class="btn-excel" onclick="exportClassExcel()">📥 تصدير Excel</button>
     </div>
   </div>
 </div>
@@ -192,87 +193,32 @@ const SM=[
 ];
 const DN=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس'];
 
-// القائمة الأصلية للطلاب (تُستخدم فقط عند أول تشغيل)
 const DS={s1:{c0:["ADEEB MUHAMMAD QASIMALI KALAMIAN","BASIL ISMAIL MAQBOL AHMED AZIZURRAHMAN","HAMAD NOOR ALISLAM MOHAMMED SULTAN ABU","MOHAMMAD JMEAL MOUHAMMD ALAM MOHAMMAD ISMEL","OMAIR ABDULLAH MAULVISYED ABDULJABBAR","ABU SHAMA SUTAAM SALIM","TAMER ABDULLAH AMIR BAKHSH ALI DAD","آسر سليمان محمد بادبيان","أحمد جعفر أحمد عيدروس","أمير فهد محمد ظمد","تميم محمد حسن فطاني","زايد خضر فوزي المولد","سايم سلطان الاسلام أشرف الزمان سلطان","سيف فيصل هشام الهباش","عزام محمد حميد مصلح","علي محمد علوي العطاس","عمر ابراهيم محمد السقاف","عمر عبد العزيز مسلم بانبيله","عمرو صالح جميل بخش","مؤيد صالح العبد طالب","محمد حسين قاسم محمد كريم","محمد رائد عبدالقوي صالح","معاذ مازن محمود ابولبن","يزن صديق علي قايد"],c1:["KASSIGUE AHMAD ABDOULSAMAD","AHMED ABDULLAH KAREEM ALLAH","HAMAD MOHAMMAD GORAMIAN","JIHAD JAFAR ALAM SYED AMEEN","OMAIR SALEEM MOHAMMAD","أوس ماجد عبدالله باجحزر","اياد فيصل حسن بخش","حسان ساعد سعيد الجحدلي","خالد سعيد علي الغامدي","خليفة فواز رشيد الحزمي","سيف وليد احمد سيف","صقر فهد سيف غالب الوانلي","طلال رامز بن مصطفى رماني","عبدالعزيز محمد ظيف الله واصلي","عز معتصم محمد محمد","عزام يوسف عادل الهندي","علي عثمان على فلاته","فهد نايف فهد الخضري","محمد حسن عبدالملك محمد","محمد صابر الحاج لقمان اشرف علي","محمد صبري احمد عبدالله","معاذ عادل سلامة الله احمد عليم الدين","موفق سيدي الامين","واسل احمد بن محمد عابد"],c2:["ABDALLAH ABOUBACAR MOUSLIM","JAWAD ABDULAZIZ ABULFAIZ","MOAAZ MOHAMMED SAED ULLAH","RAAD ABDULMAJEED MUHAMMADSALIM YAQOOB","TURKI UMAIR MOHAMMAD ILYAS","أمير نايف عبدالله ناجي راجح","أنس حمزه عبدالله الجفري","بلال انس مراد الحسن","جسار محمد عبيدالله المحمادي","جمال سعيد جمال خضرى","خالد غنام بن محسن العلياني","زيد عبدالوهاب عبدالرحمن الزهراني","سلطان احمد بن حسين شراحيلي","عبدالقادر احمد علوي العطاس","عمران عبدالاله عبدالله باطويل","عواد عبدالرحيم شفيع عالم شفيع الرحمن","غسان ادم يحي علي","غيث عادل محمد الغامدي","مؤتمن عبدالمنعم حسب الله طلحة بابكر","محمد عبدالرحمن عبدالله الغامدي","محمد عمار عبده احمد الجبالي","وسيم زكريا هارون بوكار","يزن بلال سعيد سعيد"],c3:["AZOZ SHAMS MUBIN ABDULLAH","HAMAD MOHAMMED MAHMOODOLLAH YULEMIAH","JIHAD MOOSA ALI HUSSAIN WALI","MOHAMMAD JAHANGIR KALAKHAN","SOHAIL WAHEED ABDULQASIM","ZIAD NOOR ALISLAM MOHAMMEDHUSSAIN","تركي عبدالرحمن عوض الوذيناني","رائف محمد بن عبدالله عطيه","سعد احمد جعفر بلو","سمير سامر سمير الشاذلي","عبدالرحمن عبدالله احمد بازهير","عبدالقادر ابراهيم عبدالقادر احمد محمد","عبدالوهاب محمان موسى عبدالله","علي عبدالعزيز علي برناوي","غيث عوده بن سعيد الفهمي","كنان احمد امين نصر","محمد هايل زين العابدين نجار","وسام احمد علي نواز بخش","ياسر عادل عايض العتيبي","يزن فواز مدهش علي المخلافي","يزيد علاء عدنان علي"]},s2:{c0:["ABDALMALIK ABDUL MANAN ISHAQ AHMED WALI","RAID MOUSSA ABASS IDRISS","البراء جعفر بلخي","ابراهيم يحيي احمد الكبش","احمد عبدالعزيز بن مرشود الصاعدي","حمد عبدالله احمد العمودي","الياس محمد سرحان القرني","باسل محمد مساعد المالكي","جواد عبدالمنعم بن مرشود الصاعدي","سعود علي بن احمد شراحيلي","عبدالعزيز غازي بن حامد المجنوني","عبدالله احمد عبده البهري","عبدالملك محمد مسلم الفهمي","عثمان عمر بن محمد هوساوي","علاء عبدالعزيز علي برناوي","عمر معاذ كامل محمد العبيدي","فارس عبدالله عطيه الرحيلي","فيصل ماجد بن علي الجعيد","كرم عبدالرحمن ابراهيم عسيري","كنان عمر عبدالله الصاعدي","مؤيد اسماعيل تركي الشرقي","مجاهد محمد امير احمد ابو القاسم","محمد عبدالرحمن علي القرني","محمد محسن محمد الحارثي","مهند زاند سلطان القاهري","مياد محمد احمد الحربي","اسر بن ماجد بن محسن الصاعدي","يوسف البراء جعفر بلخي"],c1:["FARES ABDOUCHACKOUR","MAHMOUD TRAORE","احمد الحسين احمد عبدالعظيم","احمد بسام عبده صدام","آدم المولد","ايهم احمد عبده سيف","رائف احمد عمر رحيم","رواف عبدالله بن محمد المولد","زياد باسم معتق الصبحي","زين الدين ايمن عبدالمنعم بانه","سعود عبدالرحمن مطير الخزاعي","عادي عبدالصمد عبدالستار بنقالي","عبدالعزيز احمد عبدالعزيز بخش","عبدالعزيز عمر عايش المروعي","عز محمد علي عسيري","عزام عبدالعزيز محمد حسين مشرف علي","علاء محمد علي عبدالرحمن","عمار حسين حسن المنهالي","فارس هليل عبيد العميري","فهد محمد عبده عبدالله","قصي خالد محمد بادويلان","قصي سام عبدالله سعيد","كريم عمار ابراهيم السيد","ماجد رضوان بن محمد نور هوساوي","محمد عبدالرحمن محمد العتيبي","محمود علي بن صالح حداد","نبراس حامد فهد القرشي","بندر عبدالخبير عقلان","هيث علوي يحي السقاف","اسر احمد بن سالم الحربي","يزن يوسف عبدالرحمن باحاج"],c2:["HANI YASEEN ABU SIDDIQ HUSSAIN","احمد امين احمد الأبيبي","حمد صفوان سعيد الدعيس","بسام حسن عمر ادم","جواد صديق علي محمد","خالد عبدالرحيم البلوشي","رعد محمد بن سليم اللهيبي","عبدالاله شاكر منصور مهدي علي","عبدالرحمن هيثم حسن الحارثي","عبدالله حسان عبدالله زيلع","عزام علي بن قائد الزبيدي","عزام هزاع صالح باحاج","عماد عبدالعزيز عدنان علي","عمر علي عبدالعزيز بيطار","فراس ياسر محمد عياش","فهد مشاري سعود الحربي","فوزان محمد فرج بايوسف","قصي محمد فواد محمد السري","كرم احمد مصطفى سيف الدين","كنان احمد قائد ناجي","محبوب عبيد مهدي المالكي","محمد وليد محمد الزايري","عمر محمد فهد القرشي","وسيم يوسف ابراهيم عمر","يامن محمد عبدالرحمن العباسي","يزن محمد احمد اسماعيل","يوسف مرزوقي عبدالرحمن حميدي"],c3:["حمد شهاب الدين الشامي عثمان","أوس يحيى محمد حمدي","اصيل بدر عوض احمد شرف","البراء كرم سعيد الدعيس","رائد فواد علي الصبياني","زين علي بن حسن معاش","سالم صلاح سعيد داود","سلطان حمدي سلطان عبده","طاهر محمد حسن نور احمد","عبدالله محمد بن عبدالله الزهيري","عبدالله محمد علي سالم","عبدالمجيد ايمن بن عبدالحميد بخش","علي ايمن علي بلخير","علي خالد بن علي باسلوم","عمار ياسر مصطفى قائد","عمر حسين عبدالهادي بشناق","عمر مامون بن محمد الجيش","فارس عبدالله مقبل محمد","فهد بن عبده محمد رسيدي","فيصل سعيد صالح زهراني","قاسم محمد ابو الهاشم عبدالصمد","كنان ماجد عبدالله العماري","كنان محمد عويش الصبياني","معتز احمد عوض شرف","ميسر سيد سيدي الامين","يامن حسن حمد بخش","يزن ياسر شحات رحيله","يونس يوسف علي حسين محمد علي"]},s3:{c0:["MOHAMMAD USMAN","HABIBULLAH SYED ALI","أمار عبدالرحيم عبدالعزيز الشمري","بتال رائد محمد العوبثاني","البراء بندر جعفر بلو","تميم وليد منير الهذلي","حازم زهير بن مصطفى سمنودي","خالد نادر بن فهد الانصاري","خالد وليد عثمان العمودي","خلف فواز رشيد الحزمي","هاني عبدالصمد احمد كسوكا","اياد احمد منصور خوجه","سعود احمد مصطفى سناري","سليمان عبدالرحمن يحيى الاهدل","عبدالعزيز اسماعيل عبدالرزاق صديق","عبدالله سامي بن عبدالله الغامدي","علي حسين زيد الحامد","قصي عبدالرحمن محمد فلمبان","كنان احمد بن يحيى صعيدي","مؤيد وجدي عريش رعيدي","محمد ابوبكر عبدالرحمن باموسي العمودي","محمد عبدالرحمن محمد العمودي","محمد عثمان علي فلاته","محمد معتصم محمد البركاتي","محمد موسى ابراهيم الجعيدي","محمد وسام محمد قناديلي","محمد ياسين بن محمد غزاوي","مشعل صالح العبد طالب","هاشم حسين سالم العطاس","وسام محمد بن جميل الحربي","يامن حسين سعد اليماني","يحيى عبدالقادر نظام ادريس","يزن هيثم عبدالله العاصمي","يعقوب مرتضى يعقوب محمد","يوسف صابر صديق لشكر"],c1:["ZEYAD YOUNEAS","ABDOULHKEAM","ABDOULBSHER","احمد محمد حسن الحداد","امير ممدوح حسن السلمي","أوس وليد ادم احمد","ابراهيم محمد ابراهيم اليماني","أوس خالد محمد شملان","بسام عثمان فيصل الغامدي","جاسر عمر سراج فقيه","جلال الدين احمد محمد البعداني","جواد بندر عبدالله الغامدي","حسام زياد عوض الرحيلي","حسين حسن بن سالم عبيري","حمد عبدالرحمن محمد حسن","زياد محمد احمد القرني","صالح محمد صالح ناير","صالح وهيب احمد باماجد","عبدالعزيز سلطان مبارك بارباع","عبدالرحمن بدر حميد سلامي","عبدالله محمد سهل الشريف","عبدالله ياسر عبدالله الزهيري","عدنان عباس احمد كريم بخش","علي محمد عبده صالح محمد","عماد فهد ماطر المسفري","عمر جابر محمد عمار","عمار محمد حسن الحداد","عمر امين علي السقاف","عمر فهد بن عمر باحسن","قصي احمد ابراهيم جعفري","مؤيد وليد بن محمد بكاوي","ماجد عبدالرحيم سعد الشمبري","هند اسامة مدهش قاسم","نوار خالد نور الاسلام حافظ","هاشر عمر","طاهر ابراهيم محمد","وليد ساعد سعيد الجحدلي","يوسف احمد عبده المصباحي"],c2:["احمد السيد السيد نحله","امير محمد يعقوب امير احمد عمر","امير مهند محمد عوض","باسم بكر حامد جبريل","بتال متعب سعد القثامي","براء ابراهيم جابر الزبيدي","تركي احمد مصلح الثقفي","تميم احمد محمد محمد","تيم محمد حميد القدسي","حسام عادل احمد ردمان","حسن وانل حسن حسن","حمزة احمد مصطفى علي","رائد ايمن حسين الجيزاني","رواد اديب بن احمد العلاوي","ريان مهند بن معروف باجمال","سعود مشاري سعود الحربي","سفيان عبدالله يحيى جعدول","سلطان محمود محمد القماني","طه صالح عبدالكريم صالح","طه محمد توفيق عريف","عبدالعزيز محمد عبدالرحمن الدوبي","عبدالمجيد عصام بن عبدالباسط عبدالله","عزام بندر ضيف الله المعلوي","عمار مجدي حسن بن سلم","عمر احمد عبدالرحمن الحربي","فارس عدنان سعيد الصاعدي","فراس معتز حميد القدسي","فيصل بن عبدالحليم بن مرشود الصاعدي","مالك عماد بن سليمان خيروا","محمد حسين عمر الحبشي","محمد عبدالله جعفر الحداد","ملهم فيصل حبيب الله بخش","ممدوح نواف بن عبدالعزيز الخزاعي","نائف حسن خليل الخيبري","وهيب عادل معراج سليماني","يحيى سمير سعيد صالح","يزيد يحيى بن محمد شقيقي"],c3:["احمد ازي محمد السبعي","انس ابراهيم امادو تراوري","اياد بندر صلاح الافعي","براء بكر بن ابراهيم فلاته","تركي محمد نور احمد ابوالخير","حامد طه محمد البار","خالد عمار عبده احمد","راغد عمر حسن التكروني","سعد سليمان سلطان مولوي","سمير عماد حافظ بشير","صالح احمد صالح باحاج","عامر سليم سعيد عبدالعزيز","سعيد حمزة الغامدي","عبدالله مدهير مادي اتا جابي","عبدالملك ختام دخيل الله الحارثي","عبدالوهاب عبدالله سالي جبرين","علي عبدالرحمن علي القرني","فهد عمر صهيب الهذلي","قاسم حسن سعيد هزاز","قصي سلطان سمير عطار","قصي عبدالعزيز محمد قفاص","كنان فايز حيدر الحداد","محمد اسماعيل تركي الشرقي","محمد طه محمد مطهر","محمد عبدالرحمن بن قاسم فلاته","محمد عبدالله سراج فضل","هاني عدنان عقيل بوشه","حسن ثامر احمد المغربي","يحيى يوسف بن محمد الشريف","يزن احمد حرب ابو العراج","يزن مسامح احمد المالكي","زيد عيسى سليماني ديالو","يسار جمال دخيل الحربي","يعقوب ابراهيم سالم باوزير"]}};
 
-// مفتاح قائمة الطلاب في Firebase (دائم - لا يتغير بتغير اليوم)
-const STUDENTS_KEY = 'lower_students_v1';
-
-// مفتاح الغياب اليومي
+const STUDENTS_KEY='lower_students_v1';
 function todayKey(){const d=new Date();return`lower_d_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;}
+function noAbsentKey(){const d=new Date();return`lower_no_absent_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;}
 
-let ST={};
-let ATT={};
-let sv=false;
-let fbListener=null;
-let curPop={sg:null,k:null};
-let selStu=null;
+let ST={},ATT={},NO_ABSENT={},sv=false,fbListener=null,curPop={sg:null,k:null},selStu=null;
+let mM=null,mT2=null;
 
-// بناء قائمة الطلاب من القائمة الأصلية (عند أول تشغيل فقط)
-function buildDefaultST(){
-  const result={};
-  SM.forEach((sg,si)=>{
-    result[sg.id]={};
-    sg.cls.forEach((_,ci)=>{
-      result[sg.id][`c${ci}`]=(DS[sg.id][`c${ci}`]||[]).map((n,i)=>({id:`s${si}c${ci}i${i}`,name:n}));
-    });
-  });
-  return result;
-}
-
+function buildDefaultST(){const r={};SM.forEach((sg,si)=>{r[sg.id]={};sg.cls.forEach((_,ci)=>{r[sg.id][`c${ci}`]=(DS[sg.id][`c${ci}`]||[]).map((n,i)=>({id:`s${si}c${ci}i${i}`,name:n}));});});return r;}
 function initAtt(){SM.forEach(sg=>{ATT[sg.id]={};sg.cls.forEach((_,ci)=>{ATT[sg.id][`c${ci}`]={};});});}
+function setSUI(s,m){document.getElementById('sDot').className='sd '+s;document.getElementById('sTxt').textContent=m;if(s==='synced')document.getElementById('sTime').textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar');}
+async function saveStudents(){try{await set(ref(db,STUDENTS_KEY),ST);}catch(e){}}
+async function saveNoAbsent(){try{await set(ref(db,noAbsentKey()),NO_ABSENT);}catch(e){}}
+async function fbS(){if(sv)return;sv=true;setSUI('syncing','جارٍ الحفظ...');try{await set(ref(db,todayKey()),ATT);setSUI('synced','محفوظ ✅');}catch(e){setSUI('error','خطأ في الحفظ');}finally{sv=false;}}
 
-function setSUI(s,m){
-  document.getElementById('sDot').className='sd '+s;
-  document.getElementById('sTxt').textContent=m;
-  if(s==='synced')document.getElementById('sTime').textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar');
-}
-
-// حفظ قائمة الطلاب في Firebase
-async function saveStudents(){
-  try{await set(ref(db,STUDENTS_KEY),ST);}
-  catch(e){console.error('خطأ في حفظ الطلاب',e);}
-}
-
-// حفظ الغياب في Firebase
-async function fbS(){
-  if(sv)return;sv=true;setSUI('syncing','جارٍ الحفظ...');
-  try{await set(ref(db,todayKey()),ATT);setSUI('synced','محفوظ ✅');}
-  catch(e){setSUI('error','خطأ في الحفظ');}
-  finally{sv=false;}
-}
-
-// تحميل البيانات من Firebase
 async function fbL(){
-  setSUI('syncing','جارٍ التحميل...');
-  initAtt();
+  setSUI('syncing','جارٍ التحميل...');initAtt();
   try{
-    // تحميل قائمة الطلاب
     const stuSnap=await get(ref(db,STUDENTS_KEY));
-    if(stuSnap.exists()){
-      ST=stuSnap.val();
-      // تأكد من وجود كل الفصول
-      SM.forEach((sg,si)=>{
-        if(!ST[sg.id])ST[sg.id]={};
-        sg.cls.forEach((_,ci)=>{
-          if(!ST[sg.id][`c${ci}`])ST[sg.id][`c${ci}`]=(DS[sg.id][`c${ci}`]||[]).map((n,i)=>({id:`s${si}c${ci}i${i}`,name:n}));
-        });
-      });
-    } else {
-      // أول مرة: بناء القائمة من الأصل وحفظها
-      ST=buildDefaultST();
-      await saveStudents();
-    }
-
-    // تحميل الغياب
-    const attSnap=await get(ref(db,todayKey()));
-    if(attSnap.exists()){
-      const data=attSnap.val();
-      SM.forEach(sg=>{sg.cls.forEach((_,ci)=>{const k=`c${ci}`;if(data[sg.id]&&data[sg.id][k])ATT[sg.id][k]=data[sg.id][k];});});
-      setSUI('synced','متزامن ✅');
-    } else {
-      setSUI('synced','يوم جديد ✅');
-    }
+    if(stuSnap.exists()){ST=stuSnap.val();SM.forEach((sg,si)=>{if(!ST[sg.id])ST[sg.id]={};sg.cls.forEach((_,ci)=>{if(!ST[sg.id][`c${ci}`])ST[sg.id][`c${ci}`]=(DS[sg.id][`c${ci}`]||[]).map((n,i)=>({id:`s${si}c${ci}i${i}`,name:n}));});});}
+    else{ST=buildDefaultST();await saveStudents();}
+    const[attSnap,naSnap]=await Promise.all([get(ref(db,todayKey())),get(ref(db,noAbsentKey()))]);
+    if(attSnap.exists()){const data=attSnap.val();SM.forEach(sg=>{sg.cls.forEach((_,ci)=>{const k=`c${ci}`;if(data[sg.id]&&data[sg.id][k])ATT[sg.id][k]=data[sg.id][k];});});setSUI('synced','متزامن ✅');}
+    else{setSUI('synced','يوم جديد ✅');}
+    NO_ABSENT=naSnap.exists()?naSnap.val():{};
   }catch(e){setSUI('error','تعذر الاتصال');}
   renderAll();
   setTimeout(()=>{const ls=document.getElementById('ls');if(ls){ls.classList.add('hide');setTimeout(()=>ls.remove(),400);}},300);
@@ -282,10 +228,8 @@ function fbLs(){
   if(fbListener)fbListener();
   fbListener=onValue(ref(db,todayKey()),(snap)=>{
     if(!snap.exists()||sv)return;
-    const data=snap.val();
-    SM.forEach(sg=>{sg.cls.forEach((_,ci)=>{const k=`c${ci}`;if(data[sg.id]&&data[sg.id][k])ATT[sg.id][k]=data[sg.id][k];});});
-    setSUI('synced','متزامن ✅');updStats();updBtns();
-    if(curPop.sg)renderPopList();
+    const data=snap.val();SM.forEach(sg=>{sg.cls.forEach((_,ci)=>{const k=`c${ci}`;if(data[sg.id]&&data[sg.id][k])ATT[sg.id][k]=data[sg.id][k];});});
+    setSUI('synced','متزامن ✅');updStats();updBtns();if(curPop.sg)renderPopList();
   });
 }
 
@@ -295,15 +239,8 @@ function clsAbs(sid,k){return Object.values(ATT[sid][k]||{}).filter(v=>v).length
 function sgAbs(sid){let t=0;SM.find(s=>s.id===sid).cls.forEach((_,ci)=>{t+=clsAbs(sid,`c${ci}`);});return t;}
 function sgTotal(sid){let t=0;ST[sid]&&Object.values(ST[sid]).forEach(arr=>{t+=arr.length;});return t;}
 
-function updStats(){
-  let g=0,gp=0;
-  SM.forEach((sg,si)=>{const abs=sgAbs(sg.id);const tot=sgTotal(sg.id);const pct=tot>0?Math.round(abs/tot*100):0;g+=abs;gp+=tot;document.getElementById(`gS${si+1}`).textContent=abs;document.getElementById(`pS${si+1}`).textContent=pct+'%';});
-  document.getElementById('gAll').textContent=g;document.getElementById('gPct').textContent=(gp>0?Math.round(g/gp*100):0)+'%';
-}
-
-function updBtns(){
-  SM.forEach(sg=>{sg.cls.forEach((_,ci)=>{const k=`c${ci}`;const cnt=clsAbs(sg.id,k);const b=document.getElementById(`badge_${sg.id}_${k}`);if(b){b.textContent=cnt;b.style.display=cnt>0?'block':'none';}const a=document.getElementById(`clsabs_${sg.id}_${k}`);if(a)a.textContent=`غياب: ${cnt}`;});const bg=document.getElementById(`bg_${sg.id}`);if(bg)bg.textContent=`غياب: ${sgAbs(sg.id)}`;});
-}
+function updStats(){let g=0,gp=0;SM.forEach((sg,si)=>{const abs=sgAbs(sg.id);const tot=sgTotal(sg.id);const pct=tot>0?Math.round(abs/tot*100):0;g+=abs;gp+=tot;document.getElementById(`gS${si+1}`).textContent=abs;document.getElementById(`pS${si+1}`).textContent=pct+'%';});document.getElementById('gAll').textContent=g;document.getElementById('gPct').textContent=(gp>0?Math.round(g/gp*100):0)+'%';}
+function updBtns(){SM.forEach(sg=>{sg.cls.forEach((_,ci)=>{const k=`c${ci}`;const cnt=clsAbs(sg.id,k);const b=document.getElementById(`badge_${sg.id}_${k}`);if(b){b.textContent=cnt;b.style.display=cnt>0?'block':'none';}const a=document.getElementById(`clsabs_${sg.id}_${k}`);if(a)a.textContent=`غياب: ${cnt}`;});const bg=document.getElementById(`bg_${sg.id}`);if(bg)bg.textContent=`غياب: ${sgAbs(sg.id)}`;});}
 
 function toH(date){const y=date.getFullYear(),m=date.getMonth()+1,d=date.getDate();const jd=Math.floor((1461*(y+4800+Math.floor((m-14)/12)))/4)+Math.floor((367*(m-2-12*(Math.floor((m-14)/12))))/12)-Math.floor((3*(Math.floor((y+4900+Math.floor((m-14)/12))/100)))/4)+d-32075;let l=jd-1948440+10632;const n=Math.floor((l-1)/10631);l=l-10631*n+354;const j=(Math.floor((10985-l)/5316))*(Math.floor((50*l)/17719))+(Math.floor(l/5670))*(Math.floor((43*l)/15238));l=l-(Math.floor((30-j)/15))*(Math.floor((17719*j)/50))-(Math.floor(j/16))*(Math.floor((15238*j)/43))+29;const hm=Math.floor((24*l)/709);const hd=l-Math.floor((709*hm)/24)-2;return{y:30*n+j-30,m:hm,d:hd<1?1:hd};}
 function hMo(m){return['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'][m-1]||'';}
@@ -324,16 +261,51 @@ function renderAll(){
 window.toggleSt=function(bid){const b=document.getElementById(bid);const sid=bid.replace('b_','');const arr=document.getElementById(`arr_${sid}`);if(b.classList.contains('open')){b.classList.remove('open');arr.textContent='▾';}else{b.classList.add('open');arr.textContent='▴';}};
 
 window.openPop=function(sid,k){
-  try{curPop={sg:SM.find(s=>s.id===sid),k};selStu=null;document.getElementById('popTitle').textContent=`${curPop.sg.name} — ${curPop.sg.cls[parseInt(k.slice(1))]}`;renderPopList();renderPopSum();document.getElementById('popOv').classList.add('show');history.pushState({popup:true},'');}
-  catch(e){showT('حاول مجدداً');}
+  try{
+    curPop={sg:SM.find(s=>s.id===sid),k};selStu=null;
+    document.getElementById('popTitle').textContent=`${curPop.sg.name} — ${curPop.sg.cls[parseInt(k.slice(1))]}`;
+    renderPopList();renderPopSum();updateNoAbsentBtn();
+    document.getElementById('popOv').classList.add('show');
+    history.pushState({popup:true},'');
+  }catch(e){showT('حاول مجدداً');}
 };
 
-window.addEventListener('popstate',function(e){
-  if(document.getElementById('popOv').classList.contains('show')){
-    document.getElementById('popOv').classList.remove('show');
-  }
-});
+window.addEventListener('popstate',function(){if(document.getElementById('popOv').classList.contains('show')){document.getElementById('popOv').classList.remove('show');}});
 window.closePop=function(e){if(e.target===document.getElementById('popOv'))document.getElementById('popOv').classList.remove('show');};
+
+function updateNoAbsentBtn(){
+  const btn=document.getElementById('btnNoAbsent');if(!btn||!curPop.sg)return;
+  const confirmed=NO_ABSENT[curPop.sg.id]&&NO_ABSENT[curPop.sg.id][curPop.k];
+  if(confirmed){btn.textContent='✅ تم تأكيد لا يوجد غياب';btn.className='btn-noabsent confirmed';}
+  else{btn.textContent='✅ لا يوجد غياب اليوم';btn.className='btn-noabsent';}
+}
+
+window.confirmNoAbsent=async function(){
+  if(!curPop.sg)return;
+  if(!NO_ABSENT[curPop.sg.id])NO_ABSENT[curPop.sg.id]={};
+  NO_ABSENT[curPop.sg.id][curPop.k]=true;
+  await saveNoAbsent();updateNoAbsentBtn();showT('✅ تم تسجيل لا يوجد غياب');
+};
+
+window.exportClassExcel=function(){
+  if(!curPop.sg)return;
+  const{sg,k}=curPop;
+  const sts=ST[sg.id][k]||[];
+  const att=ATT[sg.id][k]||{};
+  const absent=sts.filter(s=>att[s.id]===true);
+  const now=new Date();
+  const dayName=`${DN[now.getDay()]} ${now.getDate()}-${now.getMonth()+1}-${now.getFullYear()}`;
+  const rows=[['#','اسم الطالب','التاريخ']];
+  if(absent.length===0){rows.push(['—','لا يوجد غياب',dayName]);}
+  else{absent.forEach((s,i)=>rows.push([i+1,s.name,dayName]));}
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:5},{wch:40},{wch:20}];
+  const wb=XLSX.utils.book_new();
+  const sheetName=sg.cls[parseInt(k.slice(1))].replace(/\//g,'-').slice(0,31);
+  XLSX.utils.book_append_sheet(wb,ws,sheetName);
+  XLSX.writeFile(wb,`غياب_${sheetName}_${now.getDate()}-${now.getMonth()+1}.xlsx`);
+  showT('تم تصدير Excel ✅');
+};
 
 function renderPopList(){
   const{sg,k}=curPop;const sts=ST[sg.id][k]||[];const att=ATT[sg.id][k]||{};
@@ -347,10 +319,6 @@ function renderPopList(){
     let lp=null;
     row.addEventListener('touchstart',()=>{lp=setTimeout(()=>{selStu={sid:sg.id,k,stid:s.id};renderPopList();showT('✅ تم تحديد الطالب');},600);},{passive:true});
     row.addEventListener('touchend',()=>{if(lp)clearTimeout(lp);},{passive:true});
-    // دعم النقر المطوّل على الكمبيوتر أيضاً
-    let mlp=null;
-    row.addEventListener('mousedown',()=>{mlp=setTimeout(()=>{selStu={sid:sg.id,k,stid:s.id};renderPopList();showT('✅ تم تحديد الطالب');},600);});
-    row.addEventListener('mouseup',()=>{if(mlp)clearTimeout(mlp);});
     list.appendChild(row);
   });
 }
@@ -366,43 +334,9 @@ async function tglStu(sid,k,stid,row){
   updStats();updBtns();renderPopSum();await fbS();
 }
 
-window.actionAdd=function(){
-  if(!curPop.sg){showT('افتح فصلاً أولاً');return;}
-  mM='add';mT2={sid:curPop.sg.id,k:curPop.k};
-  document.getElementById('mT').textContent='إضافة طالب';
-  document.getElementById('mI').value='';
-  document.getElementById('mo').classList.add('show');
-  setTimeout(()=>document.getElementById('mI').focus(),100);
-};
-
-window.actionEdit=function(){
-  if(!selStu){showT('اضغط مطولاً على اسم الطالب');return;}
-  const{sid,k,stid}=selStu;
-  const s=ST[sid][k].find(x=>x.id===stid);
-  if(!s)return;
-  mM='edit';mT2={sid,k,stid};
-  document.getElementById('mT').textContent='تعديل الاسم';
-  document.getElementById('mI').value=s.name;
-  document.getElementById('mo').classList.add('show');
-  setTimeout(()=>document.getElementById('mI').focus(),100);
-};
-
-window.actionDel=function(){
-  if(!selStu){showT('اضغط مطولاً على اسم الطالب');return;}
-  const{sid,k,stid}=selStu;
-  if(confirm('هل تريد حذف هذا الطالب؟')){
-    ST[sid][k]=ST[sid][k].filter(s=>s.id!==stid);
-    if(ATT[sid][k])delete ATT[sid][k][stid];
-    // حفظ قائمة الطلاب وبيانات الغياب معاً
-    saveStudents();
-    fbS();
-    selStu=null;
-    if(curPop.sg)renderPopList();
-    renderPopSum();
-    updStats();updBtns();
-    showT('تم الحذف ✅');
-  }
-};
+window.actionAdd=function(){if(!curPop.sg){showT('افتح فصلاً أولاً');return;}mM='add';mT2={sid:curPop.sg.id,k:curPop.k};document.getElementById('mT').textContent='إضافة طالب';document.getElementById('mI').value='';document.getElementById('mo').classList.add('show');setTimeout(()=>document.getElementById('mI').focus(),100);};
+window.actionEdit=function(){if(!selStu){showT('اضغط مطولاً على اسم الطالب');return;}const{sid,k,stid}=selStu;const s=ST[sid][k].find(x=>x.id===stid);if(!s)return;mM='edit';mT2={sid,k,stid};document.getElementById('mT').textContent='تعديل الاسم';document.getElementById('mI').value=s.name;document.getElementById('mo').classList.add('show');setTimeout(()=>document.getElementById('mI').focus(),100);};
+window.actionDel=function(){if(!selStu){showT('اضغط مطولاً على اسم الطالب');return;}const{sid,k,stid}=selStu;if(confirm('هل تريد حذف هذا الطالب؟')){ST[sid][k]=ST[sid][k].filter(s=>s.id!==stid);if(ATT[sid][k])delete ATT[sid][k][stid];saveStudents();fbS();selStu=null;if(curPop.sg){renderPopList();renderPopSum();}updStats();updBtns();showT('تم الحذف ✅');}};
 
 window.sendWA=function(){
   if(!curPop.sg)return;const{sg,k}=curPop;const sts=ST[sg.id][k]||[];const att=ATT[sg.id][k]||{};
@@ -414,31 +348,17 @@ window.sendWA=function(){
   window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
 };
 
-let mM=null,mT2=null;
 document.getElementById('mO').onclick=async()=>{
-  const v=document.getElementById('mI').value.trim();
-  if(!v){showT('يرجى إدخال اسم');return;}
-  if(mM==='add'){
-    // ID فريد ثابت للطالب الجديد
-    const newId=`su_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
-    ST[mT2.sid][mT2.k].push({id:newId,name:v});
-  } else {
-    const s=ST[mT2.sid][mT2.k].find(x=>x.id===mT2.stid);
-    if(s)s.name=v;
-  }
-  // حفظ قائمة الطلاب في Firebase
-  await saveStudents();
-  await fbS();
-  selStu=null;
+  const v=document.getElementById('mI').value.trim();if(!v){showT('يرجى إدخال اسم');return;}
+  if(mM==='add'){const newId=`su_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;ST[mT2.sid][mT2.k].push({id:newId,name:v});}
+  else{const s=ST[mT2.sid][mT2.k].find(x=>x.id===mT2.stid);if(s)s.name=v;}
+  await saveStudents();await fbS();selStu=null;
   if(curPop.sg){renderPopList();renderPopSum();}
-  updStats();updBtns();
-  showT(mM==='add'?'تمت الإضافة ✅':'تم التعديل ✅');
+  updStats();updBtns();showT(mM==='add'?'تمت الإضافة ✅':'تم التعديل ✅');
   document.getElementById('mo').classList.remove('show');
 };
-
 document.getElementById('mC').onclick=()=>document.getElementById('mo').classList.remove('show');
 document.getElementById('mI').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('mO').click();});
-
 function showT(msg){const t=document.getElementById('tst');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
 
 await fbL();fbLs();
