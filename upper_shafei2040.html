@@ -29,8 +29,6 @@ header p{color:#a8c4e0;font-size:.72rem;margin-top:2px}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
 .st{font-size:.65rem;color:#aaa}
 .srb{padding:5px 11px;border:none;border-radius:8px;background:#0f3460;color:#fff;font-family:'Tajawal',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer}
-
-/* إحصائيات اليوم */
 .day-stats{background:#fff;border-radius:14px;padding:12px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
 .day-stats h2{font-size:.82rem;font-weight:800;margin-bottom:8px;color:#1a1a2e}
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
@@ -46,8 +44,6 @@ header p{color:#a8c4e0;font-size:.72rem;margin-top:2px}
 .stat-box.s1 .stat-n{color:#4a0080}.stat-box.s1 .stat-p{background:rgba(106,13,173,.1);color:#4a0080}
 .stat-box.s2 .stat-n{color:#004c8c}.stat-box.s2 .stat-p{background:rgba(0,119,182,.1);color:#004c8c}
 .stat-box.s3 .stat-n{color:#1b4332}.stat-box.s3 .stat-p{background:rgba(45,106,79,.15);color:#1b4332}
-
-/* المراحل */
 .stages{display:flex;flex-direction:column;gap:10px}
 .stb{border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);background:#fff}
 .sth{padding:10px 13px;font-size:.95rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
@@ -67,8 +63,6 @@ header p{color:#a8c4e0;font-size:.72rem;margin-top:2px}
 .cls-name{font-size:.8rem;font-weight:800}
 .cls-abs{font-size:.68rem;font-weight:600;opacity:.7}
 .cls-badge{position:absolute;top:6px;left:6px;background:#c1121f;color:#fff;font-size:.58rem;font-weight:800;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center}
-
-/* Popup */
 .pop-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:none;align-items:flex-end;justify-content:center}
 .pop-ov.show{display:flex}
 .pop{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:520px;max-height:92vh;display:flex;flex-direction:column;animation:su .22s ease}
@@ -82,6 +76,7 @@ header p{color:#a8c4e0;font-size:.72rem;margin-top:2px}
 .stu-list{flex:1;overflow-y:auto;padding:8px 12px;-webkit-overflow-scrolling:touch}
 .stu-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;margin-bottom:5px;background:#fafafa;cursor:pointer;user-select:none;transition:background .1s}
 .stu-row.absent{background:#fff0f0}
+.stu-row.selected{outline:2px solid #6a0dad}
 .stu-row:active{background:#f0f0f0}
 .stu-num{font-size:.65rem;color:#bbb;font-weight:700;width:18px;text-align:center;flex-shrink:0}
 .stu-name{flex:1;font-size:.82rem;font-weight:600;line-height:1.3}
@@ -93,8 +88,6 @@ header p{color:#a8c4e0;font-size:.72rem;margin-top:2px}
 .btn-add{background:#6a0dad;color:#fff}
 .btn-edit{background:#0077b6;color:#fff}
 .btn-del{background:#eee;color:#555}
-
-/* Modal */
 .mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:none;align-items:flex-end;justify-content:center}
 .mo.show{display:flex}
 .md{background:#fff;border-radius:18px 18px 0 0;padding:22px 18px 38px;width:100%;max-width:500px}
@@ -218,45 +211,48 @@ c0:["حمد امير الصادق حسين","حمد صبري احمد عبدال
 c1:["محمد فؤاد بن شوعي العريشي","اسامة الحسين احمد محمد","الوليد عبدالسلام داوود الوليد","باسل معتصم محمد البركاتي","بدر عمر بن عبدالغني خوقير","جميل حسن جميل مجلد","حمزة علوي حسن البار","خالد علي بن احمد شراحيلي","راكان بن حسن بن عبدالرحمن برناوي","راكان محرق بن مطاعن ابوطقة","زهير ريان زهير سمنودي","زياد عبدالسلام مهل هليس","صابر عبدالرحمن علي تولو","صهيب رضوان بن محمد نور هرساوي","عادل يوسف عادل الهندي","عبدالرحمن علوي حسن البار","عبدالله احمد محمد حسن","عقيل مطهر عقيل علوي عبدالله","عمر فايز حبيب الصاعدي","فارس عبدالله حمود الغامدي","فراس مروان داود علي الوليد","كرم احمد سعيد عبده","محمد عبدالرحمن وانو ابراهيم","محمد فيصل عبدالله الحربي","مراد حامد اسكندر عبدول","منصور محمد منصور قحطان","مهاب عادل معراج سليماني","مهند منير حافظ عبدالرشيد","هود عبدالله السقاف","وسام مساعد سعيد الجحدلي","يزيد مشهور شاهر الشنبري"],
 c2:["ثناء الله امين الله","مجد محمد قاري محمد شيخ","بدر عبدالرحمن عبدالصمد سيام","رائد انور عبده مفرح الشريف","بندر مشهور عبدالحفيظ","حمزة سعيد حمزة الغامدي","رازي فيصل عبدالله بازرعة","فهد عبدالله درويش مطراني","سلطان ابوالسلام خان عباس","عبدالرحمن جمال الدين عبدالرحمن هوساوي","عبدالرحمن ختام دخيل الله الحارثي","عبدالرحمن محمد عبدالرحمن الدوبي","عبدالعزيز علي عبدالعزيز بيطار","عبدالله اسماعيل سعيد كارمبي","عبدالله فردوس محمد حبيب الله","عبدالمنعم عبدالحي بن احمد فلاته","عصام يوسف بن محمد الشريف","فارس عامر محمد صعيدي","فراس طاهر مهدي محمد","فيصل ابراهيم ناجي داود","فيصل بن عادل بن عايض العتيبي","كنان حسن زين حمداني","كنان ماجد صالح القرشي","متعب عبدالرحمن آدم صالح","مشاري اسامة حسين احمد","مشعل ابراهيم اسحاق","مشهور عبدالرحمن آدم صالح","معتز هشام حسن كعكي","هارون علي بن محمد سليمان","هياف خالد نور الاسلام عبدالرحمن","وليد احسان داود الهوساوي","يحيى لؤي يحيى البركاتي","يعقوب يوسف ابراهيم آدم"],
 c3:["نور جمعان بن عبدالله الغامدي","بسام بكر ابراهيم ادم","بندر علي بن محمد الشهري","تركي نايف سعيد عسيري","غلا حسام صابر احمد نذير احمد","حسين احمد بن حسين شراحيلي","راكان عبدالله محمد الرشيد","رويد احمد عمر رحيم","ريان بسام ياسين الفي","عبدالباسط عصام بن عبدالباسط عبدالله","عبدالرحمن عبدالفتاح بن حسين الهوساوي","عبدالرحمن محمد بن عمر تكروني","عبدالعزيز ماجد بن علي الجعيد","عبدالعزيز وليد بن عبدالحميد فلتاري","عبدالله حسين زيد الحامد","عبدالملك عمر بن حسين الهوساوي","عزام عماد محمد احمد","عماد عبدالرحمن يحيى صغير","عمار علي يحيى الشراحيلي","محمد ايمن بن محمد الحربي","محمد حسام محمد مقبول احمد","محمد عادل سعد الزهراني","محمد عبدالملك خضري محي الدين عابد","محمد وليد بن محمد بكاوي","مشاري عبدالعزيز مالك جندو","معاذ محمد ابراهيم علي محمد","نايف عبدالله بن ناصر الغامدي","هايل نبيل ناجي احمد","هتان خالد عصام الجفراوي","يعقوب حمزة يعقوب علي عزيز الرحمن","يوسف باسم بن حسين شاط","يوسف بسام شبلوط"]
-}
-};
+}};
 
-// بناء قوائم الطلاب
-const ST={};
-SM.forEach((sg,si)=>{
-  ST[sg.id]={};
-  sg.cls.forEach((_,ci)=>{
-    ST[sg.id][`c${ci}`]=(DS[sg.id][`c${ci}`]||[]).map((n,i)=>({id:`s${si}c${ci}i${i}`,name:n}));
-  });
-});
+// مفتاح قائمة الطلاب في Firebase (دائم)
+const STUDENTS_KEY='upper_students_v1';
 
-function toH(date){
-  const y=date.getFullYear(),m=date.getMonth()+1,d=date.getDate();
-  const jd=Math.floor((1461*(y+4800+Math.floor((m-14)/12)))/4)+Math.floor((367*(m-2-12*(Math.floor((m-14)/12))))/12)-Math.floor((3*(Math.floor((y+4900+Math.floor((m-14)/12))/100)))/4)+d-32075;
-  let l=jd-1948440+10632;
-  const n=Math.floor((l-1)/10631);
-  l=l-10631*n+354;
-  const j=(Math.floor((10985-l)/5316))*(Math.floor((50*l)/17719))+(Math.floor(l/5670))*(Math.floor((43*l)/15238));
-  l=l-(Math.floor((30-j)/15))*(Math.floor((17719*j)/50))-(Math.floor(j/16))*(Math.floor((15238*j)/43))+29;
-  const hm=Math.floor((24*l)/709);
-  // تصحيح الفارق (-2 يوم)
-  const hd=l-Math.floor((709*hm)/24)-2;
-  return{y:30*n+j-30,m:hm,d:hd<1?1:hd};
-}
-function hMo(m){return['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'][m-1]||'';}
+// مفتاح الغياب اليومي
 function todayKey(){const d=new Date();return`upper_d_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;}
 
-// بيانات الغياب — اليوم فقط
-let ATT={};// {sid:{k:{stid:true/false}}}
+let ST={};
+let ATT={};
 let sv=false;
 let fbListener=null;
 let curPop={sg:null,k:null};
 let selStu=null;
 
+// بناء قائمة الطلاب من القائمة الأصلية
+function buildDefaultST(){
+  const result={};
+  SM.forEach((sg,si)=>{
+    result[sg.id]={};
+    sg.cls.forEach((_,ci)=>{
+      result[sg.id][`c${ci}`]=(DS[sg.id][`c${ci}`]||[]).map((n,i)=>({id:`s${si}c${ci}i${i}`,name:n}));
+    });
+  });
+  return result;
+}
+
 function initAtt(){SM.forEach(sg=>{ATT[sg.id]={};sg.cls.forEach((_,ci)=>{ATT[sg.id][`c${ci}`]={};});});}
 
-function setSUI(s,m){document.getElementById('sDot').className='sd '+s;document.getElementById('sTxt').textContent=m;if(s==='synced')document.getElementById('sTime').textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar');}
+function setSUI(s,m){
+  document.getElementById('sDot').className='sd '+s;
+  document.getElementById('sTxt').textContent=m;
+  if(s==='synced')document.getElementById('sTime').textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar');
+}
 
+// حفظ قائمة الطلاب في Firebase
+async function saveStudents(){
+  try{await set(ref(db,STUDENTS_KEY),ST);}
+  catch(e){console.error('خطأ في حفظ الطلاب',e);}
+}
+
+// حفظ الغياب في Firebase
 async function fbS(){
   if(sv)return;sv=true;setSUI('syncing','جارٍ الحفظ...');
   try{await set(ref(db,todayKey()),ATT);setSUI('synced','محفوظ ✅');}
@@ -264,13 +260,32 @@ async function fbS(){
   finally{sv=false;}
 }
 
+// تحميل البيانات من Firebase
 async function fbL(){
   setSUI('syncing','جارٍ التحميل...');
   initAtt();
   try{
-    const snap=await get(ref(db,todayKey()));
-    if(snap.exists()){
-      const data=snap.val();
+    // تحميل قائمة الطلاب
+    const stuSnap=await get(ref(db,STUDENTS_KEY));
+    if(stuSnap.exists()){
+      ST=stuSnap.val();
+      // تأكد من وجود كل الفصول
+      SM.forEach((sg,si)=>{
+        if(!ST[sg.id])ST[sg.id]={};
+        sg.cls.forEach((_,ci)=>{
+          if(!ST[sg.id][`c${ci}`])ST[sg.id][`c${ci}`]=(DS[sg.id][`c${ci}`]||[]).map((n,i)=>({id:`s${si}c${ci}i${i}`,name:n}));
+        });
+      });
+    }else{
+      // أول مرة: بناء القائمة وحفظها
+      ST=buildDefaultST();
+      await saveStudents();
+    }
+
+    // تحميل الغياب
+    const attSnap=await get(ref(db,todayKey()));
+    if(attSnap.exists()){
+      const data=attSnap.val();
       SM.forEach(sg=>{sg.cls.forEach((_,ci)=>{const k=`c${ci}`;if(data[sg.id]&&data[sg.id][k])ATT[sg.id][k]=data[sg.id][k];});});
       setSUI('synced','متزامن ✅');
     }else{setSUI('synced','يوم جديد ✅');}
@@ -324,6 +339,20 @@ function updBtns(){
   });
 }
 
+function toH(date){
+  const y=date.getFullYear(),m=date.getMonth()+1,d=date.getDate();
+  const jd=Math.floor((1461*(y+4800+Math.floor((m-14)/12)))/4)+Math.floor((367*(m-2-12*(Math.floor((m-14)/12))))/12)-Math.floor((3*(Math.floor((y+4900+Math.floor((m-14)/12))/100)))/4)+d-32075;
+  let l=jd-1948440+10632;
+  const n=Math.floor((l-1)/10631);
+  l=l-10631*n+354;
+  const j=(Math.floor((10985-l)/5316))*(Math.floor((50*l)/17719))+(Math.floor(l/5670))*(Math.floor((43*l)/15238));
+  l=l-(Math.floor((30-j)/15))*(Math.floor((17719*j)/50))-(Math.floor(j/16))*(Math.floor((15238*j)/43))+29;
+  const hm=Math.floor((24*l)/709);
+  const hd=l-Math.floor((709*hm)/24)-2;
+  return{y:30*n+j-30,m:hm,d:hd<1?1:hd};
+}
+function hMo(m){return['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'][m-1]||'';}
+
 function renderAll(){
   const now=new Date();const h=toH(now);
   document.getElementById('hDate').textContent=`${DN[now.getDay()]} ${h.d} ${hMo(h.m)} ${h.y}هـ`;
@@ -334,21 +363,9 @@ function renderAll(){
     let btns='';
     sg.cls.forEach((cls,ci)=>{
       const k=`c${ci}`;const cnt=clsAbs(sg.id,k);
-      btns+=`<button class="cls-btn" onclick="openPop('${sg.id}','${k}')">
-        <span class="cls-badge" id="badge_${sg.id}_${k}" style="display:${cnt>0?'block':'none'}">${cnt}</span>
-        <span class="cls-name">${cls}</span>
-        <span class="cls-abs" id="clsabs_${sg.id}_${k}">غياب: ${cnt}</span>
-      </button>`;
+      btns+=`<button class="cls-btn" onclick="openPop('${sg.id}','${k}')"><span class="cls-badge" id="badge_${sg.id}_${k}" style="display:${cnt>0?'block':'none'}">${cnt}</span><span class="cls-name">${cls}</span><span class="cls-abs" id="clsabs_${sg.id}_${k}">غياب: ${cnt}</span></button>`;
     });
-    block.innerHTML=`
-      <div class="sth" onclick="toggleSt('b_${sg.id}')">
-        <span class="si">${sg.icon}</span>المرحلة ${sg.name}
-        <span class="sbg" id="bg_${sg.id}">غياب: ${sgAbs(sg.id)}</span>
-        <span style="margin-right:auto;font-size:.75rem" id="arr_${sg.id}">▾</span>
-      </div>
-      <div class="cls-body ${si===0?'open':''}" id="b_${sg.id}">
-        <div class="cls-grid">${btns}</div>
-      </div>`;
+    block.innerHTML=`<div class="sth" onclick="toggleSt('b_${sg.id}')"><span class="si">${sg.icon}</span>المرحلة ${sg.name}<span class="sbg" id="bg_${sg.id}">غياب: ${sgAbs(sg.id)}</span><span style="margin-right:auto;font-size:.75rem" id="arr_${sg.id}">▾</span></div><div class="cls-body ${si===0?'open':''}" id="b_${sg.id}"><div class="cls-grid">${btns}</div></div>`;
     cont.appendChild(block);
   });
 }
@@ -388,13 +405,15 @@ function renderPopList(){
     const ab=att[s.id]===true;
     const sel=selStu&&selStu.stid===s.id;
     const row=document.createElement('div');
-    row.className=`stu-row${ab?' absent':''}`;
-    if(sel)row.style.outline='2px solid #6a0dad';
+    row.className=`stu-row${ab?' absent':''}${sel?' selected':''}`;
     row.innerHTML=`<span class="stu-num">${idx+1}</span><span class="stu-name">${s.name}</span><div class="stu-chk">${ab?'غ':''}</div>`;
     row.onclick=()=>tglStu(sg.id,k,s.id,row);
     let lp=null;
     row.addEventListener('touchstart',()=>{lp=setTimeout(()=>{selStu={sid:sg.id,k,stid:s.id};renderPopList();showT('✅ تم تحديد الطالب');},600);},{passive:true});
     row.addEventListener('touchend',()=>{if(lp)clearTimeout(lp);},{passive:true});
+    let mlp=null;
+    row.addEventListener('mousedown',()=>{mlp=setTimeout(()=>{selStu={sid:sg.id,k,stid:s.id};renderPopList();showT('✅ تم تحديد الطالب');},600);});
+    row.addEventListener('mouseup',()=>{if(mlp)clearTimeout(mlp);});
     list.appendChild(row);
   });
 }
@@ -442,10 +461,14 @@ window.actionDel=function(){
   const{sid,k,stid}=selStu;
   if(confirm('هل تريد حذف هذا الطالب؟')){
     ST[sid][k]=ST[sid][k].filter(s=>s.id!==stid);
-    delete(ATT[sid][k]||{})[stid];
-    fbS();selStu=null;
+    if(ATT[sid][k])delete ATT[sid][k][stid];
+    saveStudents();
+    fbS();
+    selStu=null;
     if(curPop.sg)renderPopList();
-    updStats();updBtns();showT('تم الحذف ✅');
+    renderPopSum();
+    updStats();updBtns();
+    showT('تم الحذف ✅');
   }
 };
 
@@ -469,22 +492,30 @@ window.sendWA=function(){
 
 let mM=null,mT2=null;
 document.getElementById('mO').onclick=async()=>{
-  const v=document.getElementById('mI').value.trim();if(!v){showT('يرجى إدخال اسم');return;}
-  if(mM==='add'){ST[mT2.sid][mT2.k].push({id:`s_${Date.now()}`,name:v});}
-  else{const s=ST[mT2.sid][mT2.k].find(x=>x.id===mT2.stid);if(s)s.name=v;}
-  await fbS();selStu=null;
-  if(curPop.sg)renderPopList();
+  const v=document.getElementById('mI').value.trim();
+  if(!v){showT('يرجى إدخال اسم');return;}
+  if(mM==='add'){
+    const newId=`su_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+    ST[mT2.sid][mT2.k].push({id:newId,name:v});
+  }else{
+    const s=ST[mT2.sid][mT2.k].find(x=>x.id===mT2.stid);
+    if(s)s.name=v;
+  }
+  await saveStudents();
+  await fbS();
+  selStu=null;
+  if(curPop.sg){renderPopList();renderPopSum();}
   updStats();updBtns();
   showT(mM==='add'?'تمت الإضافة ✅':'تم التعديل ✅');
   document.getElementById('mo').classList.remove('show');
 };
+
 document.getElementById('mC').onclick=()=>document.getElementById('mo').classList.remove('show');
 document.getElementById('mI').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('mO').click();});
 
 function showT(msg){const t=document.getElementById('tst');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
 
 await fbL();fbLs();
-// تحديث تلقائي عند منتصف الليل
 const now=new Date();
 const msToMidnight=(new Date(now.getFullYear(),now.getMonth(),now.getDate()+1)-now);
 setTimeout(async()=>{await fbL();fbLs();},msToMidnight);
