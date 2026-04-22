@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>سيارتي للبيع</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:#07090D}
+body{font-family:Tahoma,Arial,sans-serif;background:#07090D;color:#E8EDF5;min-height:100vh;overflow-x:hidden}
+button,input,select,textarea{font-family:Tahoma,Arial,sans-serif;outline:none}
+:root{--g:#C8952A;--g2:#F5B942;--d:#07090D;--d2:#0D1117;--d3:#131B24;--d4:#1A2430;--c:#0F161E;--b:#1E2A38;--b2:#263545;--t:#E8EDF5;--m:#4A6070;--m2:#7A9BAA;--red:#D63030;--grn:#1DB954}
+
+/* HEADER */
+.hdr{background:#0D1117;border-bottom:1px solid var(--b);position:sticky;top:0;z-index:99;width:100%}
+.hdr-in{display:flex;align-items:center;justify-content:space-between;padding:0 12px;height:54px;gap:8px}
+.logo{display:flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none}
+.logo-i{width:32px;height:32px;background:linear-gradient(135deg,var(--g),var(--g2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.logo-t{font-size:15px;font-weight:900;color:var(--g)}
+.logo-s{font-size:9px;color:var(--m2)}
+.hdr-r{display:flex;gap:6px}
+.bp{background:linear-gradient(135deg,var(--g),var(--g2));color:#000;border:none;padding:7px 11px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer}
+.bo{background:none;color:var(--t);border:1px solid var(--b2);padding:7px 11px;border-radius:8px;font-weight:600;font-size:12px;cursor:pointer}
+
+/* NAV */
+.nav{display:flex;background:#0D1117;border-bottom:1px solid var(--b);overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nv{flex:1;min-width:56px;background:none;border:none;color:var(--m2);padding:10px 4px;font-size:11px;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.nv.on{color:var(--g);border-bottom-color:var(--g)}
+
+/* HERO */
+.hero{background:#0D1117;border-bottom:1px solid var(--b);padding:14px 12px;text-align:center}
+.hbadge{display:inline-block;background:#1A2430;border:1px solid var(--g);color:var(--g2);padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:8px}
+.htitle{font-size:20px;font-weight:900;color:var(--g2);margin-bottom:4px}
+.hsub{font-size:12px;color:var(--m2);line-height:1.5}
+.stats{display:flex;margin-top:12px;padding-top:12px;border-top:1px solid var(--b)}
+.stat{flex:1;text-align:center;border-left:1px solid var(--b)}
+.stat:last-child{border-left:none}
+.sn{font-size:18px;font-weight:900;color:var(--g);display:block;font-family:Arial}
+.sl{font-size:10px;color:var(--m2);display:block;margin-top:2px}
+
+/* VIP */
+.vip-wrap{background:#0D1117;border-bottom:1px solid var(--b);padding:10px 12px}
+.vip-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.vip-lbl{font-size:13px;font-weight:700;color:var(--g)}
+.vip-btn{background:linear-gradient(135deg,var(--g),var(--g2));color:#000;border:none;padding:5px 11px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer}
+.vip-empty{padding:16px;text-align:center;color:var(--m2);font-size:12px;background:var(--d2);border-radius:10px;border:1px dashed var(--b2)}
+
+/* PAGE */
+.page{padding:12px;display:none}
+.page.on{display:block}
+
+/* FILTERS */
+.filters{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.fsearch{flex:1;min-width:0;background:var(--d3);border:1px solid var(--b2);color:var(--t);padding:9px 11px;border-radius:8px;font-size:13px}
+.fsearch::placeholder{color:var(--m)}
+.fsel{background:var(--d3);border:1px solid var(--b2);color:var(--t);padding:9px 9px;border-radius:8px;font-size:11px;max-width:110px}
+
+/* CARDS */
+.grid{display:flex;flex-direction:column;gap:10px}
+.card{background:var(--c);border:1px solid var(--b);border-radius:10px;overflow:hidden;cursor:pointer}
+.cimg{height:160px;background:var(--d3);position:relative;overflow:hidden}
+.cimg img,.cimg video{width:100%;height:100%;object-fit:cover}
+.cph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:44px;background:var(--d3)}
+.blive{position:absolute;top:8px;right:8px;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px}
+.bend{position:absolute;top:8px;right:8px;background:var(--m);color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px}
+.bpend{position:absolute;top:8px;right:8px;background:#D07020;color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px}
+.cbody{padding:12px}
+.ctitle{font-size:14px;font-weight:700;margin-bottom:4px}
+.cmeta{font-size:11px;color:var(--m2);margin-bottom:10px}
+.pbox{background:var(--d3);border-radius:8px;padding:9px 11px;margin-bottom:9px}
+.plbl{font-size:10px;color:var(--m2)}
+.pbig{font-size:19px;font-weight:900;color:var(--g);display:block;font-family:Arial;text-align:right}
+.psmall{font-size:10px;color:var(--m);text-align:right;font-family:Arial}
+.ctmr{font-size:11px;color:var(--red);font-weight:700;margin-bottom:8px}
+.bidrow{display:flex;gap:6px}
+.bidinp{flex:1;min-width:0;background:var(--d2);border:1px solid var(--b2);color:#fff;padding:9px 10px;border-radius:8px;font-size:14px;font-family:Arial;direction:ltr}
+.bidinp::placeholder{color:var(--m);direction:rtl;font-family:Tahoma}
+.bidbtn{flex-shrink:0;background:linear-gradient(135deg,var(--g),var(--g2));color:#000;border:none;padding:9px 13px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer}
+
+/* MODAL */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:none;align-items:flex-end;justify-content:center;padding:0}
+.ov.on{display:flex}
+.modal{background:#0D1117;border:1px solid var(--b2);border-radius:14px 14px 0 0;width:100%;max-height:88vh;overflow-y:auto}
+.mhdr{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:1px solid var(--b);position:sticky;top:0;background:#0D1117;z-index:1}
+.mtitle{font-size:14px;font-weight:700}
+.mclose{background:var(--d3);border:none;color:var(--m2);width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
+.mbody{padding:14px}
+.mftr{padding:11px 15px;border-top:1px solid var(--b);display:flex;gap:8px;justify-content:flex-end;background:#0D1117}
+
+/* FORMS */
+.fg{margin-bottom:12px}
+.fl{display:block;font-size:11px;font-weight:600;color:var(--m2);margin-bottom:5px}
+.fi,.fs,.ft{width:100%;background:var(--d3);border:1px solid var(--b2);color:var(--t);padding:9px 11px;border-radius:8px;font-size:13px}
+.ft{resize:vertical;min-height:68px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* MISC */
+.ibox{background:rgba(45,111,212,.07);border:1px solid rgba(45,111,212,.2);border-radius:8px;padding:10px;font-size:12px;line-height:1.7;color:var(--m2);margin-bottom:11px}
+.gbox{background:rgba(29,185,84,.07);border:1px solid rgba(29,185,84,.25);border-radius:8px;padding:9px;font-size:12px;color:var(--grn);margin-bottom:9px}
+.wbox{background:rgba(214,48,48,.07);border:1px solid rgba(214,48,48,.2);border-radius:8px;padding:9px;font-size:11px;color:#ff8888;margin-bottom:10px}
+.steps{display:flex;gap:5px;margin-bottom:12px}
+.step{flex:1;height:3px;background:var(--b2);border-radius:2px}
+.step.done{background:var(--grn)}.step.act{background:var(--g)}
+.contact-card{background:rgba(29,185,84,.07);border:1px solid rgba(29,185,84,.3);border-radius:9px;padding:13px;text-align:center;margin-bottom:8px}
+.contact-ph{font-size:20px;font-weight:900;color:var(--grn);letter-spacing:2px;font-family:Arial;margin:5px 0}
+.contact-lb{font-size:10px;color:var(--m2)}
+.brow{display:flex;justify-content:space-between;align-items:center;padding:8px 11px;background:var(--d3);border-radius:8px;margin-bottom:5px;font-size:12px}
+.brow.top{border:1px solid rgba(200,149,42,.4)}
+.empty{text-align:center;padding:36px 14px;color:var(--m2);font-size:13px}
+.upzone{border:2px dashed var(--b2);border-radius:9px;padding:14px;text-align:center;cursor:pointer;margin-bottom:6px}
+.prevs{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.previmg{width:60px;height:52px;border-radius:6px;object-fit:cover;border:1px solid var(--b2)}
+.firow{display:flex;align-items:center;gap:7px;background:var(--d3);border-radius:7px;padding:6px 9px;margin-bottom:4px;font-size:11px}
+.finm{flex:1;color:var(--m2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fidel{background:none;border:none;color:var(--red);cursor:pointer;font-size:13px}
+
+/* IBAN */
+.iban-box{background:linear-gradient(135deg,rgba(200,149,42,.1),rgba(200,149,42,.05));border:1px solid rgba(200,149,42,.3);border-radius:10px;padding:12px;margin-bottom:10px;text-align:center}
+.iban-title{font-size:11px;color:var(--m2);margin-bottom:5px}
+.iban-num{font-size:14px;font-weight:900;color:var(--g2);letter-spacing:1px;font-family:Arial;direction:ltr;display:block;margin-bottom:4px}
+.iban-copy{background:var(--g);color:#000;border:none;padding:5px 14px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;margin-top:4px}
+
+/* RATING */
+.stars{display:flex;gap:3px;justify-content:center;margin:8px 0}
+.star{font-size:22px;cursor:pointer;opacity:.35;transition:.2s}
+.star.on{opacity:1}
+.rating-badge{display:inline-flex;align-items:center;gap:3px;background:rgba(200,149,42,.12);border:1px solid rgba(200,149,42,.3);border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;color:var(--g2)}
+
+/* TOAST */
+.tw{position:fixed;bottom:14px;left:12px;right:12px;z-index:999;display:flex;flex-direction:column;gap:5px;pointer-events:none}
+.toast{background:var(--d2);border:1px solid var(--b2);padding:9px 13px;border-radius:9px;font-size:12px;font-weight:600;box-shadow:0 3px 15px rgba(0,0,0,.5);display:flex;align-items:center;gap:6px}
+.toast.ok{border-color:var(--grn)}.toast.er{border-color:var(--red)}.toast.go{border-color:var(--g);color:var(--g)}
+
+/* PRICE CARDS */
+.pcards{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+.pcard{background:var(--d3);border:2px solid var(--b2);border-radius:9px;padding:13px;text-align:center;cursor:pointer}
+.pcard.sel{border-color:var(--g);background:rgba(200,149,42,.07)}
+.pcard-p{font-size:20px;font-weight:900;color:var(--g);font-family:Arial}
+.pcard-d{font-size:12px;font-weight:700;margin-bottom:3px}
+.pcard-n{font-size:10px;color:var(--m2)}
+
+/* DETAIL BID BOX */
+.dtbbox{background:var(--d3);border:1px solid rgba(200,149,42,.3);border-radius:9px;padding:12px;margin-bottom:11px}
+.dtbtitle{font-size:12px;font-weight:700;color:var(--g);margin-bottom:5px}
+.dtbmin{font-size:10px;color:var(--m2);margin-bottom:7px;font-family:Arial;text-align:right}
+.dtbrow{display:flex;gap:7px;margin-bottom:7px}
+.dtbinp{flex:1;min-width:0;background:var(--d2);border:2px solid var(--g);color:#fff;padding:10px 9px;border-radius:8px;font-size:15px;font-family:Arial;direction:ltr}
+.dtbbtn{flex-shrink:0;background:linear-gradient(135deg,var(--g),var(--g2));color:#000;border:none;padding:10px 13px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer}
+.dtbquick{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.dtbquick button{background:var(--d4);border:1px solid var(--b2);color:var(--m2);padding:6px 2px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial}
+
+/* CHAT */
+.chatbox{background:var(--d3);border-radius:9px;padding:9px;max-height:190px;overflow-y:auto;display:flex;flex-direction:column;gap:5px;margin-bottom:8px}
+.cmsg{max-width:80%;padding:7px 11px;border-radius:9px;font-size:12px;line-height:1.5}
+.cmsg.me{background:var(--g);color:#000;margin-right:auto;border-radius:9px 9px 2px 9px}
+.cmsg.them{background:var(--d2);border:1px solid var(--b2);margin-left:auto;border-radius:9px 9px 9px 2px}
+.cu{font-size:9px;opacity:.65;margin-bottom:2px;font-weight:700}
+.chatin{display:flex;gap:6px}
+.ci{flex:1;background:var(--d3);border:1px solid var(--b2);color:var(--t);padding:8px 11px;border-radius:8px;font-size:12px}
+.csend{background:var(--g);color:#000;border:none;padding:8px 13px;border-radius:8px;font-weight:700;cursor:pointer}
+
+/* ADMIN */
+.atabs{display:flex;background:#0D1117;border-bottom:1px solid var(--b);overflow-x:auto;scrollbar-width:none}
+.atabs::-webkit-scrollbar{display:none}
+.atab{background:none;border:none;border-bottom:2px solid transparent;color:var(--m2);padding:9px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.atab.on{color:var(--g);border-bottom-color:var(--g)}
+.abody{padding:11px}
+.urow{display:flex;align-items:center;gap:9px;background:var(--d3);border:1px solid var(--b);border-radius:9px;padding:10px;margin-bottom:7px;flex-wrap:wrap}
+.uname2{font-size:12px;font-weight:700}
+.umeta{font-size:10px;color:var(--m2);margin-top:1px}
+.ubadge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px}
+.ub-active{background:rgba(29,185,84,.15);color:var(--grn)}
+.ub-pending{background:rgba(208,112,32,.15);color:#D07020}
+.ub-banned{background:rgba(214,48,48,.15);color:var(--red)}
+.ua{border:none;padding:4px 9px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer}
+.ua-approve{background:rgba(29,185,84,.12);color:var(--grn)}
+.ua-ban{background:rgba(214,48,48,.1);color:var(--red)}
+.ua-del{background:rgba(214,48,48,.1);color:var(--red)}
+.acar{display:flex;align-items:center;gap:9px;background:var(--d3);border:1px solid var(--b);border-radius:9px;padding:10px;margin-bottom:7px;flex-wrap:wrap}
+.acthumb{width:55px;height:46px;border-radius:6px;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;overflow:hidden}
+.acthumb img{width:100%;height:100%;object-fit:cover}
+
+footer{background:#0D1117;border-top:1px solid var(--b);padding:14px;text-align:center}
+footer button{background:none;border:none;color:var(--m2);font-size:11px;cursor:pointer;text-decoration:underline;margin:0 8px}
+.fcopy{font-size:10px;color:var(--m);margin-top:6px}
+</style>
+</head>
+<body>
+
+<div class="hdr"><div class="hdr-in">
+  <div class="logo" onclick="goP('home')">
+    <div class="logo-i">&#x1F697;</div>
+    <div><div class="logo-t">سيارتي للبيع</div><div class="logo-s">منصة مزادات السيارات</div></div>
+  </div>
+  <div class="hdr-r">
+    <button class="bo" id="btnLogin" onclick="openM('mLogin')">دخول</button>
+    <button class="bp" onclick="needL(function(){openM('mAddCar')})">+ أضف</button>
+  </div>
+</div></div>
+
+<div class="nav">
+  <button class="nv on" id="nvHome"   onclick="goP('home')">الرئيسية</button>
+  <button class="nv"    id="nvBids"   onclick="goP('bids')">مزايداتي</button>
+  <button class="nv"    id="nvList"   onclick="goP('list')">إعلاناتي</button>
+  <button class="nv"    id="nvDeals"  onclick="goP('deals')">صفقاتي</button>
+  <button class="nv"    id="nvAdmin"  onclick="goP('admin')" style="display:none">&#x1F6E1; إدارة</button>
+</div>
+
+<div class="hero">
+  <div class="hbadge">&#x1F534; مزادات حية الآن</div>
+  <div class="htitle">&#x1F697; سيارتي للبيع</div>
+  <div class="hsub">زايد وافوز بأحسن سعر &mdash; بياناتك محمية حتى تكتمل الصفقة</div>
+  <div class="stats">
+    <div class="stat"><span class="sn" id="sCars">0</span><span class="sl">سيارة</span></div>
+    <div class="stat"><span class="sn" id="sBids">0</span><span class="sl">مزايدة</span></div>
+    <div class="stat"><span class="sn" id="sUsers">0</span><span class="sl">مستخدم</span></div>
+  </div>
+</div>
+
+<div class="vip-wrap">
+  <div class="vip-hdr">
+    <div class="vip-lbl">&#x1F451; VIP المميز</div>
+    <button class="vip-btn" onclick="needL(function(){openVipPromote()})">&#x2728; اعرض هنا</button>
+  </div>
+  <div id="vipBox"></div>
+</div>
+
+<div class="page on" id="pgHome">
+  <div class="filters">
+    <input class="fsearch" id="fSearch" type="search" placeholder="ابحث عن سيارة...">
+    <select class="fsel" id="fBrand">
+      <option value="">كل الماركات</option>
+      <optgroup label="يابانية"><option>تويوتا</option><option>لكزس</option><option>نيسان</option><option>هوندا</option><option>ميتسوبيشي</option></optgroup>
+      <optgroup label="كورية"><option>هيونداي</option><option>كيا</option><option>جينيسيس</option></optgroup>
+      <optgroup label="أوروبية/أمريكية"><option>BMW</option><option>مرسيدس</option><option>أودي</option><option>فورد</option><option>جيب</option></optgroup>
+      <optgroup label="صينية"><option>BYD</option><option>هافال</option><option>MG</option><option>شيري</option><option>جيلي</option><option>أومودا</option></optgroup>
+    </select>
+    <select class="fsel" id="fStatus">
+      <option value="">الكل</option><option value="live">حية</option><option value="ended">منتهية</option>
+    </select>
+  </div>
+  <div class="grid" id="homeGrid"></div>
+</div>
+
+<div class="page" id="pgBids"><div id="bidsBody"></div></div>
+<div class="page" id="pgList"><div id="listBody"></div></div>
+<div class="page" id="pgDeals"><div id="dealsBody"></div></div>
+<div class="page" id="pgAdmin">
+  <div class="atabs">
+    <button class="atab on" id="atUsers" onclick="aTab('users')">المستخدمون</button>
+    <button class="atab" id="atCars" onclick="aTab('cars')">السيارات</button>
+    <button class="atab" id="atDeals" onclick="aTab('deals')">الصفقات</button>
+    <button class="atab" id="atComp" onclick="aTab('comp')">الشكاوى</button>
+    <button class="atab" id="atVip" onclick="aTab('vip')">VIP</button>
+  </div>
+  <div class="abody" id="adminBody"></div>
+</div>
+
+<div class="tw" id="tw"></div>
+
+<!-- LOGIN -->
+<div class="ov" id="mLogin"><div class="modal">
+  <div class="mhdr"><span class="mtitle">&#x1F510; دخول</span><button class="mclose" onclick="closeM('mLogin')">&#x2715;</button></div>
+  <div class="mbody">
+    <div class="fg"><label class="fl">رقم الجوال</label><input class="fi" id="lPh" placeholder="05xxxxxxxx" type="tel" maxlength="10" inputmode="numeric"></div>
+    <div class="fg"><label class="fl">كلمة المرور</label><input class="fi" id="lPw" placeholder="••••••••" type="password"></div>
+    <div style="font-size:11px;color:var(--m2)">للمدير: <b style="color:var(--g)">0500000000 / admin</b></div>
+  </div>
+  <div class="mftr"><button class="bo" onclick="closeM('mLogin')">إلغاء</button><button class="bp" onclick="doLogin()">دخول</button></div>
+</div></div>
+
+<!-- ADD CAR -->
+<div class="ov" id="mAddCar"><div class="modal">
+  <div class="mhdr"><span class="mtitle">&#x1F697; إضافة سيارة</span><button class="mclose" onclick="closeM('mAddCar')">&#x2715;</button></div>
+  <div class="mbody">
+    <div class="frow">
+      <div class="fg"><label class="fl">الماركة</label>
+        <select class="fs" id="acBrand"><option>تويوتا</option><option>لكزس</option><option>نيسان</option><option>هيونداي</option><option>كيا</option><option>BMW</option><option>مرسيدس</option><option>BYD</option><option>هافال</option><option>MG</option><option>شيري</option><option>جيلي</option><option>أومودا</option></select>
+      </div>
+      <div class="fg"><label class="fl">الموديل</label><input class="fi" id="acModel" placeholder="كامري"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">السنة</label><input class="fi" id="acYear" type="number" placeholder="2022" inputmode="numeric"></div>
+      <div class="fg"><label class="fl">الكيلومترات</label><input class="fi" id="acKm" type="number" placeholder="50000" inputmode="numeric"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">سعر الابتداء</label><input class="fi" id="acSp" type="number" placeholder="50000" inputmode="numeric"></div>
+      <div class="fg"><label class="fl">مدة المزاد (ساعة)</label><input class="fi" id="acDur" type="number" placeholder="24" inputmode="numeric"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">المدينة</label>
+        <select class="fs" id="acCity"><option>الرياض</option><option>جدة</option><option>الدمام</option><option>مكة المكرمة</option><option>المدينة المنورة</option><option>الخبر</option></select>
+      </div>
+      <div class="fg"><label class="fl">رقم جوالك &#x1F512;</label><input class="fi" id="acPh" placeholder="05xxxxxxxx" type="tel" maxlength="10" inputmode="numeric"></div>
+    </div>
+    <div class="fg"><label class="fl">الوصف</label><textarea class="ft" id="acDesc" placeholder="حالة السيارة، الإضافات..."></textarea></div>
+    <div class="fg">
+      <label class="fl">&#x1F4F8; صور السيارة</label>
+      <div class="upzone" onclick="document.getElementById('acImgs').click()">
+        <input type="file" id="acImgs" accept="image/*" multiple style="display:none" onchange="addImgs(event)">
+        <div style="font-size:24px;margin-bottom:4px">&#x1F4F7;</div><div style="font-size:11px;color:var(--m2)">اضغط لرفع الصور</div>
+      </div>
+      <div class="prevs" id="acImgsPrev"></div>
+    </div>
+    <div class="fg">
+      <label class="fl">&#x1F4C4; أوراق الفحص</label>
+      <div class="upzone" onclick="document.getElementById('acDocs').click()">
+        <input type="file" id="acDocs" accept="image/*,.pdf" multiple style="display:none" onchange="addDocs(event)">
+        <div style="font-size:24px;margin-bottom:4px">&#x1F4CE;</div><div style="font-size:11px;color:var(--m2)">صور أو PDF</div>
+      </div>
+      <div id="acDocsList"></div>
+    </div>
+  </div>
+  <div class="mftr"><button class="bo" onclick="closeM('mAddCar')">إلغاء</button><button class="bp" onclick="doAddCar()">&#x1F680; إرسال للمراجعة</button></div>
+</div></div>
+
+<!-- CAR DETAIL -->
+<div class="ov" id="mDetail"><div class="modal">
+  <div class="mhdr"><span class="mtitle" id="dtTitle"></span><button class="mclose" onclick="closeM('mDetail')">&#x2715;</button></div>
+  <div class="mbody" id="dtBody"></div>
+</div></div>
+
+<!-- SELLER CONFIRM -->
+<div class="ov" id="mConfirm"><div class="modal">
+  <div class="mhdr"><span class="mtitle">&#x1F3C6; انتهى المزاد</span><button class="mclose" onclick="closeM('mConfirm')">&#x2715;</button></div>
+  <div class="mbody">
+    <div class="ibox">أعلى مزايدة: <b id="scAmt"></b> من <b id="scWho"></b><br>هل توافق على البيع؟</div>
+  </div>
+  <div class="mftr"><button class="bo" onclick="sDecline()">&#x274C; أرفض</button><button class="bp" onclick="sAccept()">&#x2705; أوافق</button></div>
+</div></div>
+
+<!-- COMMISSION -->
+<div class="ov" id="mComm"><div class="modal">
+  <div class="mhdr"><span class="mtitle">&#x1F4B0; دفع العمولة</span><button class="mclose" onclick="closeM('mComm')">&#x2715;</button></div>
+  <div class="mbody">
+    <div class="steps"><div class="step" id="cs1"></div><div class="step" id="cs2"></div><div class="step" id="cs3"></div></div>
+    <div id="commBody"></div>
+  </div>
+  <div class="mftr" id="commFtr"></div>
+</div></div>
+
+<!-- PAYMENT -->
+<div class="ov" id="mPay"><div class="modal">
+  <div class="mhdr"><span class="mtitle">&#x1F4B3; الدفع</span><button class="mclose" onclick="closeM('mPay')">&#x2715;</button></div>
+  <div class="mbody">
+    <div style="background:var(--d3);border-radius:8px;padding:11px;margin-bottom:11px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--m2)">الخدمة</span><span id="paySvc" style="font-size:12px;font-weight:700"></span></div>
+      <div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:var(--m2)">المبلغ</span><span id="payAmt" style="font-size:18px;font-weight:900;color:var(--g);font-family:Arial"></span></div>
+    </div>
+    <div id="payForm">
+      <div class="fg"><label class="fl">رقم البطاقة</label><input class="fi" id="payCn" placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric" oninput="formatCard(this)"></div>
+      <div class="frow">
+        <div class="fg"><label class="fl">الانتهاء</label><input class="fi" id="payEx" placeholder="MM/YY" maxlength="5" inputmode="numeric" oninput="formatExp(this)"></div>
+        <div class="fg"><label class="fl">CVV</label><input class="fi" id="payCv" placeholder="000" maxlength="4" type="password" inputmode="numeric"></div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px" id="pmBtns">
+        <button class="bp sel-pm" data-pm="card" onclick="selPM(this)" style="flex:1;min-width:60px;padding:7px 4px;font-size:10px">&#x1F4B3; بطاقة</button>
+        <button class="bo sel-pm" data-pm="apple" onclick="selPM(this)" style="flex:1;min-width:60px;padding:7px 4px;font-size:10px">&#x1F34E; Apple Pay</button>
+        <button class="bo sel-pm" data-pm="stc" onclick="selPM(this)" style="flex:1;min-width:60px;padding:7px 4px;font-size:10px">&#x1F4F1; STC Pay</button>
+        <button class="bo sel-pm" data-pm="mada" onclick="selPM(this)" style="flex:1;min-width:60px;padding:7px 4px;font-size:10px">&#x1F3E6; مدى</button>
+      </div>
+      <div style="text-align:center;font-size:10px;color:var(--m2)">&#x1F512; SSL &nbsp;&#x2705; PCI &nbsp;&#x1F6E1; 3DS &nbsp; Powered by Moyasar</div>
+    </div>
+    <div id="payProc" style="display:none;text-align:center;padding:18px">
+      <div style="font-size:28px;margin-bottom:8px">&#x231B;</div>
+      <div style="font-weight:700">جاري المعالجة...</div>
+    </div>
+    <div id="payOk" style="display:none;text-align:center;padding:18px">
+      <div style="font-size:36px;margin-bottom:8px">&#x2705;</div>
+      <div style="font-weight:700;color:var(--grn)">تم الدفع!</div>
+      <div id="payOkMsg" style="font-size:11px;color:var(--m2);margin-top:4px"></div>
+    </div>
+  </div>
+  <div class="mftr" id="payFtr">
+    <button class="bo" onclick="closeM('mPay')">إلغاء</button>
+    <button class="bp" onclick="doPay()">&#x1F4B3; ادفع الآن</button>
+  </div>
+</div></div>
+
+<!-- CHAT -->
+<div class="ov" id="mChat"><div class="modal">
+  <div class="mhdr"><span class="mtitle" id="chatTtl">&#x1F4AC; محادثة</span><button class="mclose" onclick="closeM('mChat')">&#x2715;</button></div>
+  <div class="mbody">
+    <div class="wbox">&#x26A0; ممنوع إرسال أرقام الجوال أو وسائل التواصل قبل دفع العمولة</div>
+    <div class="chatbox" id="chatMsgs"></div>
+    <div class="chatin">
+      <input class="ci" id="chatInp" placeholder="اكتب رسالتك...">
+      <button class="csend" onclick="doChat()">إرسال</button>
+    </div>
+  </div>
+</div></div>
+
+<!-- VIP PROMOTE -->
+<div class="ov" id="mVip"><div class="modal">
+  <div class="mhdr"><span class="mtitle">&#x1F451; عرض VIP</span><button class="mclose" onclick="closeM('mVip')">&#x2715;</button></div>
+  <div class="mbody">
+    <div class="ibox">&#x2B50; سيارتك ستظهر للجميع في الأعلى وتدور كل 30 ثانية</div>
+    <div class="fg"><label class="fl">اختر السيارة</label><select class="fs" id="vipCarSel" style="width:100%"><option value="">-- اختر --</option></select></div>
+    <div class="fg"><label class="fl">مدة العرض</label>
+      <div class="pcards">
+        <div class="pcard sel" id="vpc2" onclick="selVip(2,35,this)"><div class="pcard-d">يومان</div><div class="pcard-p">35</div><div class="pcard-n">ريال / 48 ساعة</div></div>
+        <div class="pcard" id="vpc7" onclick="selVip(7,113,this)"><div class="pcard-d">أسبوع</div><div class="pcard-p">113</div><div class="pcard-n">ريال / 7 أيام</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="mftr"><button class="bo" onclick="closeM('mVip')">إلغاء</button><button class="bp" onclick="doPayVip()">&#x1F451; ادفع وانشر</button></div>
+</div></div>
+
+<!-- COMPLAINT -->
+<div class="ov" id="mComp"><div class="modal">
+  <div class="mhdr"><span class="mtitle">&#x1F6A8; شكوى</span><button class="mclose" onclick="closeM('mComp')">&#x2715;</button></div>
+  <div class="mbody">
+    <div class="fg"><label class="fl">النوع</label>
+      <select class="fs" id="compType"><option value="fraud">صفقة مضروبة</option><option value="fake">سيارة وهمية</option><option value="desc">وصف غير مطابق</option><option value="contact">لا يرد</option><option value="other">أخرى</option></select>
+    </div>
+    <div class="fg"><label class="fl">التفاصيل</label><textarea class="ft" id="compText" placeholder="اشرح المشكلة..."></textarea></div>
+  </div>
+  <div class="mftr"><button class="bo" onclick="closeM('mComp')">إلغاء</button><button class="bp" style="background:var(--red);color:#fff" onclick="doComp()">&#x1F6A8; إرسال</button></div>
+</div></div>
+
+<!-- PRIVACY -->
+<div class="ov" id="mPrivacy"><div class="modal">
+  <div class="mhdr"><span class="mtitle">&#x1F512; سياسة الخصوصية</span><button class="mclose" onclick="closeM('mPrivacy')">&#x2715;</button></div>
+  <div class="mbody" style="font-size:12px;line-height:1.8;color:var(--m2)">
+    <p style="margin-bottom:9px">منصة <b style="color:var(--t)">سيارتي للبيع</b> تلتزم بحماية خصوصيتك وفق نظام PDPL السعودي.</p>
+    <b style="color:var(--t)">البيانات:</b><p style="margin-bottom:9px">نجمع رقم الجوال وبيانات السيارات والمزايدات فقط.</p>
+    <b style="color:var(--t)">الحماية:</b><p style="margin-bottom:9px">أرقام الجوال مخفية حتى دفع العمولة. نستخدم تشفير SSL.</p>
+    <b style="color:var(--t)">حقوقك:</b><p>يحق لك حذف بياناتك في أي وقت.</p>
+  </div>
+  <div class="mftr"><button class="bp" onclick="closeM('mPrivacy')">فهمت &#x2713;</button></div>
+</div></div>
+
+<!-- TERMS -->
+<div class="ov" id="mTerms"><div class="modal">
+  <div class="mhdr"><span class="mtitle">&#x1F4DC; شروط الاستخدام</span><button class="mclose" onclick="closeM('mTerms')">&#x2715;</button></div>
+  <div class="mbody" style="font-size:12px;line-height:1.8;color:var(--m2)">
+    <b style="color:var(--t)">المزايدة:</b><p style="margin-bottom:9px">المزايدة التزام قانوني. الفائز ملزم بإتمام الصفقة ودفع 1% عمولة.</p>
+    <b style="color:var(--t)">المحظورات:</b><p style="margin-bottom:9px">يُحظر نشر سيارات مسروقة أو إرسال أرقام الجوال قبل إتمام الصفقة.</p>
+    <b style="color:var(--t)">القانون:</b><p>تخضع هذه الشروط لأنظمة المملكة العربية السعودية.</p>
+  </div>
+  <div class="mftr"><button class="bp" onclick="closeM('mTerms')">أوافق &#x2713;</button></div>
+</div></div>
+
+<footer>
+  <div><button onclick="openM('mPrivacy')">سياسة الخصوصية</button><button onclick="openM('mTerms')">شروط الاستخدام</button></div>
+  <div class="fcopy">&#x00A9; 2026 سيارتي للبيع &mdash; المملكة العربية السعودية</div>
+</footer>
+
+<script>
+// ═══ DATA ═══
+var CU=null, NID=4, UID=4;
+var pAct=null, chatDid=null, commDid=null, commRole=null;
+var payCtx=null, selPMval='card';
+var pendImgs=[], pendDocs=[];
+var vipSlots=[], vipIdx=0, vipTmr=null, vipBarStart=0;
+var selVipData={days:2,price:35};
+var complaints=[], deals=[], myBids=[];
+var curAT='users';
+
+var CARS=[
+  {id:1,brand:'تويوتا',model:'كامري',year:2022,km:45000,city:'الرياض',desc:'بحالة ممتازة كاملة المواصفات',sp:85000,cb:92000,bids:[{u:'أحمد',ph:'0501111111',a:86000,t:'10:30'},{u:'محمد',ph:'0502222222',a:89000,t:'11:15'},{u:'سلطان',ph:'0503333333',a:92000,t:'12:00'}],status:'live',end:Date.now()+18000000,seller:'عبدالله',sph:'0511111111',imgs:[],docs:[],vid:null,dealId:null,approved:true},
+  {id:2,brand:'لكزس',model:'LX 570',year:2021,km:30000,city:'جدة',desc:'فل كامل بانوراما',sp:280000,cb:295000,bids:[{u:'فيصل',ph:'0504444444',a:282000,t:'09:00'},{u:'خالد',ph:'0505555555',a:295000,t:'10:45'}],status:'live',end:Date.now()+28800000,seller:'نواف',sph:'0512222222',imgs:[],docs:[],vid:null,dealId:null,approved:true},
+  {id:3,brand:'BMW',model:'X5',year:2020,km:68000,city:'الدمام',desc:'حالة جيدة صيانة دورية',sp:150000,cb:162000,bids:[{u:'ماجد',ph:'0506666666',a:155000,t:'14:00'}],status:'live',end:Date.now()+5400000,seller:'طارق',sph:'0513333333',imgs:[],docs:[],vid:null,dealId:null,approved:true}
+];
+var USERS=[
+  {id:'u1',name:'عبدالله',phone:'0511111111',status:'active',joined:'2024-01-10'},
+  {id:'u2',name:'نواف',phone:'0512222222',status:'active',joined:'2024-02-05'},
+  {id:'u3',name:'طارق',phone:'0513333333',status:'active',joined:'2024-03-01'}
+];
+
+// ═══ HELPERS ═══
+function N(n){return Number(n).toLocaleString('en-US');}
+function T(ms){if(ms<=0)return'انتهى';var h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);if(h>0)return h+'س '+m+'د';if(m>0)return m+'د '+s+'ث';return s+'ث';}
+function E(ico,txt){return '<div class="empty"><div style="font-size:36px;margin-bottom:8px">'+ico+'</div>'+txt+'</div>';}
+function toast(msg,type){var w=document.getElementById('tw');var t=document.createElement('div');t.className='toast '+(type||'');t.textContent=msg;w.appendChild(t);setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},3000);}
+function openM(id){document.getElementById(id).style.display='flex';}
+function closeM(id){document.getElementById(id).style.display='none';}
+function needL(fn){if(CU){fn();}else{pAct=fn;openM('mLogin');}}
+function blocked(txt){var w=['سناب','snap','snapchat','تيك','tiktok','واتساب','whatsapp','انستقرام','instagram','تويتر','twitter','تلغرام','telegram'];if(w.some(function(x){return txt.toLowerCase().indexOf(x)>=0;}))return true;if(/\d[\d\s]{6,}\d/.test(txt))return true;return false;}
+function formatCard(el){el.value=el.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim();}
+function formatExp(el){el.value=el.value.replace(/\D/g,'').replace(/^(\d{2})(\d)/,'$1/$2');}
+function stats(){document.getElementById('sCars').textContent=CARS.filter(function(c){return c.status!=='pending'&&c.status!=='rejected';}).length;document.getElementById('sBids').textContent=CARS.reduce(function(a,c){return a+c.bids.length;},0);document.getElementById('sUsers').textContent=USERS.filter(function(u){return u.status==='active';}).length;}
+
+// ═══ AUTH ═══
+function doLogin(){
+  var ph=document.getElementById('lPh').value.trim();
+  var pw=document.getElementById('lPw').value.trim();
+  if(ph.length<10){toast('رقم غير صحيح','er');return;}
+  if(!pw){toast('أدخل كلمة المرور','er');return;}
+  var isAdmin=(ph==='0500000000'&&pw==='admin');
+  var name=isAdmin?'المدير':'مستخدم_'+ph.slice(-4);
+  var ex=USERS.find(function(u){return u.phone===ph;});
+  if(ex&&ex.status==='banned'){toast('حسابك محظور','er');return;}
+  CU={name:name,phone:ph,isAdmin:isAdmin};
+  if(!isAdmin&&!ex)USERS.push({id:'u'+(UID++),name:name,phone:ph,status:'active',joined:new Date().toLocaleDateString('ar')});
+  document.getElementById('btnLogin').style.display='none';
+  if(isAdmin)document.getElementById('nvAdmin').style.display='';
+  closeM('mLogin');
+  toast('أهلاً '+name,'ok');
+  stats();
+  if(pAct){var f=pAct;pAct=null;f();}
+}
+
+// ═══ UPLOAD ═══
+function addImgs(e){
+  var files=Array.prototype.slice.call(e.target.files);
+  files.forEach(function(f){
+    if(pendImgs.length>=10)return;
+    var r=new FileReader();
+    r.onload=function(ev){pendImgs.push({name:f.name,url:ev.target.result});renderPrevs();};
+    r.readAsDataURL(f);
+  });
+  e.target.value='';
+}
+function addDocs(e){
+  var files=Array.prototype.slice.call(e.target.files);
+  files.forEach(function(f){
+    var r=new FileReader();
+    r.onload=function(ev){pendDocs.push({name:f.name,url:ev.target.result,type:f.type});renderDocs();};
+    r.readAsDataURL(f);
+  });
+  e.target.value='';
+}
+function renderPrevs(){
+  var h='';
+  pendImgs.forEach(function(p,i){
+    h+='<div style="position:relative;display:inline-block">';
+    h+='<img class="previmg" src="'+p.url+'" alt="">';
+    h+='<button onclick="pendImgs.splice('+i+',1);renderPrevs()" style="position:absolute;top:-3px;left:-3px;background:#D63030;color:#fff;border:none;width:15px;height:15px;border-radius:50%;font-size:9px;cursor:pointer;line-height:15px;text-align:center">x</button>';
+    h+='</div>';
+  });
+  document.getElementById('acImgsPrev').innerHTML=h;
+}
+function renderDocs(){
+  var h='';
+  pendDocs.forEach(function(d,i){
+    h+='<div class="firow"><span>'+( d.type==='application/pdf'?'&#x1F4C4;':'&#x1F5BC;')+'</span><span class="finm">'+d.name+'</span><button class="fidel" onclick="pendDocs.splice('+i+',1);renderDocs()">&#x2715;</button></div>';
+  });
+  document.getElementById('acDocsList').innerHTML=h;
+}
+
+// ═══ ADD CAR ═══
+function doAddCar(){
+  var brand=document.getElementById('acBrand').value;
+  var model=document.getElementById('acModel').value.trim();
+  var year=parseInt(document.getElementById('acYear').value);
+  var km=parseInt(document.getElementById('acKm').value);
+  var sp=parseInt(document.getElementById('acSp').value);
+  var dur=parseInt(document.getElementById('acDur').value)||24;
+  var city=document.getElementById('acCity').value;
+  var sph=document.getElementById('acPh').value.trim();
+  var desc=document.getElementById('acDesc').value.trim();
+  if(!model||!year||!km||!sp||sph.length<10){toast('عبّئ جميع الحقول','er');return;}
+  CARS.unshift({id:NID++,brand:brand,model:model,year:year,km:km,city:city,desc:desc||'—',sp:sp,cb:sp,bids:[],status:'pending',end:Date.now()+dur*3600000,seller:CU.name,sph:sph,imgs:pendImgs.slice(),docs:pendDocs.slice(),vid:null,dealId:null,approved:false});
+  pendImgs=[];pendDocs=[];
+  ['acModel','acYear','acKm','acSp','acDur','acDesc','acPh'].forEach(function(id){document.getElementById(id).value='';});
+  renderPrevs();renderDocs();
+  closeM('mAddCar');
+  toast('تم الإرسال للمراجعة','go');
+  updateAdminBadge();
+}
+
+// ═══ BIDDING ═══
+function doBid(cid){
+  if(!CU){needL(function(){});return;}
+  var c=CARS.find(function(x){return x.id===cid;});
+  if(!c||c.status!=='live')return;
+  if(c.seller===CU.name){toast('لا تزايد على سيارتك','er');return;}
+  var u=USERS.find(function(u){return u.phone===CU.phone;});
+  if(u&&u.status==='banned'){toast('حسابك محظور','er');return;}
+  var inp=document.getElementById('bi'+cid);
+  var amt=parseInt((inp.value||'').replace(/[^0-9]/g,''))||0;
+  if(amt<=c.cb){toast('الحد الأدنى: '+(c.cb+1)+' ريال','er');inp.value='';return;}
+  c.cb=amt;
+  c.bids.push({u:CU.name,ph:CU.phone,a:amt,t:new Date().toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit'})});
+  inp.value='';
+  var el=document.getElementById('cbp'+cid);if(el)el.textContent=N(amt)+' ريال';
+  myBids.unshift({car:c.brand+' '+c.model,cid:cid,a:amt,t:new Date().toLocaleTimeString('ar')});
+  toast('مزايدتك '+N(amt)+' ريال','ok');
+  stats();
+}
+function dtBid(cid){
+  if(!CU){needL(function(){openDetail(cid);});return;}
+  var c=CARS.find(function(x){return x.id===cid;});
+  if(!c||c.status!=='live')return;
+  if(c.seller===CU.name){toast('لا تزايد على سيارتك','er');return;}
+  var inp=document.getElementById('dtbi'+cid);
+  var amt=parseInt((inp.value||'').replace(/[^0-9]/g,''))||0;
+  var mn=c.cb+1;
+  if(amt<mn){toast('الحد الأدنى: '+mn+' ريال','er');inp.value='';return;}
+  c.cb=amt;
+  c.bids.push({u:CU.name,ph:CU.phone,a:amt,t:new Date().toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit'})});
+  inp.value='';
+  var el=document.getElementById('dtpr'+cid);if(el)el.textContent=N(amt)+' ريال';
+  var cel=document.getElementById('cbp'+cid);if(cel)cel.textContent=N(amt)+' ريال';
+  myBids.unshift({car:c.brand+' '+c.model,cid:cid,a:amt,t:new Date().toLocaleTimeString('ar')});
+  toast('مزايدتك '+N(amt)+' ريال','ok');
+  stats();
+  var bl=document.querySelector('#dtBody .blist');
+  if(bl)bl.innerHTML=bidListHTML(c.bids);
+}
+function qBid(cid,amt){var inp=document.getElementById('dtbi'+cid);if(inp)inp.value=amt;}
+
+// ═══ AUCTION END ═══
+function endAuction(car){
+  car.status='ended';
+  renderHome();
+  if(!car.bids.length)return;
+  if(CU&&car.seller===CU.name){
+    var top=car.bids[car.bids.length-1];
+    document.getElementById('scAmt').textContent=N(top.a)+' ريال';
+    document.getElementById('scWho').textContent=top.u;
+    commDid=car.id;
+    openM('mConfirm');
+  }
+}
+function sDecline(){closeM('mConfirm');commDid=null;toast('تم الرفض','er');}
+function sAccept(){
+  closeM('mConfirm');
+  var car=CARS.find(function(c){return c.id===commDid;});
+  if(!car)return;
+  var top=car.bids[car.bids.length-1];
+  var comm=Math.round(car.cb*0.01);
+  var deal={id:'D'+Date.now(),cid:car.id,cname:car.brand+' '+car.model+' '+car.year,price:car.cb,comm:comm,seller:{name:car.seller,ph:car.sph},winner:{name:top.u,ph:top.ph},sp:false,bp:false,revealed:false,chat:[]};
+  deals.push(deal);car.dealId=deal.id;
+  toast('وافقت! ادفع العمولة','go');
+  openComm(deal.id,'seller');
+}
+
+// ═══ COMMISSION ═══
+function openComm(did,role){
+  commDid=did;commRole=role;
+  refreshComm();
+  openM('mComm');
+}
+function refreshComm(){
+  var d=deals.find(function(x){return x.id===commDid;});
+  if(!d)return;
+  var both=d.sp&&d.bp;
+  document.getElementById('cs1').className='step '+(d.sp?'done':'act');
+  document.getElementById('cs2').className='step '+(d.bp?(d.sp?'done':'act'):(d.sp?'act':''));
+  document.getElementById('cs3').className='step '+(both?'done':'');
+  var cb=document.getElementById('commBody');
+  var cf=document.getElementById('commFtr');
+  if(both){
+    d.revealed=true;
+    var h='<div style="text-align:center;font-size:32px;margin-bottom:10px">&#x1F389;</div>';
+    h+='<div style="text-align:center;font-weight:700;color:var(--grn);margin-bottom:14px">تمت الصفقة!</div>';
+    h+='<div class="contact-card"><div class="contact-lb">رقم البائع &mdash; '+d.seller.name+'</div><div class="contact-ph">'+d.seller.ph+'</div></div>';
+    h+='<div class="contact-card"><div class="contact-lb">رقم المشتري &mdash; '+d.winner.name+'</div><div class="contact-ph">'+d.winner.ph+'</div></div>';
+    cb.innerHTML=h;
+    cf.innerHTML='<button class="bp" onclick="closeM(\'mComm\');goP(\'deals\')">عرض الصفقة</button>';
+    renderDeals();return;
+  }
+  var myPaid=(commRole==='seller')?d.sp:d.bp;
+  var h2='<div class="ibox">كل طرف يدفع 1% عمولة قبل ظهور بيانات الطرف الآخر</div>';
+  h2+='<div style="background:var(--d3);border-radius:8px;padding:11px;margin-bottom:11px">';
+  h2+='<div style="font-size:11px;color:var(--m2)">'+d.cname+'</div>';
+  h2+='<div style="font-size:18px;font-weight:900;color:var(--g);font-family:Arial">'+N(d.price)+' ريال</div></div>';
+  h2+='<div style="background:rgba(200,149,42,.08);border:1px solid rgba(200,149,42,.2);border-radius:8px;padding:11px;margin-bottom:11px">';
+  h2+='<div style="font-size:11px;font-weight:700;color:var(--g);margin-bottom:4px">عمولتك ('+(commRole==='seller'?'البائع':'المشتري')+')</div>';
+  h2+='<div style="font-size:20px;font-weight:900;color:var(--g2);font-family:Arial">'+N(d.comm)+' ريال</div></div>';
+  h2+='<div class="iban-box"><div class="iban-title">&#x1F3E6; حوّل العمولة على هذا الحساب</div><div style="font-size:10px;color:var(--m2);margin-bottom:3px">رقم الآيبان</div><span class="iban-num">SA98 8000 0201 6080 1028 2538</span><div style="font-size:10px;color:var(--m2);margin:5px 0 2px">رقم الحساب</div><span class="iban-num" style="font-size:13px">201000010006080282538</span><div style="font-size:10px;color:var(--m2);margin-bottom:5px">بنك الراجحي</div><button class="iban-copy" onclick="copyIBAN()">&#x1F4CB; نسخ الآيبان</button> <button class="iban-copy" style="background:var(--d3);color:var(--g);border:1px solid var(--g)" onclick="copyAcc()">&#x1F4CB; نسخ الحساب</button></div>';
+h2+='<div style="display:flex;gap:12px;font-size:12px;">';
+  h2+='<span style="color:'+(d.sp?'var(--grn)':'var(--m)')+'\">'+(d.sp?'&#x2705;':'&#x23F3;')+' البائع</span>';
+  h2+='<span style="color:'+(d.bp?'var(--grn)':'var(--m)')+'\">'+(d.bp?'&#x2705;':'&#x23F3;')+' المشتري</span></div>';
+  if(myPaid)h2+='<div style="color:var(--grn);font-size:12px;margin-top:7px">&#x2705; دفعت &mdash; بانتظار الطرف الآخر</div>';
+  cb.innerHTML=h2;
+  if(!myPaid){
+    cf.innerHTML='<button class="bo" onclick="closeM(\'mComm\')">لاحقاً</button><button class="bp" id="payCommBtn">ادفع '+N(d.comm)+' ريال</button>';
+    document.getElementById('payCommBtn').onclick=function(){doPayComm();};
+  } else {
+    cf.innerHTML='<button class="bo" onclick="closeM(\'mComm\')">إغلاق</button>';
+  }
+}
+function doPayComm(){
+  var d=deals.find(function(x){return x.id===commDid;});
+  if(!d)return;
+  openPayModal('عمولة صفقة','عمولة '+d.cname,d.comm,function(){
+    if(commRole==='seller')d.sp=true;else d.bp=true;
+    toast('تم استلام العمولة','ok');
+    refreshComm();
+  });
+}
+
+// ═══ PAYMENT ═══
+function openPayModal(title,svc,amt,onOk){
+  payCtx={title:title,svc:svc,amt:amt,onOk:onOk};
+  document.getElementById('paySvc').textContent=svc;
+  document.getElementById('payAmt').textContent=N(amt)+' ريال';
+  document.getElementById('payForm').style.display='block';
+  document.getElementById('payProc').style.display='none';
+  document.getElementById('payOk').style.display='none';
+  document.getElementById('payFtr').style.display='flex';
+  ['payCn','payEx','payCv'].forEach(function(id){document.getElementById(id).value='';});
+  openM('mPay');
+}
+function selPM(btn){
+  selPMval=btn.getAttribute('data-pm');
+  document.querySelectorAll('.sel-pm').forEach(function(b){b.className='bo sel-pm';b.style.background='';b.style.color='';});
+  btn.className='bp sel-pm';
+}
+function doPay(){
+  if(selPMval==='card'||selPMval==='mada'){
+    if(document.getElementById('payCn').value.replace(/\s/g,'').length<16){toast('رقم البطاقة غير صحيح','er');return;}
+    if(document.getElementById('payEx').value.length<5){toast('تاريخ انتهاء غير صحيح','er');return;}
+    if(document.getElementById('payCv').value.length<3){toast('CVV غير صحيح','er');return;}
+  }
+  document.getElementById('payForm').style.display='none';
+  document.getElementById('payFtr').style.display='none';
+  document.getElementById('payProc').style.display='block';
+  setTimeout(function(){
+    document.getElementById('payProc').style.display='none';
+    document.getElementById('payOk').style.display='block';
+    document.getElementById('payOkMsg').textContent='تم خصم '+N(payCtx.amt)+' ريال';
+    setTimeout(function(){
+      closeM('mPay');
+      if(payCtx&&payCtx.onOk)payCtx.onOk();
+      payCtx=null;
+    },1600);
+  },2000);
+}
+
+// ═══ DEALS ═══
+function renderDeals(){
+  var el=document.getElementById('dealsBody');
+  var mine=deals.filter(function(d){return CU&&(d.seller.name===CU.name||d.winner.name===CU.name);});
+  if(!mine.length){el.innerHTML=E('&#x1F4BC;','ما عندك صفقات بعد');return;}
+  var h='';
+  mine.forEach(function(d){
+    var isSeller=CU&&d.seller.name===CU.name;
+    var role=isSeller?'seller':'buyer';
+    var myPaid=isSeller?d.sp:d.bp;
+    var other=isSeller?d.winner.name:d.seller.name;
+    var otherPh=isSeller?d.winner.ph:d.seller.ph;
+    h+='<div style="background:var(--c);border:1px solid var(--b);border-radius:10px;padding:13px;margin-bottom:11px">';
+    h+='<div style="display:flex;justify-content:space-between;margin-bottom:9px">';
+    h+='<div><div style="font-weight:700;font-size:13px">'+d.cname+'</div><div style="font-size:10px;color:var(--m2)">'+(isSeller?'البائع':'المشتري')+' &mdash; مع: '+other+'</div></div>';
+    h+='<div style="text-align:right"><div style="color:var(--g);font-weight:900;font-family:Arial;font-size:14px">'+N(d.price)+' ﷼</div><div style="font-size:10px;color:var(--m)">عمولتك: '+N(d.comm)+' ﷼</div></div></div>';
+    if(d.revealed){
+      h+='<div class="contact-card"><div class="contact-lb">'+(isSeller?'رقم المشتري':'رقم البائع')+' &mdash; '+other+'</div><div class="contact-ph">'+otherPh+'</div>';
+    var otherRating = getUserRating(other);
+    if(otherRating) { h+='<div style="margin-top:4px">'+starsHTML(otherRating.avg)+'<span style="font-size:10px;color:var(--m2);margin-right:4px">('+otherRating.count+' تقييم)</span></div>'; }
+    h+='</div>';
+    } else {
+      h+='<div style="background:rgba(214,48,48,.06);border:1px solid rgba(214,48,48,.18);border-radius:8px;padding:9px;font-size:11px;color:#ff9090;margin-bottom:9px">';
+      h+='&#x1F512; الرقم مخفي حتى دفع الطرفين<br>البائع: '+(d.sp?'&#x2705;':'&#x23F3;')+' | المشتري: '+(d.bp?'&#x2705;':'&#x23F3;')+'</div>';
+      if(!myPaid){
+        h+='<button class="bp" style="width:100%;margin-bottom:8px" data-did="'+d.id+'" data-role="'+role+'" onclick="var btn=this;openComm(btn.getAttribute(\'data-did\'),btn.getAttribute(\'data-role\'))">ادفع عمولتك '+N(d.comm)+' ريال</button>';
+      } else {
+        h+='<div style="color:var(--grn);font-size:11px;margin-bottom:8px">&#x2705; دفعت &mdash; بانتظار الطرف الآخر</div>';
+      }
+    }
+    h+='<div style="display:flex;gap:6px">';
+    h+='<button class="bo" style="flex:1;font-size:11px" data-did="'+d.id+'" onclick="var b=this;openChatFor(b.getAttribute(\'data-did\'))">&#x1F4AC; محادثة</button>';
+    h+='<button class="bo" style="flex:1;font-size:11px;color:var(--red);border-color:var(--red)" data-did="'+d.id+'" onclick="var b=this;openCompFor(b.getAttribute(\'data-did\'))">&#x1F6A8; شكوى</button>';
+    // Rating button - only show after deal revealed
+    if(d.revealed) {
+        var alreadyRated = RATINGS.find(function(r){return r.dealId===d.id && r.from===CU.name;});
+        if(!alreadyRated) {
+            h+='<button class="bp" style="flex:1;font-size:11px" data-did="'+d.id+'" data-other="'+other+'" onclick="var b=this;openRateModal(b.getAttribute(\'data-did\'),b.getAttribute(\'data-other\'))">&#x2B50; قيّم</button>';
+        } else {
+            h+='<div style="flex:1;text-align:center;font-size:11px;color:var(--g2)">'+starsHTML(alreadyRated.stars)+'</div>';
+        }
+    }
+    h+='</div></div>';
+  });
+  el.innerHTML=h;
+}
+
+// ═══ CHAT ═══
+function openChatFor(did){chatDid=did;var d=deals.find(function(x){return x.id===did;});if(!d)return;var other=(CU&&d.seller.name===CU.name)?d.winner.name:d.seller.name;document.getElementById('chatTtl').textContent='محادثة &mdash; '+other;renderChat(d);openM('mChat');}
+function renderChat(d){var b=document.getElementById('chatMsgs');if(!d.chat.length){b.innerHTML='<div style="text-align:center;color:var(--m2);font-size:11px;padding:10px">لا رسائل بعد</div>';return;}var h='';d.chat.forEach(function(m){var me=CU&&m.u===CU.name;h+='<div class="cmsg '+(me?'me':'them')+'"><div class="cu">'+m.u+'</div>'+m.txt+'</div>';});b.innerHTML=h;b.scrollTop=b.scrollHeight;}
+function doChat(){if(!CU)return;var inp=document.getElementById('chatInp');var txt=inp.value.trim();if(!txt)return;if(blocked(txt)){toast('ممنوع إرسال أرقام أو وسائل التواصل','er');return;}var d=deals.find(function(x){return x.id===chatDid;});if(!d)return;d.chat.push({u:CU.name,txt:txt});inp.value='';renderChat(d);}
+
+// ═══ COMPLAINTS ═══
+function openCompFor(did){commDid=did;document.getElementById('compText').value='';openM('mComp');}
+function doComp(){var txt=document.getElementById('compText').value.trim();if(!txt){toast('اشرح التفاصيل','er');return;}var tMap={fraud:'صفقة مضروبة',fake:'سيارة وهمية',desc:'وصف غير مطابق',contact:'لا يرد',other:'أخرى'};var type=document.getElementById('compType').value;var d=deals.find(function(x){return x.id===commDid;});var isSeller=d&&CU&&d.seller.name===CU.name;complaints.push({id:'C'+Date.now(),dealId:commDid,cname:d?d.cname:'—',filer:CU.name,filerPh:CU.phone,against:d?(isSeller?d.winner.name:d.seller.name):'—',type:tMap[type]||type,text:txt,status:'open',date:new Date().toLocaleDateString('ar')});closeM('mComp');toast('تم إرسال الشكوى','go');updateAdminBadge();}
+
+// ═══ VIP ═══
+function openVipPromote(){var sel=document.getElementById('vipCarSel');var mine=CU?CARS.filter(function(c){return c.seller===CU.name&&c.status==='live';}):[];if(!mine.length){toast('ما عندك سيارات حية','er');return;}sel.innerHTML='<option value="">-- اختر --</option>'+mine.map(function(c){return '<option value="'+c.id+'">'+c.brand+' '+c.model+' '+c.year+'</option>';}).join('');openM('mVip');}
+function selVip(days,price,btn){selVipData={days:days,price:price};document.querySelectorAll('#mVip .pcard').forEach(function(b){b.classList.remove('sel');});btn.classList.add('sel');}
+function doPayVip(){var cid=parseInt(document.getElementById('vipCarSel').value);if(!cid){toast('اختر سيارة','er');return;}var car=CARS.find(function(c){return c.id===cid;});if(!car)return;if(vipSlots.find(function(v){return v.carId===cid&&v.endTime>Date.now();})){toast('السيارة في VIP بالفعل','er');return;}closeM('mVip');openPayModal('دفع VIP','عرض VIP '+selVipData.days+' أيام',selVipData.price,function(){vipSlots.push({carId:cid,seller:CU.name,endTime:Date.now()+selVipData.days*24*3600000,days:selVipData.days,price:selVipData.price});toast('تم النشر في VIP','go');renderVIP();});}
+function renderVIP(){
+  vipSlots=vipSlots.filter(function(v){return v.endTime>Date.now();});
+  var active=vipSlots.map(function(v){return CARS.find(function(c){return c.id===v.carId;});}).filter(Boolean);
+  var box=document.getElementById('vipBox');
+  if(!active.length){box.innerHTML='<div class="vip-empty">&#x1F451; لا توجد سيارات VIP &mdash; كن أول من يعرض!</div>';stopVipTimer();return;}
+  var h='<div style="position:relative;border-radius:10px;overflow:hidden;border:1px solid rgba(200,149,42,.3)">';
+  h+='<div id="vipTrack" style="display:flex;transition:transform .6s ease;will-change:transform">';
+  active.forEach(function(c,i){
+    var slot=vipSlots.find(function(v){return v.carId===c.id;});
+    var rem=slot?Math.max(0,Math.ceil((slot.endTime-Date.now())/3600000)):0;
+    var rt=rem>24?Math.ceil(rem/24)+' يوم':rem+' ساعة';
+    var media=c.imgs.length?'<img src="'+c.imgs[0].url+'" style="width:100%;height:170px;object-fit:cover;display:block" alt="">':'<div style="width:100%;height:170px;background:var(--d3);display:flex;align-items:center;justify-content:center;font-size:48px">&#x1F697;</div>';
+    h+='<div style="min-width:100%;position:relative;cursor:pointer" onclick="openDetail('+c.id+')">';
+    h+=media;
+    h+='<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.8) 0%,transparent 50%)"></div>';
+    h+='<div style="position:absolute;top:8px;right:8px;background:linear-gradient(135deg,var(--g),var(--g2));color:#000;font-size:9px;font-weight:900;padding:2px 9px;border-radius:20px">&#x1F451; VIP &bull; '+rt+'</div>';
+    h+='<div style="position:absolute;bottom:0;left:0;right:0;padding:10px 12px">';
+    h+='<div style="font-size:15px;font-weight:900;color:#fff">'+c.brand+' '+c.model+' '+c.year+'</div>';
+    h+='<div style="font-size:13px;font-weight:700;color:var(--g2);font-family:Arial">'+N(c.cb)+' ريال</div></div>';
+    h+='<div id="vp'+i+'" style="position:absolute;bottom:0;left:0;height:3px;background:var(--g2);width:0%"></div>';
+    h+='</div>';
+  });
+  h+='</div>';
+  if(active.length>1){
+    h+='<div style="display:flex;justify-content:center;gap:5px;padding:7px 0;background:var(--d2)">';
+    active.forEach(function(_,i){h+='<button class="vdot'+(i===0?' on':'')+'" style="width:'+(i===0?'14':'6')+'px;height:6px;border-radius:3px;background:'+(i===0?'var(--g)':'var(--b2)')+';border:none;cursor:pointer;padding:0;transition:.2s" onclick="goVip('+i+')"></button>';});
+    h+='</div>';
+  }
+  h+='</div>';
+  box.innerHTML=h;
+  vipIdx=0;startVipTimer(active.length);
+}
+function goVip(i){var n=vipSlots.filter(function(v){return v.endTime>Date.now();}).length;if(!n)return;vipIdx=((i%n)+n)%n;var t=document.getElementById('vipTrack');if(t)t.style.transform='translateX('+vipIdx*100+'%)';document.querySelectorAll('.vdot').forEach(function(d,j){d.style.width=j===vipIdx?'14px':'6px';d.style.background=j===vipIdx?'var(--g)':'var(--b2)';});vipBarStart=Date.now();}
+function startVipTimer(n){stopVipTimer();if(!n)return;vipBarStart=Date.now();vipTmr=setInterval(function(){var el2=Date.now()-vipBarStart;var p2=Math.min(100,el2/300);var b2=document.getElementById('vp'+vipIdx);if(b2)b2.style.width=p2+'%';if(el2>=30000){goVip(vipIdx+1);vipBarStart=Date.now();}},100);}
+var RATINGS = [];
+var rateCtx = null;
+var selStarVal = 0;
+var rateLabels = ['','سيء جداً','سيء','مقبول','جيد','ممتاز!'];
+function openRateModal(did,toName){rateCtx={did:did,toName:toName};selStarVal=0;document.getElementById('rateWho').textContent=toName;document.getElementById('rateComment').value='';document.getElementById('rateLabel').textContent='';document.querySelectorAll('.star').forEach(function(s){s.classList.remove('on');});openM('mRate');}
+function selStar(v){selStarVal=v;document.querySelectorAll('.star').forEach(function(s){s.classList.toggle('on',parseInt(s.getAttribute('data-v'))<=v);});document.getElementById('rateLabel').textContent=rateLabels[v]||'';}
+function submitRate(){if(!selStarVal){toast('اختر عدد النجوم','er');return;}if(!rateCtx)return;var already=RATINGS.find(function(r){return r.dealId===rateCtx.did&&r.from===CU.name;});if(already){toast('قيّمت هذه الصفقة مسبقاً','er');closeM('mRate');return;}RATINGS.push({id:'R'+Date.now(),dealId:rateCtx.did,from:CU.name,to:rateCtx.toName,stars:selStarVal,comment:document.getElementById('rateComment').value.trim(),date:new Date().toLocaleDateString('ar')});closeM('mRate');toast('تم إرسال تقييمك','go');renderDeals();}
+function getUserRating(name){var ur=RATINGS.filter(function(r){return r.to===name;});if(!ur.length)return null;var avg=ur.reduce(function(a,r){return a+r.stars;},0)/ur.length;return{avg:Math.round(avg*10)/10,count:ur.length};}
+function starsHTML(avg){var h='';for(var i=1;i<=5;i++){h+='<span style="color:'+(i<=Math.round(avg)?'var(--g2)':'var(--b2)')+'">&#x2605;</span>';}return h;}
+function stopVipTimer(){if(vipTmr){clearInterval(vipTmr);vipTmr=null;}}
+
+// ═══ HOME RENDER ═══
+function renderHome(){
+  var s=(document.getElementById('fSearch').value||'').toLowerCase();
+  var b=document.getElementById('fBrand').value;
+  var st=document.getElementById('fStatus').value;
+  var list=CARS.filter(function(c){
+    if(c.status==='pending'||c.status==='rejected')return false;
+    if(s&&(c.brand+' '+c.model+' '+c.year).toLowerCase().indexOf(s)<0)return false;
+    if(b&&c.brand!==b)return false;
+    if(st&&c.status!==st)return false;
+    return true;
+  });
+  var g=document.getElementById('homeGrid');
+  if(!list.length){g.innerHTML=E('&#x1F50D;','ما في نتائج');return;}
+  var h='';
+  list.forEach(function(c){
+    var thumb=c.imgs.length?'<img src="'+c.imgs[0].url+'" style="width:100%;height:100%;object-fit:cover" alt="">':'<div class="cph">&#x1F697;</div>';
+    var badge=c.status==='live'?'<div class="blive">حي</div>':c.status==='pending'?'<div class="bpend">مراجعة</div>':'<div class="bend">منتهي</div>';
+    h+='<div class="card" onclick="openDetail('+c.id+')">';
+    h+='<div class="cimg">'+thumb+badge+'</div>';
+    h+='<div class="cbody">';
+    h+='<div class="ctitle">'+c.brand+' '+c.model+' '+c.year+'</div>';
+    h+='<div class="cmeta">'+c.city+' &bull; '+N(c.km)+' كم &bull; '+c.bids.length+' مزايدة</div>';
+    h+='<div class="pbox"><div class="plbl">السعر الحالي</div><span class="pbig" id="cbp'+c.id+'">'+N(c.cb)+' ريال</span><div class="psmall">بدأ من '+N(c.sp)+' ريال</div></div>';
+    if(c.status==='live'){
+      h+='<div class="ctmr" id="ctm'+c.id+'">&#x23F1; '+T(c.end-Date.now())+'</div>';
+      h+='<div class="bidrow" onclick="event.stopPropagation()">';
+      h+='<input class="bidinp" id="bi'+c.id+'" type="number" placeholder="أدخل مبلغ المزايدة" inputmode="numeric" min="'+(c.cb+1)+'">';
+      h+='<button class="bidbtn" onclick="needL(function(){doBid('+c.id+')})">زايد</button>';
+      h+='</div>';
+    } else if(c.bids.length){
+      h+='<div style="font-size:11px;color:var(--m2);text-align:center">&#x1F3C6; '+c.bids[c.bids.length-1].u+'</div>';
+    } else {
+      h+='<div style="font-size:11px;color:var(--m);text-align:center">لا مزايدات</div>';
+    }
+    h+='</div></div>';
+  });
+  g.innerHTML=h;
+  stats();
+}
+
+// ═══ DETAIL ═══
+function openDetail(cid){
+  var c=CARS.find(function(x){return x.id===cid;});if(!c)return;
+  document.getElementById('dtTitle').textContent=c.brand+' '+c.model+' '+c.year;
+  var h='';
+  if(c.imgs.length){
+    h+='<div style="display:flex;gap:6px;overflow-x:auto;margin-bottom:11px;-webkit-overflow-scrolling:touch">';
+    c.imgs.forEach(function(im){h+='<img src="'+im.url+'" style="width:130px;height:90px;object-fit:cover;border-radius:7px;flex-shrink:0;cursor:pointer" onclick="viewImg(\''+im.url+'\')" alt="">';});
+    h+='</div>';
+  } else {
+    h+='<div style="background:var(--d3);border-radius:9px;padding:24px;text-align:center;font-size:48px;margin-bottom:11px">&#x1F697;</div>';
+  }
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px">';
+  h+='<div style="background:var(--d3);padding:9px;border-radius:8px"><div style="font-size:10px;color:var(--m2)">المدينة</div><div style="font-weight:700;font-size:12px">'+c.city+'</div></div>';
+  h+='<div style="background:var(--d3);padding:9px;border-radius:8px"><div style="font-size:10px;color:var(--m2)">الكيلومترات</div><div style="font-weight:700;font-size:12px;font-family:Arial">'+N(c.km)+' كم</div></div>';
+  h+='<div style="background:var(--d3);padding:9px;border-radius:8px"><div style="font-size:10px;color:var(--m2)">البائع</div><div style="font-weight:700;font-size:12px">'+c.seller+'</div></div>';
+  h+='<div style="background:var(--d3);padding:9px;border-radius:8px"><div style="font-size:10px;color:var(--m2)">السعر الحالي</div><div id="dtpr'+c.id+'" style="font-weight:900;color:var(--g);font-family:Arial;font-size:14px">'+N(c.cb)+' ريال</div></div>';
+  h+='</div>';
+  var isMySell=CU&&c.seller===CU.name;
+  var isLive=c.status==='live';
+  if(isLive){
+    h+='<div style="background:rgba(214,48,48,.08);border:1px solid rgba(214,48,48,.2);border-radius:8px;padding:8px;margin-bottom:10px;display:flex;align-items:center;gap:6px"><span>&#x23F1;</span><span id="dttmr'+c.id+'" style="color:var(--red);font-weight:700;font-size:13px">'+T(c.end-Date.now())+'</span><span style="font-size:11px;color:var(--m2)">متبقي</span></div>';
+    if(!isMySell){
+      var mn=c.cb+1;
+      h+='<div class="dtbbox">';
+      h+='<div class="dtbtitle">&#x1F528; زايد الآن</div>';
+      h+='<div class="dtbmin">الحد الأدنى: '+N(mn)+' ريال</div>';
+      h+='<div class="dtbrow"><input id="dtbi'+c.id+'" class="dtbinp" type="number" placeholder="'+mn+'" min="'+mn+'" inputmode="numeric"><button class="dtbbtn" onclick="dtBid('+c.id+')">زايد</button></div>';
+      h+='<div class="dtbquick">';
+      [500,1000,2000,5000].forEach(function(a){h+='<button onclick="qBid('+c.id+','+(c.cb+a)+')">'+(a>=1000?(a/1000)+'K':a)+'</button>';});
+      h+='</div></div>';
+    } else {
+      h+='<div class="gbox">&#x2705; هذه سيارتك</div>';
+    }
+  } else if(c.bids.length){
+    h+='<div style="background:var(--d3);border-radius:8px;padding:9px;margin-bottom:10px;text-align:center"><div style="font-size:10px;color:var(--m2)">&#x1F3C6; الفائز</div><div style="font-weight:700;color:var(--g)">'+c.bids[c.bids.length-1].u+'</div><div style="font-family:Arial;font-size:13px;font-weight:700">'+N(c.cb)+' ريال</div></div>';
+  }
+  h+='<p style="color:var(--m2);font-size:12px;margin-bottom:11px;line-height:1.7">'+c.desc+'</p>';
+  if(c.docs.length){
+    h+='<div style="font-weight:700;margin-bottom:7px;font-size:12px">&#x1F4C4; الأوراق ('+c.docs.length+')</div>';
+    c.docs.forEach(function(d){h+='<div class="firow"><span>'+(d.type==='application/pdf'?'&#x1F4C4;':'&#x1F5BC;')+'</span><span class="finm">'+d.name+'</span><a href="'+d.url+'" target="_blank" style="color:var(--g);font-size:10px;text-decoration:none">عرض</a></div>';});
+  } else {
+    h+='<div style="color:var(--m);font-size:11px;margin-bottom:9px">لا توجد أوراق</div>';
+  }
+  h+='<div style="font-weight:700;margin-bottom:7px;font-size:12px">سجل المزايدات ('+c.bids.length+')</div>';
+  h+='<div class="blist">'+bidListHTML(c.bids)+'</div>';
+  document.getElementById('dtBody').innerHTML=h;
+  openM('mDetail');
+}
+function bidListHTML(bids){if(!bids.length)return'<div style="color:var(--m);font-size:11px;text-align:center;padding:10px">لا مزايدات بعد</div>';var h='';bids.slice().reverse().forEach(function(b,i){h+='<div class="brow'+(i===0?' top':'')+'"><span style="color:var(--m2)">'+(i===0?'&#x1F3C6; ':'')+b.u+'</span><div style="text-align:right"><div style="color:var(--g);font-weight:700;font-family:Arial">'+N(b.a)+' ريال</div><div style="color:var(--m);font-size:9px;font-family:Arial">'+b.t+'</div></div></div>';});return h;}
+function viewImg(url){document.getElementById('mImgSrc').src=url;openM('mImgView');}
+
+// ═══ MY LIST ═══
+function renderList(){
+  var mine=CU?CARS.filter(function(c){return c.seller===CU.name;}):[];
+  var el=document.getElementById('listBody');
+  if(!mine.length){el.innerHTML=E('&#x1F697;','ما أضفت سيارات بعد');return;}
+  var h='';
+  mine.forEach(function(c){
+    var thumb=c.imgs.length?'<img src="'+c.imgs[0].url+'" style="width:100%;height:100%;object-fit:cover" alt="">':'<div class="cph">&#x1F697;</div>';
+    var badge=c.status==='live'?'<div class="blive">حي</div>':c.status==='pending'?'<div class="bpend">مراجعة</div>':'<div class="bend">منتهي</div>';
+    h+='<div class="card" onclick="openDetail('+c.id+')">';
+    h+='<div class="cimg">'+thumb+badge+'</div>';
+    h+='<div class="cbody">';
+    h+='<div class="ctitle">'+c.brand+' '+c.model+' '+c.year+'</div>';
+    h+='<div class="cmeta">'+c.city+' &bull; '+N(c.km)+' كم</div>';
+    h+='<div class="pbox"><span class="pbig" style="font-size:16px">'+N(c.cb)+' ريال</span></div>';
+    h+='</div>';
+    var canClose=c.status==='live';
+    var canDel=!c.dealId;
+    if(canClose||canDel){
+      h+='<div style="display:flex;gap:6px;padding:0 11px 11px" onclick="event.stopPropagation()">';
+      if(canClose)h+='<button style="flex:1;background:rgba(208,112,32,.1);border:1px solid rgba(208,112,32,.2);color:#D07020;padding:7px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer" data-cid="'+c.id+'" onclick="var b=this;closeMyListing(parseInt(b.getAttribute(\'data-cid\')))">&#x270B; إنهاء</button>';
+      if(canDel)h+='<button style="flex:1;background:rgba(214,48,48,.08);border:1px solid rgba(214,48,48,.2);color:var(--red);padding:7px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer" data-cid="'+c.id+'" onclick="var b=this;delMyCar(parseInt(b.getAttribute(\'data-cid\')))">&#x1F5D1; حذف</button>';
+      h+='</div>';
+    }
+    h+='</div>';
+  });
+  el.innerHTML=h;
+}
+function closeMyListing(cid){var c=CARS.find(function(x){return x.id===cid;});if(!c)return;if(!confirm('إنهاء المزاد؟'))return;c.status='ended';c.end=Date.now();toast('تم إنهاء المزاد','ok');renderList();renderHome();stats();}
+function delMyCar(cid){var c=CARS.find(function(x){return x.id===cid;});if(!c)return;if(c.dealId){toast('لا يمكن حذف سيارة لها صفقة','er');return;}var r=prompt('سبب الحذف؟');if(r===null)return;CARS.splice(CARS.findIndex(function(x){return x.id===cid;}),1);toast('تم الحذف','go');renderList();renderHome();stats();updateAdminBadge();}
+
+// ═══ ADMIN ═══
+function aTab(t){curAT=t;document.querySelectorAll('.atab').forEach(function(b){b.classList.remove('on');});var btn=document.getElementById('at'+t[0].toUpperCase()+t.slice(1));if(btn)btn.classList.add('on');renderAdminContent();}
+function renderAdminContent(){var el=document.getElementById('adminBody');if(curAT==='users')renderAdminUsers(el);else if(curAT==='cars')renderAdminCars(el);else if(curAT==='deals')renderAdminDeals(el);else if(curAT==='comp')renderAdminComp(el);else renderAdminVip(el);}
+function renderAdminUsers(el){
+  var h='';
+  USERS.forEach(function(u){
+    h+='<div class="urow"><div style="font-size:18px">&#x1F464;</div>';
+    h+='<div style="flex:1;min-width:0"><div class="uname2">'+u.name+'</div><div class="umeta">'+u.phone+'</div></div>';
+    h+='<span class="ubadge ub-'+u.status+'">'+(u.status==='active'?'نشط':u.status==='pending'?'انتظار':'محظور')+'</span>';
+    h+='<div style="display:flex;gap:4px;flex-wrap:wrap">';
+    if(u.status==='pending')h+='<button class="ua ua-approve" data-uid="'+u.id+'" onclick="var b=this;approveUser(b.getAttribute(\'data-uid\'))">&#x2705; قبول</button>';
+    if(u.status!=='banned')h+='<button class="ua ua-ban" data-uid="'+u.id+'" onclick="var b=this;banUser(b.getAttribute(\'data-uid\'))">&#x1F6AB; طرد</button>';
+    else h+='<button class="ua" style="background:rgba(45,111,212,.1);color:var(--blue)" data-uid="'+u.id+'" onclick="var b=this;unbanUser(b.getAttribute(\'data-uid\'))">رفع الحظر</button>';
+    h+='</div></div>';
+  });
+  el.innerHTML=h||E('&#x1F464;','لا مستخدمون');
+}
+function approveUser(uid){var u=USERS.find(function(x){return x.id===uid;});if(u){u.status='active';toast('تم القبول','ok');renderAdminContent();updateAdminBadge();}}
+function banUser(uid){var u=USERS.find(function(x){return x.id===uid;});if(u){u.status='banned';toast('تم الطرد','er');renderAdminContent();}}
+function unbanUser(uid){var u=USERS.find(function(x){return x.id===uid;});if(u){u.status='active';toast('تم رفع الحظر','ok');renderAdminContent();}}
+function renderAdminCars(el){
+  var pend=CARS.filter(function(c){return c.status==='pending';});
+  var rest=CARS.filter(function(c){return c.status!=='pending'&&c.status!=='rejected';});
+  var h='';
+  if(pend.length){h+='<div style="font-weight:700;color:#D07020;margin-bottom:7px">بانتظار المراجعة ('+pend.length+')</div>';pend.forEach(function(c){h+=adminCarRow(c,true);});h+='<div style="height:1px;background:var(--b);margin:11px 0"></div>';}
+  h+='<div style="font-weight:700;margin-bottom:7px">&#x2705; المعتمدة</div>';
+  rest.forEach(function(c){h+=adminCarRow(c,false);});
+  el.innerHTML=h||E('&#x1F697;','لا سيارات');
+}
+function adminCarRow(c,isPend){
+  var thumb=c.imgs.length?'<img src="'+c.imgs[0].url+'" style="width:100%;height:100%;object-fit:cover" alt="">':c.brand[0];
+  var h='<div class="acar"><div class="acthumb">'+thumb+'</div>';
+  h+='<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:12px">'+c.brand+' '+c.model+' '+c.year+'</div><div style="font-size:10px;color:var(--m2)">'+c.seller+' | '+c.city+'</div></div>';
+  h+='<div style="display:flex;gap:4px;flex-wrap:wrap">';
+  h+='<button class="ua" style="background:rgba(45,111,212,.1);color:var(--blue)" data-cid="'+c.id+'" onclick="var b=this;openDetail(parseInt(b.getAttribute(\'data-cid\')))">عرض</button>';
+  if(isPend){
+    h+='<button class="ua ua-approve" data-cid="'+c.id+'" onclick="var b=this;approveCar(parseInt(b.getAttribute(\'data-cid\')))">&#x2705;</button>';
+    h+='<button class="ua ua-del" data-cid="'+c.id+'" onclick="var b=this;rejectCar(parseInt(b.getAttribute(\'data-cid\')))">&#x274C;</button>';
+  } else {
+    h+='<button class="ua ua-del" data-cid="'+c.id+'" onclick="var b=this;removeCar(parseInt(b.getAttribute(\'data-cid\')))">&#x1F5D1;</button>';
+  }
+  h+='</div></div>';
+  return h;
+}
+function approveCar(cid){var c=CARS.find(function(x){return x.id===cid;});if(c){c.status='live';c.approved=true;toast('تم القبول','ok');renderAdminContent();renderHome();stats();}}
+function rejectCar(cid){var c=CARS.find(function(x){return x.id===cid;});if(c){c.status='rejected';toast('تم الرفض','er');renderAdminContent();}}
+function removeCar(cid){if(!confirm('حذف؟'))return;CARS.splice(CARS.findIndex(function(x){return x.id===cid;}),1);toast('تم الحذف','er');renderAdminContent();renderHome();stats();}
+function renderAdminDeals(el){if(!deals.length){el.innerHTML=E('&#x1F4B0;','لا صفقات');return;}var h='';deals.forEach(function(d){h+='<div style="background:var(--d3);border:1px solid var(--b);border-radius:8px;padding:10px;margin-bottom:7px"><div style="font-weight:700;font-size:12px">'+d.cname+'</div><div style="font-size:10px;color:var(--m2)">البائع: '+d.seller.name+' | المشتري: '+d.winner.name+'</div><div style="display:flex;gap:9px;margin-top:5px;font-size:11px"><span style="color:var(--g);font-family:Arial;font-weight:700">'+N(d.price)+' ﷼</span><span style="color:'+(d.sp?'var(--grn)':'var(--m)')+'\">'+(d.sp?'&#x2705;':'&#x23F3;')+' بائع</span><span style="color:'+(d.bp?'var(--grn)':'var(--m)')+'\">'+(d.bp?'&#x2705;':'&#x23F3;')+' مشترٍ</span></div></div>';});el.innerHTML=h;}
+function renderAdminComp(el){if(!complaints.length){el.innerHTML=E('&#x1F6A8;','لا شكاوى');return;}var h='';var sMap={open:'مفتوحة',reviewing:'مراجعة',resolved:'حلّت'};complaints.slice().reverse().forEach(function(c){h+='<div style="background:var(--d3);border:1px solid var(--b);border-radius:8px;padding:10px;margin-bottom:7px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div style="font-weight:700;font-size:12px">'+c.type+'</div><span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(214,48,48,.15);color:var(--red)">'+sMap[c.status]+'</span></div><div style="font-size:10px;color:var(--m2);margin-bottom:5px">'+c.filer+' ضد '+c.against+'</div><div style="font-size:11px;color:var(--m2);background:var(--d2);border-radius:7px;padding:8px">'+c.text+'</div></div>';});el.innerHTML=h;}
+function renderAdminVip(el){if(!vipSlots.length){el.innerHTML=E('&#x1F451;','لا عروض VIP');return;}var h='';vipSlots.forEach(function(v,i){var car=CARS.find(function(c){return c.id===v.carId;});var rem=Math.max(0,Math.ceil((v.endTime-Date.now())/3600000));h+='<div style="background:var(--d3);border:1px solid rgba(200,149,42,.3);border-radius:8px;padding:10px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700;color:var(--g);font-size:12px">&#x1F451; '+(car?car.brand+' '+car.model:'—')+'</div><div style="font-size:10px;color:var(--m2)">'+v.seller+' | '+v.days+' يوم | '+v.price+' ﷼</div><div style="font-size:10px;color:'+(rem<6?'var(--red)':'var(--grn)')+'">'+rem+(rem>24?'h':' ساعة')+'</div></div><button class="ua ua-del" data-idx="'+i+'" onclick="var b=this;removeVip(parseInt(b.getAttribute(\'data-idx\')))">&#x1F5D1;</button></div>';});el.innerHTML=h;}
+function removeVip(i){vipSlots.splice(i,1);toast('تم الإلغاء','er');renderAdminContent();renderVIP();}
+function updateAdminBadge(){var n=CARS.filter(function(c){return c.status==='pending';}).length+complaints.filter(function(c){return c.status==='open';}).length;var btn=document.getElementById('nvAdmin');if(btn&&n>0)btn.textContent='&#x1F6E1; إدارة ('+n+')';else if(btn)btn.textContent='&#x1F6E1; إدارة';}
+
+// ═══ PAGE NAV ═══
+function goP(p){
+  document.querySelectorAll('.page').forEach(function(x){x.classList.remove('on');});
+  document.querySelectorAll('.nv').forEach(function(x){x.classList.remove('on');});
+  var pg=document.getElementById('pg'+p[0].toUpperCase()+p.slice(1));if(pg)pg.classList.add('on');
+  var nv=document.getElementById('nv'+p[0].toUpperCase()+p.slice(1));if(nv)nv.classList.add('on');
+  if(p==='bids'){var el=document.getElementById('bidsBody');if(!myBids.length){el.innerHTML=E('&#x1F528;','ما زايدت بعد');return;}var h='';myBids.forEach(function(b){h+='<div class="brow"><span style="color:var(--m2)">'+b.car+'</span><div style="text-align:right"><div style="color:var(--g);font-weight:700;font-family:Arial">'+N(b.a)+' ريال</div><div style="color:var(--m);font-size:9px">'+b.t+'</div></div></div>';});el.innerHTML=h;}
+  if(p==='list'){if(!CU){needL(function(){goP('list');});return;}renderList();}
+  if(p==='deals'){if(!CU){needL(function(){goP('deals');});return;}renderDeals();}
+  if(p==='admin'){if(!CU||!CU.isAdmin){toast('للمدير فقط','er');goP('home');return;}renderAdminContent();updateAdminBadge();}
+}
+
+function copyAcc(){
+  var acc='201000010006080282538';
+  if(navigator.clipboard){navigator.clipboard.writeText(acc).then(function(){toast('تم نسخ رقم الحساب','go');});}
+  else{var el=document.createElement('input');el.value=acc;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);toast('تم نسخ رقم الحساب','go');}
+}
+function copyIBAN(){
+  var iban='SA9880000201608010282538';
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(iban).then(function(){toast('تم نسخ رقم الآيبان','go');});
+  } else {
+    var el=document.createElement('input');
+    el.value=iban;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    toast('تم نسخ رقم الآيبان','go');
+  }
+}
+var RATINGS=[];
+var rateCtx=null;
+var selStarVal=0;
+var rateLabels=['','سيء جداً','سيء','مقبول','جيد','ممتاز!'];
+function openRateModal(did,toName){rateCtx={did:did,toName:toName};selStarVal=0;document.getElementById('rateWho').textContent=toName;document.getElementById('rateComment').value='';document.getElementById('rateLabel').textContent='';document.querySelectorAll('.star').forEach(function(s){s.classList.remove('on');});openM('mRate');}
+function selStar(v){selStarVal=v;document.querySelectorAll('.star').forEach(function(s){s.classList.toggle('on',parseInt(s.getAttribute('data-v'))<=v);});document.getElementById('rateLabel').textContent=rateLabels[v]||'';}
+function submitRate(){if(!selStarVal){toast('اختر عدد النجوم','er');return;}if(!rateCtx)return;var already=RATINGS.find(function(r){return r.dealId===rateCtx.did&&r.from===CU.name;});if(already){toast('قيّمت مسبقاً','er');closeM('mRate');return;}RATINGS.push({id:'R'+Date.now(),dealId:rateCtx.did,from:CU.name,to:rateCtx.toName,stars:selStarVal,comment:document.getElementById('rateComment').value.trim(),date:new Date().toLocaleDateString('ar')});closeM('mRate');toast('تم إرسال تقييمك','go');renderDeals();}
+function getUserRating(name){var ur=RATINGS.filter(function(r){return r.to===name;});if(!ur.length)return null;var avg=ur.reduce(function(a,r){return a+r.stars;},0)/ur.length;return{avg:Math.round(avg*10)/10,count:ur.length};}
+function starsHTML(avg){var h='';for(var i=1;i<=5;i++){h+='<span style="color:'+(i<=Math.round(avg)?'var(--g2)':'var(--b2)')+'">&#x2605;</span>';}return h;}
+
+// ═══ TIMERS ═══
+setInterval(function(){
+  CARS.forEach(function(c){
+    if(c.status==='live'){
+      var r=c.end-Date.now();
+      if(r<=0){endAuction(c);}
+      else{
+        var el=document.getElementById('ctm'+c.id);if(el)el.textContent='⏱ '+T(r);
+        var dt=document.getElementById('dttmr'+c.id);if(dt)dt.textContent=T(r);
+      }
+    }
+  });
+},1000);
+
+document.getElementById('fSearch').addEventListener('input',renderHome);
+document.getElementById('fBrand').addEventListener('change',renderHome);
+document.getElementById('fStatus').addEventListener('change',renderHome);
+document.getElementById('chatInp').addEventListener('keydown',function(e){if(e.key==='Enter')doChat();});
+
+// ═══ INIT ═══
+renderHome();
+renderVIP();
+stats();
+</script>
+
+<!-- IMG VIEWER (separate simple modal) -->
+<div id="mImgView" style="position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:300;display:none;align-items:center;justify-content:center;padding:10px" onclick="this.style.display='none'">
+  <img id="mImgSrc" style="max-width:100%;max-height:90vh;object-fit:contain;border-radius:8px">
+</div>
+
+
+<!-- RATING MODAL -->
+<div class="ov" id="mRate"><div class="modal">
+  <div class="mhdr"><span class="mtitle">&#x2B50; تقييم الطرف الآخر</span><button class="mclose" onclick="closeM('mRate')">&#x2715;</button></div>
+  <div class="mbody" style="text-align:center">
+    <div style="font-size:13px;color:var(--m2);margin-bottom:6px">كيف كانت تجربتك مع</div>
+    <div id="rateWho" style="font-size:16px;font-weight:700;margin-bottom:14px"></div>
+    <div class="stars" id="rateStars">
+      <span class="star" data-v="1" onclick="selStar(1)">&#x2605;</span>
+      <span class="star" data-v="2" onclick="selStar(2)">&#x2605;</span>
+      <span class="star" data-v="3" onclick="selStar(3)">&#x2605;</span>
+      <span class="star" data-v="4" onclick="selStar(4)">&#x2605;</span>
+      <span class="star" data-v="5" onclick="selStar(5)">&#x2605;</span>
+    </div>
+    <div id="rateLabel" style="font-size:13px;color:var(--g2);height:20px;margin-bottom:14px"></div>
+    <div class="fg"><textarea class="ft" id="rateComment" placeholder="اكتب تعليقك (اختياري)..." style="min-height:70px;text-align:right"></textarea></div>
+  </div>
+  <div class="mftr"><button class="bo" onclick="closeM('mRate')">لاحقاً</button><button class="bp" onclick="submitRate()">&#x2B50; إرسال التقييم</button></div>
+</div></div>
+</body>
+</html>
