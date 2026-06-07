@@ -321,11 +321,11 @@ const ovFn=onValue(ovRef,(snap)=>{
 
 const stlRef=ref(db,'lower_students_v1');
 onValue(stlRef,(snap)=>{
-  if(snap.exists()){STL=snap.val();if(wDays.length)renderDay(dIdx);}
+  if(snap.exists()){STL=snap.val();if(wDays.length)calcWeekAbsCount().then(()=>renderDay(dIdx));}
 });
 const stuRef=ref(db,'upper_students_v1');
 onValue(stuRef,(snap)=>{
-  if(snap.exists()){STU=snap.val();if(wDays.length)renderDay(dIdx);}
+  if(snap.exists()){STU=snap.val();if(wDays.length)calcWeekAbsCount().then(()=>renderDay(dIdx));}
 });
 
 let dayData={lower:{ATT:{},noA:{}},upper:{ATT:{},noA:{}}};
@@ -461,6 +461,8 @@ window.loadAll=async function(){
   if(wOff===0&&ti>=0)dIdx=ti; else if(dIdx>=wDays.length)dIdx=0;
   listenToDay(wDays[dIdx]);
   rwn();rdt();rh();
+  // احسب غيابات الأسبوع بعد ثانيتين (بعد تحميل البيانات)
+  setTimeout(()=>calcWeekAbsCount().then(()=>{if(wDays.length)renderDay(dIdx);}),2000);
 };
 
 function rh(){const now=new Date(),h=toH(now);document.getElementById('hDate').textContent=`${DN[now.getDay()]} ${h.d} ${HM[h.m-1]} ${h.y}هـ`;}
