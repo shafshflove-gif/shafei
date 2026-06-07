@@ -540,8 +540,10 @@ function renderDay(idx){
             const sms=ph?`<button class="xb xb-sms" data-ph="${ph}" data-name="${s.name.replace(/"/g,'&quot;')}" data-act="sms">💬 SMS</button>`:'';
             const ed=`<button class="xb xb-edit" data-gid="${sg.id}" data-ci="${ci}" data-idx="${s._i}" data-name="${s.name.replace(/"/g,'&quot;')}" data-ph="${ph||''}" data-act="edit">✏️</button>`;
             const wk=weekAbsCount[`${sg.id}_${ci}_${s._i}`]||0;
-            const star=wk>=3?`<span title="غاب ${wk} مرات هذا الأسبوع" style="color:#f4a261;font-size:.85rem;font-weight:900;">⭐</span>`:'';
-            b+=`<div class="stu-item"><span class="stu-num">${i+1}</span><span class="stu-name">${star}${s.name}</span><div class="stu-acts">${ptag}${wa}${sms}${ed}</div></div>`;
+            const starBadge=wk>=3
+              ?`<span title="غاب ${wk} مرات هذا الأسبوع" style="font-size:1rem;filter:none;opacity:1;cursor:default;" >⭐</span>`
+              :`<span title="لم يتجاوز 3 غيابات" style="font-size:1rem;filter:grayscale(1);opacity:0.35;cursor:default;">⭐</span>`;
+            b+=`<div class="stu-item"><span class="stu-num">${i+1}</span><span class="stu-name">${s.name}</span><div class="stu-acts">${ptag}${wa}${sms}${ed}${starBadge}</div></div>`;
           });
         }
       });
