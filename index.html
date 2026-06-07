@@ -69,10 +69,8 @@ header p{color:#a8c4e0;font-size:.78rem;margin-top:3px;}
 .xb-sms{background:#0f3460;color:#fff;}
 .xb-wa{background:#25d366;color:#fff;}
 .xb-edit{background:#f0f0f0;color:#555;}
-/* Live indicator badge */
 .live-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(42,157,143,.12);color:#2a9d8f;border-radius:20px;padding:3px 10px;font-size:.72rem;font-weight:700;}
 .live-dot{width:6px;height:6px;border-radius:50%;background:#2a9d8f;animation:pulse 1.5s infinite;}
-/* Modals */
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
 .ov.hidden{display:none;}
 .sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:560px;max-height:88vh;display:flex;flex-direction:column;}
@@ -117,10 +115,8 @@ header p{color:#a8c4e0;font-size:.78rem;margin-top:3px;}
 .ed-cancel{background:#f0f0f0;color:#555;}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(70px);background:#1a1a2e;color:#fff;padding:9px 20px;border-radius:22px;font-size:.83rem;font-weight:600;z-index:9999;transition:transform .25s;pointer-events:none;}
 .toast.show{transform:translateX(-50%) translateY(0);}
-/* Sync flash animation */
 @keyframes syncFlash{0%{background:rgba(42,157,143,.15)}100%{background:transparent}}
 .sync-flash{animation:syncFlash .8s ease-out;}
-/* VCF Modal */
 .vcf-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;display:flex;align-items:flex-end;justify-content:center;}
 .vcf-ov.hidden{display:none;}
 .vcf-sheet{background:#fff;border-radius:22px 22px 0 0;width:100%;max-width:560px;max-height:90vh;display:flex;flex-direction:column;}
@@ -286,7 +282,6 @@ const app=initializeApp({
 });
 const db=getDatabase(app);
 
-// ===== أرقام الجوالات من PDF =====
 const PP={"s1_0":{"0":"966532299598","1":"966533220414","2":"966578087669","3":"966578466360","4":"966551405681","5":"966556418160","6":"966505513055","7":"966555545079","8":"966500625246","9":"966509733395","10":"966504788669","11":"966546000823","12":"966578812816","13":"966554517189","14":"966566555059","15":"966552700056","16":"966509193979","17":"966542022219","18":"966540655234","19":"966507589613","20":"966576113713","21":"966503632503","22":"966504771647","23":"966503892953"},"s1_1":{"0":"966554532249","1":"966551058728","2":"966554950554","3":"966537408185","4":"966578617459","5":"966566033777","6":"966506738315","7":"966566545699","8":"966571259237","9":"966560043341","10":"966554836958","11":"966558055538","12":"966544182037","13":"966535909947","14":"966542316669","15":"966557388694","16":"966563843497","17":"966555098482","18":"966559623541","19":"966555252836","20":"966535512551","21":"966553197173","22":"966562340229"},"s1_2":{"0":"966509966103","1":"966598707621","2":"966535781793","3":"966552093095","4":"966531255915","5":"966560548910","6":"966558571550","7":"966504910758","8":"966555591992","9":"966569569638","10":"966542201427","11":"966553815589","12":"966566778864","13":"966507586821","14":"966566778725","15":"966568355594","16":"966533301972","17":"966591310956","18":"966532481677","19":"966507561628","20":"966537879210","21":"966537269795","22":"966507921269","23":"966552062443"},"s1_3":{"0":"966536385212","1":"966504237311","2":"966556339029","3":"966577159835","4":"966538613577","5":"966554155802","6":"966540202032","7":"966501122637","8":"966567031178","9":"966558883115","10":"966557760301","11":"966580554323","12":"966599435207","13":"966534998133","14":"966561156118","15":"966556633356","16":"966501774494","17":"966504508087","18":"966508923066","19":"966503390798","20":"966507237727","21":"966563003039"},"s2_0":{"0":"966507548620","1":"966503713489","2":"966537050392","3":"966544554924","4":"966594379746","5":"966557731506","6":"966504753372","7":"966599403017","8":"966566793942","9":"966544070243","10":"966500008635","11":"966565888776","12":"966557832883","13":"966561557767","14":"966534998133","15":"966560007916","16":"966541500646","17":"966555992950","18":"966590400670","19":"966567679094","20":"966536444711","21":"966578573081","22":"966566355363","23":"966542033735","24":"966550014299","25":"966566001633","26":"966545230440","27":"966537050392"},"s2_1":{"0":"966508039591","1":"966547205710","2":"966501298685","3":"966568763199","4":"966560910080","5":"966506165616","6":"966548771446","7":"966555074434","8":"966594234360","9":"966532853961","10":"966555190648","11":"966565660077","12":"966555547048","13":"966540405125","14":"966504810355","15":"966535550316","16":"966531657879","17":"966558948196","18":"966560204039","19":"966597557899","20":"966538382513","21":"966591709654","22":"966543302434","23":"966505544425","24":"966503553095","25":"966559923360","26":"966544533857","27":"966503549547","28":"966555551463","29":"966557449204"},"s2_2":{"0":"966555684958","1":"966545055529","2":"966550109935","3":"966543445735","4":"966504481633","5":"966505560613","6":"966563244036","7":"966563391233","8":"966561524819","9":"966555678835","10":"966503520706","11":"966555603818","12":"966599886789","13":"966561917993","14":"966536036034","15":"966509471160","16":"966566690400","17":"966556414508","18":"966544054119","19":"966553547025","20":"966502696155","21":"966558774875","22":"966549223000","23":"966592228084","24":"966565502226","25":"966505124656","26":"966556946180"},"s2_3":{"0":"966575098030","1":"966506811803","2":"966541693727","3":"966566600155","4":"966544666505","5":"966540004792","6":"966551595770","7":"966554535065","8":"966539779509","9":"966555392278","10":"966535445558","11":"966541818335","12":"966561589530","13":"966533039415","14":"966502679189","15":"966504232320","16":"966509547133","17":"966559823706","18":"966544099838","19":"966501883011","20":"966554508545","21":"966544904145","22":"966566699047","23":"966559890515","24":"966587677355","25":"966558982269","26":"966503968676","27":"966550095510"},"s3_0":{"0":"966557399018","1":"966591692697","2":"966544453951","3":"966552820618","4":"966550492859","5":"966555506272","6":"966569942299","7":"966580026945","8":"966571259237","9":"966554229236","10":"966555547540","11":"966545418363","12":"966544180726","13":"966582588805","14":"966554777494","15":"966502509093","16":"966543477404","17":"966556081608","18":"966506659567","19":"966506500951","20":"966555503623","21":"966590459962","22":"966545421121","23":"966546216521","24":"966500552031","25":"966537311641","26":"966507589613","27":"966531402633","28":"966541514249","29":"966555561319","30":"966542171756","31":"966549949939","32":"966556054352","33":"966503355908"},"s3_1":{"0":"966556120194","1":"966504773583","2":"966555548803","3":"966504347557","4":"966534932363","5":"966544617554","6":"966561107707","7":"966534348343","8":"966563559571","9":"966554533722","10":"966534666343","11":"966504771838","12":"966552191154","13":"966508359716","14":"966551920140","15":"966504621837","16":"966562228954","17":"966566408066","18":"966555565644","19":"966505511067","20":"966558373886","21":"966502006222","22":"966567699265","23":"966566185657","24":"966504773583","25":"966560887714","26":"966555277213","27":"966557207328","28":"966590008045","29":"966559480635","30":"966556149495","31":"966552005308","32":"966534207016","33":"966567216565","34":"966566545699","35":"966505568538"},"s3_2":{"0":"966536146922","1":"966535199882","2":"966594161338","3":"966592167240","4":"966538612800","5":"966560020038","6":"966509991440","7":"966552724426","8":"966553678575","9":"966543909083","10":"966509367739","11":"966558528560","12":"966542795554","13":"966563339311","14":"966563366916","15":"966562067568","16":"966501032502","17":"966545545898","18":"966549861103","19":"966564564099","20":"966561066166","21":"966567493891","22":"966500258496","23":"966561722789","24":"966532525258","25":"966555963141","26":"966568800003","27":"966551333079","28":"966544333311","29":"966555105789","30":"966550078150","31":"966550104089","32":"966565895964","33":"966507708890","34":"966598355697","35":"966504322557","36":"966551598833"},"s3_3":{"0":"966508046163","1":"966566952834","2":"966595978783","3":"966501760755","4":"966555734507","5":"966505449178","6":"966537269795","7":"966506711912","8":"966507426656","9":"966504799067","10":"966555301672","11":"966554089435","12":"966537116119","13":"966503527689","14":"966555571632","15":"966568698477","16":"966542033735","17":"966580459508","18":"966537862866","19":"966543929414","20":"966541585939","21":"966501226265","22":"966504783922","23":"966535863243","24":"966555510827","25":"966500044650","26":"966542993854","27":"966560461821","28":"966555826474","29":"966566676099","30":"966543397993","31":"966502773223","32":"966555550745","33":"966556270648"},"s4_0":{"0":"966597557899","1":"966544180726","2":"966541835058","3":"966560767906","4":"966551557277","5":"966555562916","6":"966555562128","7":"966503535450","8":"966555575071","9":"966577060575","10":"966504514974","11":"966560653199","12":"966507808095","13":"966542316669","14":"966555572197","15":"966501313558","16":"966567840000","17":"966500424088","18":"966543005553","19":"966558845325","20":"966581113373","21":"966561524819","22":"966502618882","23":"966548485559","24":"966506532163","25":"966501764526","26":"966501660021","27":"966550095510","28":"966580901155","29":"966506532163"},"s4_1":{"0":"966597392000","1":"966553331680","2":"966554513807","3":"966537632562","4":"966545996618","5":"966555625685","6":"966580037776","7":"966573240526","8":"966507308591","9":"966555051130","10":"966577195362","11":"966580656878","12":"966509325527","13":"966576920121","14":"966598964974","15":"966530785982","16":"966534859816","17":"966500648313","18":"966565609200","19":"966566151314","20":"966508039591","21":"966545461467","22":"966505527658","23":"966500840005","24":"966545930545","25":"966558883115","26":"966548916677","27":"966534735937","28":"966537020232"},"s4_2":{"0":"966567601833","1":"966509717625","2":"966566025297","3":"966500212565","4":"966578342256","5":"966576187254","6":"966554852630","7":"966559327046","8":"966500660820","9":"966501297992","10":"966555992950","11":"966555538532","12":"966502773747","13":"966504799621","14":"966545628249","15":"966555564858","16":"966550926805","17":"966580291823","18":"966501956730","19":"966597561532","20":"966542063073","21":"966558055538","22":"966576105004","23":"966540543044","24":"966508382559","25":"966506212249","26":"966548062828","27":"966568728873","28":"966555895136"},"s4_3":{"0":"966555510674","1":"966500027708","2":"966560022396","3":"966555568538","4":"966566555059","5":"966568120855","6":"966560040144","7":"966504347557","8":"966551767214","9":"966580182506","10":"966500095780","11":"966577296565","12":"966555020065","13":"966500873386","14":"966503527902","15":"966551557277","16":"966596214011","17":"966555527387","18":"966560008281","19":"966545313320","20":"966509309304","21":"966566904429","22":"966502297560","23":"966506070983","24":"966505560613","25":"966503519854","26":"966507586821","27":"966566344881","28":"966555895136"},"s5_0":{"0":"966551453255","1":"966540830458","2":"966532747509","3":"966555505656","4":"966541584689","5":"966504788175","6":"966568351502","7":"966559935507","8":"966565167073","9":"966555510615","10":"966562313287","11":"966578375636","12":"966564822499","13":"966555582616","14":"966535478825","15":"966580843130","16":"966532855530","17":"966555545402","18":"966535379253","19":"966555521061","20":"966557377066","21":"966547360893","22":"966503807608","23":"966505525219","24":"966568402472","25":"966502376685","26":"966555215228","27":"966508988203","28":"966555536341","29":"966503526826","30":"966503892953","31":"966565512308","32":"966597990891"},"s5_1":{"0":"966508645815","1":"966505969767","2":"966555508264","3":"966598700842","4":"966502642818","5":"966508926766","6":"966554515122","7":"966555546124","8":"966545224977","9":"966547443932","10":"966532351696","11":"966555872733","12":"966500155951","13":"966555550857","14":"966565095524","15":"966541602946","16":"966599403017","17":"966535445558","18":"966555696197","19":"966555872733","20":"966566122333","21":"966559823706","22":"966562563234","23":"966564666882","24":"966509733395","25":"966557399018","26":"966548872410","27":"966549861103","28":"966504402185","29":"966547064573","30":"966502883009","31":"966555584677","32":"966562269656","33":"966559407736"},"s5_2":{"0":"966566440430","1":"966507645455","2":"966506519012","3":"966555708650","4":"966536408887","5":"966507708890","6":"966531300208","7":"966565112333","8":"966554613593","9":"966537116119","10":"966500044650","11":"966566056196","12":"966537632562","13":"966554174258","14":"966566987855","15":"966504543971","16":"966503558700","17":"966500512514","18":"966544617554","19":"966566363444","20":"966568535116","21":"966549485779","22":"966552547401","23":"966503549547","24":"966541113070","25":"966551336962","26":"966581911046","27":"966500182198","28":"966560387973","29":"966504532366","30":"966555419255","31":"966558646191","32":"966531556598"},"s5_3":{"0":"966558845325","1":"966500042599","2":"966565609100","3":"966561545854","4":"966599997684","5":"966507074492","6":"966545736807","7":"966563501428","8":"966583534536","9":"966555037871","10":"966545475377","11":"966505535761","12":"966549888280","13":"966564232320","14":"966533301972","15":"966569596033","16":"966509278502","17":"966598697640","18":"966566690400","19":"966565579033","20":"966555767171","21":"966504772240","22":"966505500639","23":"966507651628","24":"966558694740","25":"966554535065","26":"966555840175","27":"966503506496","28":"966555603923","29":"966532080666","30":"966565111660","31":"966543666205","32":"966504506756"},"s6_0":{"0":"966530577836","1":"966555252836","2":"966536025182","3":"966535933069","4":"966554777525","5":"966560045490","6":"966566952834","7":"966507636420","8":"966535606864","9":"966530130414","10":"966560653199","11":"966555538532","12":"966507745607","13":"966555542866","14":"966555575071","15":"966509059675","16":"966594498143","17":"966543796259","18":"966555568776","19":"966566033777","20":"966549949939","21":"966569607516","22":"966565456900","23":"966557806043","24":"966506514106","25":"966506665173","26":"966577069034","27":"966555568776","28":"966543477404","29":"966503397534","30":"966506070983","31":"966568091023","32":"966504543932"},"s6_1":{"0":"966537263447","1":"966547205710","2":"966562313287","3":"966545421121","4":"966505554481","5":"966540830458","6":"966509848799","7":"966544070243","8":"966555870517","9":"966505598519","10":"966560066669","11":"966553030005","12":"966507724789","13":"966582745920","14":"966542316669","15":"966509848799","16":"966556231811","17":"966559446589","18":"966554539859","19":"966504506040","20":"966509006732","21":"966542675573","22":"966568058775","23":"966502060551","24":"966555543421","25":"966550665676","26":"966598355697","27":"966543442629","28":"966551453255","29":"966566545699","30":"966560601211"},"s6_2":{"0":"966536358767","1":"966505567340","2":"966555571345","3":"966560008281","4":"966545949636","5":"966537116119","6":"966535597979","7":"966558214007","8":"966545224977","9":"966534187771","10":"966555571632","11":"966561066166","12":"966565557599","13":"966555678189","14":"966559908655","15":"966541215281","16":"966555826474","17":"966555545466","18":"966553428051","19":"966555531637","20":"966546205621","21":"966596956565","22":"966555547726","23":"966533332303","24":"966537020232","25":"966541652579","26":"966542412207","27":"966538625215","28":"966532248426","29":"966552005308","30":"966566943620","31":"966541741577","32":"966503529974"},"s6_3":{"0":"966504532042","1":"966557040247","2":"966569819141","3":"966546747468","4":"966551634252","5":"966507586821","6":"966545836217","7":"966506165616","8":"966546751751","9":"966567807142","10":"966504524204","11":"966569487855","12":"966555992950","13":"966506631944","14":"966502509093","15":"966562280144","16":"966555419255","17":"966504532843","18":"966558132043","19":"966545192882","20":"966506607748","21":"966544078866","22":"966561484116","23":"966590008045","24":"966565100341","25":"966547360893","26":"966555909188","27":"966542690960","28":"966500856246","29":"966557399736","30":"966556602258","31":"966566030781"}};
 
 const SML=[
@@ -305,11 +300,8 @@ const HM=['محرم','صفر','ربيع الأول','ربيع الآخر','جم�
 let wOff=0,dIdx=0,wDays=[],STL={},STU={};
 let ov={};
 let absentToday=[];
-
-// ============================================================
-// ✅ المزامنة الفورية — المستمعون النشطون
-// ============================================================
-// نخزن مراجع المستمعين لإلغائها عند تغيير اليوم/الأسبوع
+// غيابات الأسبوع لكل طالب: weekAbsCount['gid_ci_idx'] = عدد أيام الغياب
+let weekAbsCount={};
 let activeListeners=[];
 
 function clearListeners(){
@@ -317,7 +309,6 @@ function clearListeners(){
   activeListeners=[];
 }
 
-// 1) مزامنة أرقام الجوال — دائماً نشطة
 const ovRef=ref(db,'phone_overrides');
 const ovFn=onValue(ovRef,(snap)=>{
   const prev=JSON.stringify(ov);
@@ -328,7 +319,6 @@ const ovFn=onValue(ovRef,(snap)=>{
   }
 });
 
-// 2) مزامنة بيانات الطلاب
 const stlRef=ref(db,'lower_students_v1');
 onValue(stlRef,(snap)=>{
   if(snap.exists()){STL=snap.val();if(wDays.length)renderDay(dIdx);}
@@ -338,34 +328,74 @@ onValue(stuRef,(snap)=>{
   if(snap.exists()){STU=snap.val();if(wDays.length)renderDay(dIdx);}
 });
 
-// 3) مزامنة بيانات الغياب لليوم المحدد فورياً
 let dayData={lower:{ATT:{},noA:{}},upper:{ATT:{},noA:{}}};
+
+// حساب غيابات الأسبوع كله لكل طالب
+async function calcWeekAbsCount(){
+  weekAbsCount={};
+  for(const d of wDays){
+    const key=dk(d);
+    let lATT={},uATT={};
+    if(key===dk(wDays[dIdx])){
+      lATT=dayData.lower.ATT;
+      uATT=dayData.upper.ATT;
+    }else{
+      try{
+        const[ls,us]=await Promise.all([
+          get(ref(db,`lower_d_${key}`)),
+          get(ref(db,`upper_d_${key}`))
+        ]);
+        lATT=ls.exists()?ls.val():{};
+        uATT=us.exists()?us.val():{};
+      }catch(e){}
+    }
+    // المرحلة الدنيا
+    SML.forEach(sg=>{
+      sg.cls.forEach((_,ci)=>{
+        const a=lATT[sg.id]?lATT[sg.id][`c${ci}`]||{}:{};
+        const sts=STL[sg.id]?STL[sg.id][`c${ci}`]||[]:[];
+        sts.forEach((s,idx)=>{
+          if(a[s.id]===true){
+            const k=`${sg.id}_${ci}_${idx}`;
+            weekAbsCount[k]=(weekAbsCount[k]||0)+1;
+          }
+        });
+      });
+    });
+    // المرحلة العليا
+    SMU.forEach(sg=>{
+      sg.cls.forEach((_,ci)=>{
+        const a=uATT[sg.id]?uATT[sg.id][`c${ci}`]||{}:{};
+        const sts=STU[sg.id]?STU[sg.id][`c${ci}`]||[]:[];
+        sts.forEach((s,idx)=>{
+          if(a[s.id]===true){
+            const k=`${sg.id}_${ci}_${idx}`;
+            weekAbsCount[k]=(weekAbsCount[k]||0)+1;
+          }
+        });
+      });
+    });
+  }
+}
 
 function listenToDay(date){
   clearListeners();
   const key=dk(date);
-
-  // المسارات الأربعة للغياب
   const paths=[
     {r:ref(db,`lower_d_${key}`),       target:'lower', sub:'ATT'},
     {r:ref(db,`upper_d_${key}`),       target:'upper', sub:'ATT'},
     {r:ref(db,`lower_no_absent_${key}`),target:'lower', sub:'noA'},
     {r:ref(db,`upper_no_absent_${key}`),target:'upper', sub:'noA'},
   ];
-
   paths.forEach(({r:dbRef,target,sub})=>{
     const fn=onValue(dbRef,(snap)=>{
       dayData[target][sub]=snap.exists()?snap.val():{};
       if(wDays.length){
-        renderDay(dIdx);
-        // وميض خفيف يدل على تحديث مباشر
-        flashSync();
+        calcWeekAbsCount().then(()=>{renderDay(dIdx);flashSync();});
       }
     });
     activeListeners.push({r:dbRef,fn});
   });
-
-  // أظهر مؤشر "مباشر"
   document.getElementById('liveBadge').style.display='inline-flex';
   setSUI('live','مباشر 🟢');
 }
@@ -373,11 +403,10 @@ function listenToDay(date){
 function flashSync(){
   const sec=document.getElementById('sections');
   sec.classList.remove('sync-flash');
-  void sec.offsetWidth; // reflow
+  void sec.offsetWidth;
   sec.classList.add('sync-flash');
 }
 
-// ============================================================
 function gph(gid,ci,idx){
   const ok=ov[`${gid}_${ci}_${idx}`];
   if(ok)return ok;
@@ -430,7 +459,6 @@ window.loadAll=async function(){
   const tk=dk(new Date());
   const ti=wDays.findIndex(d=>dk(d)===tk);
   if(wOff===0&&ti>=0)dIdx=ti; else if(dIdx>=wDays.length)dIdx=0;
-  // بدء الاستماع الفوري لليوم المحدد
   listenToDay(wDays[dIdx]);
   rwn();rdt();rh();
 };
@@ -452,7 +480,6 @@ function rdt(){
     b.textContent=`${DN[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`;
     b.onclick=()=>{
       dIdx=i;
-      // عند تغيير اليوم → استمع لليوم الجديد فوراً
       dayData={lower:{ATT:{},noA:{}},upper:{ATT:{},noA:{}}};
       listenToDay(wDays[dIdx]);
       rdt();
@@ -512,7 +539,9 @@ function renderDay(idx){
             const wa=ph?`<button class="xb xb-wa" data-ph="${ph}" data-name="${s.name.replace(/"/g,'&quot;')}" data-act="wa">🟢 WA</button>`:'';
             const sms=ph?`<button class="xb xb-sms" data-ph="${ph}" data-name="${s.name.replace(/"/g,'&quot;')}" data-act="sms">💬 SMS</button>`:'';
             const ed=`<button class="xb xb-edit" data-gid="${sg.id}" data-ci="${ci}" data-idx="${s._i}" data-name="${s.name.replace(/"/g,'&quot;')}" data-ph="${ph||''}" data-act="edit">✏️</button>`;
-            b+=`<div class="stu-item"><span class="stu-num">${i+1}</span><span class="stu-name">${s.name}</span><div class="stu-acts">${ptag}${wa}${sms}${ed}</div></div>`;
+            const wk=weekAbsCount[`${sg.id}_${ci}_${s._i}`]||0;
+            const star=wk>=3?`<span title="غاب ${wk} مرات هذا الأسبوع" style="color:#f4a261;font-size:.85rem;font-weight:900;">⭐</span>`:'';
+            b+=`<div class="stu-item"><span class="stu-num">${i+1}</span><span class="stu-name">${star}${s.name}</span><div class="stu-acts">${ptag}${wa}${sms}${ed}</div></div>`;
           });
         }
       });
@@ -543,6 +572,7 @@ function renderDay(idx){
 window.changeWeek=function(d){
   wOff+=d;dIdx=0;
   dayData={lower:{ATT:{},noA:{}},upper:{ATT:{},noA:{}}};
+  weekAbsCount={};
   wDays=gwd(wOff);
   listenToDay(wDays[dIdx]);
   rwn();rdt();rh();
@@ -670,9 +700,9 @@ window.exportTodayExcel=function(){
   showT('تم تصدير Excel ✅');
 };
 
+// ===== تصدير Excel الأسبوعي مع نجمة ⭐ للغائب 3 مرات فأكثر =====
 window.exportWeekExcel=async function(){
   showT('جارٍ تجهيز الأسبوع...');
-  // جلب بيانات باقي الأيام بـ get عادي (ليست اليوم الحالي)
   const allData={};
   for(const d of wDays){
     const key=dk(d);
@@ -696,19 +726,23 @@ window.exportWeekExcel=async function(){
       const hdr=['#','اسم الطالب','رقم الجوال',...wDays.map(d=>`${DN[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`),'إجمالي'];
       const rows=[hdr];
       sts.forEach((s,idx)=>{
-        const row=[idx+1,s.name,gph(sg.id,ci,idx)||'—'];
+        const row=[idx+1,null,gph(sg.id,ci,idx)||'—'];
         let tot=0;
         wDays.forEach(d=>{
           const dd=allData[dk(d)]||{lower:{ATT:{}},upper:{ATT:{}}};
           const att=(isL?dd.lower.ATT:dd.upper.ATT);
           const a=att[sg.id]?att[sg.id][`c${ci}`]||{}:{};
-          const ab=a[s.id]===true;if(ab)tot++;
+          const ab=a[s.id]===true;
+          if(ab)tot++;
           row.push(ab?'غ':'');
         });
-        row.push(tot);rows.push(row);
+        // ⭐ نجمة أمام اسم الطالب إذا غاب 3 مرات أو أكثر في الأسبوع
+        row[1] = tot >= 3 ? `⭐ ${s.name}` : s.name;
+        row.push(tot);
+        rows.push(row);
       });
       const ws=XLSX.utils.aoa_to_sheet(rows);
-      ws['!cols']=[{wch:5},{wch:40},{wch:16},...wDays.map(()=>({wch:13})),{wch:9}];
+      ws['!cols']=[{wch:5},{wch:42},{wch:16},...wDays.map(()=>({wch:13})),{wch:9}];
       XLSX.utils.book_append_sheet(wb,ws,cls.replace(/\//g,'-').slice(0,31));
     });
   });
@@ -718,129 +752,102 @@ window.exportWeekExcel=async function(){
 };
 
 // ===== VCF Export =====
-const VCF_LIMIT = 256; // حد واتساب لكل ملف
-
-function buildVcfContent(contacts) {
-  return contacts.map((c, i) => {
-    const name = c.name.replace(/;/g, ' ').replace(/:/g, ' ');
-    const phone = c.phone.startsWith('+') ? c.phone : `+${c.phone}`;
+const VCF_LIMIT=256;
+function buildVcfContent(contacts){
+  return contacts.map((c)=>{
+    const name=c.name.replace(/;/g,' ').replace(/:/g,' ');
+    const phone=c.phone.startsWith('+')?c.phone:`+${c.phone}`;
     return `BEGIN:VCARD\nVERSION:3.0\nFN:🔔غياب | ${name}\nN:🔔غياب | ${name};;;\nTEL;TYPE=CELL:${phone}\nEND:VCARD`;
   }).join('\n');
 }
-
-async function shareVCF(vcfText, filename) {
-  const file = new File([vcfText], filename, {type: 'text/vcard'});
-  // لو الجوال يدعم مشاركة الملفات (أغلب الجوالات الحديثة)
-  if (navigator.canShare && navigator.canShare({files: [file]})) {
-    try {
-      await navigator.share({
-        files: [file],
-        title: 'جهات اتصال أولياء أمور الغائبين',
-      });
-      return;
-    } catch(e) {
-      if (e.name === 'AbortError') return; // المستخدم ألغى
-    }
+async function shareVCF(vcfText,filename){
+  const file=new File([vcfText],filename,{type:'text/vcard'});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    try{await navigator.share({files:[file],title:'جهات اتصال أولياء أمور الغائبين'});return;}
+    catch(e){if(e.name==='AbortError')return;}
   }
-  // خطة بديلة للمتصفحات القديمة: تحميل عادي
-  const url = URL.createObjectURL(file);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename; a.click();
+  const url=URL.createObjectURL(file);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;a.click();
   URL.revokeObjectURL(url);
 }
-// للتوافق مع الكود القديم
-function downloadVcf(content, filename) {
-  shareVCF(content, filename);
-}
+function downloadVcf(content,filename){shareVCF(content,filename);}
 
-window.openVCF = function() {
-  // جمع الغائبين الذين عندهم أرقام صالحة (أكثر من 8 أرقام)
-  const contacts = absentToday.filter(s => {
-    if (!s.phone) return false;
-    const digits = s.phone.replace(/\D/g, '');
-    return digits.length > 8;
-  }).map(s => ({name: s.name, phone: s.phone, cls: s.cls}));
-
-  const total = contacts.length;
-  const noPhone = absentToday.length - total;
-  const filesCount = Math.ceil(total / VCF_LIMIT);
-  const date = wDays[dIdx];
-
-  // إحصائيات
-  document.getElementById('vcfStats').innerHTML = `
+window.openVCF=function(){
+  const contacts=absentToday.filter(s=>{
+    if(!s.phone)return false;
+    const digits=s.phone.replace(/\D/g,'');
+    return digits.length>8;
+  }).map(s=>({name:s.name,phone:s.phone,cls:s.cls}));
+  const total=contacts.length;
+  const noPhone=absentToday.length-total;
+  const filesCount=Math.ceil(total/VCF_LIMIT);
+  const date=wDays[dIdx];
+  document.getElementById('vcfStats').innerHTML=`
     <div class="vcf-stat"><div class="vn">${absentToday.length}</div><div class="vl">إجمالي الغائبين</div></div>
     <div class="vcf-stat"><div class="vn" style="color:#25d366">${total}</div><div class="vl">لديهم أرقام</div></div>
     <div class="vcf-stat"><div class="vn" style="color:#e65100">${noPhone}</div><div class="vl">بدون رقم</div></div>
     <div class="vcf-stat"><div class="vn" style="color:#4a0080">${filesCount}</div><div class="vl">ملف VCF</div></div>
   `;
-
-  // نص الرسالة
-  const dateStr = dlbl(date);
-  const msgText = `السلام عليكم ورحمة الله وبركاته\nنُحيطكم علماً بأن ابنكم الطالب غائب اليوم\n📅 ${dateStr}\nنرجو التواصل مع إدارة المدرسة.\n\nمدرسة عمورية الابتدائية 🏫`;
-  document.getElementById('vcfMsgPreview').innerText = msgText;
-  window._vcfMsg = msgText;
-
-  // قائمة الملفات
-  let filesHtml = '';
-  if (total === 0) {
-    filesHtml = '<div style="text-align:center;color:#aaa;padding:20px;font-size:.85rem">لا يوجد أرقام مسجلة للغائبين اليوم</div>';
-  } else if (filesCount === 1) {
-    filesHtml = `<div class="vcf-file">
+  const dateStr=dlbl(date);
+  const msgText=`السلام عليكم ورحمة الله وبركاته\nنُحيطكم علماً بأن ابنكم الطالب غائب اليوم\n📅 ${dateStr}\nنرجو التواصل مع إدارة المدرسة.\n\nمدرسة عمورية الابتدائية 🏫`;
+  document.getElementById('vcfMsgPreview').innerText=msgText;
+  window._vcfMsg=msgText;
+  let filesHtml='';
+  if(total===0){
+    filesHtml='<div style="text-align:center;color:#aaa;padding:20px;font-size:.85rem">لا يوجد أرقام مسجلة للغائبين اليوم</div>';
+  }else if(filesCount===1){
+    filesHtml=`<div class="vcf-file">
       <div class="vcf-file-info">
         <div class="vcf-file-name">📇 غياب_${date.getDate()}-${date.getMonth()+1}.vcf</div>
         <div class="vcf-file-count">${total} جهة اتصال</div>
       </div>
       <button class="vcf-dl" onclick="downloadVcfPart(0)">⬇️ تنزيل</button>
     </div>`;
-  } else {
-    for (let i = 0; i < filesCount; i++) {
-      const from = i * VCF_LIMIT + 1;
-      const to = Math.min((i + 1) * VCF_LIMIT, total);
-      filesHtml += `<div class="vcf-file">
+  }else{
+    for(let i=0;i<filesCount;i++){
+      const from=i*VCF_LIMIT+1;
+      const to=Math.min((i+1)*VCF_LIMIT,total);
+      filesHtml+=`<div class="vcf-file">
         <div class="vcf-file-info">
           <div class="vcf-file-name">📇 غياب_جزء${i+1}_${date.getDate()}-${date.getMonth()+1}.vcf</div>
-          <div class="vcf-file-count">${from} – ${to} (${to - from + 1} جهة)</div>
+          <div class="vcf-file-count">${from} – ${to} (${to-from+1} جهة)</div>
         </div>
         <button class="vcf-dl" onclick="downloadVcfPart(${i})">⬇️ تنزيل</button>
       </div>`;
     }
-    filesHtml += `<button style="width:100%;background:#0f3460;color:#fff;border:none;border-radius:10px;padding:10px;font-family:Tajawal,sans-serif;font-size:.85rem;font-weight:900;cursor:pointer;margin-top:4px;" onclick="downloadAllVcf()">⬇️ تنزيل جميع الملفات (${filesCount})</button>`;
+    filesHtml+=`<button style="width:100%;background:#0f3460;color:#fff;border:none;border-radius:10px;padding:10px;font-family:Tajawal,sans-serif;font-size:.85rem;font-weight:900;cursor:pointer;margin-top:4px;" onclick="downloadAllVcf()">⬇️ تنزيل جميع الملفات (${filesCount})</button>`;
   }
-  document.getElementById('vcfFilesList').innerHTML = filesHtml;
-  window._vcfContacts = contacts;
-  window._vcfDate = date;
-
+  document.getElementById('vcfFilesList').innerHTML=filesHtml;
+  window._vcfContacts=contacts;
+  window._vcfDate=date;
   document.getElementById('vcfModal').classList.remove('hidden');
 };
 
-window.downloadVcfPart = function(partIdx) {
-  const contacts = window._vcfContacts || [];
-  const date = window._vcfDate || wDays[dIdx];
-  const chunk = contacts.slice(partIdx * VCF_LIMIT, (partIdx + 1) * VCF_LIMIT);
-  const content = buildVcfContent(chunk);
-  const suffix = Math.ceil(contacts.length / VCF_LIMIT) > 1 ? `_جزء${partIdx + 1}` : '';
-  downloadVcf(content, `غياب${suffix}_${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}.vcf`);
-  showT(`✅ تم تنزيل الجزء ${partIdx + 1} (${chunk.length} جهة)`);
+window.downloadVcfPart=function(partIdx){
+  const contacts=window._vcfContacts||[];
+  const date=window._vcfDate||wDays[dIdx];
+  const chunk=contacts.slice(partIdx*VCF_LIMIT,(partIdx+1)*VCF_LIMIT);
+  const content=buildVcfContent(chunk);
+  const suffix=Math.ceil(contacts.length/VCF_LIMIT)>1?`_جزء${partIdx+1}`:'';
+  downloadVcf(content,`غياب${suffix}_${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}.vcf`);
+  showT(`✅ تم تنزيل الجزء ${partIdx+1} (${chunk.length} جهة)`);
 };
-
-window.downloadAllVcf = function() {
-  const contacts = window._vcfContacts || [];
-  const date = window._vcfDate || wDays[dIdx];
-  const filesCount = Math.ceil(contacts.length / VCF_LIMIT);
-  for (let i = 0; i < filesCount; i++) {
-    setTimeout(() => downloadVcfPart(i), i * 600);
-  }
+window.downloadAllVcf=function(){
+  const contacts=window._vcfContacts||[];
+  const date=window._vcfDate||wDays[dIdx];
+  const filesCount=Math.ceil(contacts.length/VCF_LIMIT);
+  for(let i=0;i<filesCount;i++){setTimeout(()=>downloadVcfPart(i),i*600);}
   showT(`⬇️ جارٍ تنزيل ${filesCount} ملفات...`);
 };
-
-window.copyVcfMsg = function() {
-  const msg = window._vcfMsg || '';
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(msg).then(() => showT('✅ تم نسخ الرسالة!'));
-  } else {
-    const ta = document.createElement('textarea');
-    ta.value = msg; document.body.appendChild(ta);
-    ta.select(); document.execCommand('copy');
+window.copyVcfMsg=function(){
+  const msg=window._vcfMsg||'';
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(msg).then(()=>showT('✅ تم نسخ الرسالة!'));
+  }else{
+    const ta=document.createElement('textarea');
+    ta.value=msg;document.body.appendChild(ta);
+    ta.select();document.execCommand('copy');
     document.body.removeChild(ta);
     showT('✅ تم نسخ الرسالة!');
   }
@@ -852,7 +859,6 @@ function showT(msg){
   setTimeout(()=>t.classList.remove('show'),3500);
 }
 
-// بدء التشغيل
 loadAll();
 </script>
 </body>
