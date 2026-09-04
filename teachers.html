@@ -1,1 +1,835 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جدول المعلمين</title>
+<style>
+  :root{
+    --ink:#1c1917;
+    --paper:#faf7f2;
+    --panel:#ffffff;
+    --line:#e7e1d8;
+    --accent:#2f6f5e;
+    --accent-dark:#204d41;
+    --muted:#8a8378;
+    --wait:#c0392b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Tahoma","Segoe UI",Arial,sans-serif;
+    min-height:100vh;
+  }
+  header{
+    padding:18px 16px 12px;
+    background:var(--panel);
+    border-bottom:2px solid var(--line);
+    position:sticky;
+    top:0;
+    z-index:5;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  h1{
+    margin:0;
+    font-size:19px;
+    letter-spacing:.3px;
+    color:var(--accent-dark);
+  }
+  .head-actions{display:flex;gap:8px;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  .icon-btn{
+    width:38px;height:38px;
+    border-radius:10px;
+    background:var(--accent);
+    color:#fff;
+    font-size:18px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .icon-btn.secondary{background:var(--panel); border:1.5px solid var(--line); color:var(--ink);}
+  .icon-btn.locked{background:#8a8378;}
+  .icon-btn.unlocked{background:#2f6f5e;}
+  main{padding:14px 12px 60px;}
+  .now-banner{
+    background:linear-gradient(135deg,var(--accent),var(--accent-dark));
+    color:#fff;
+    border-radius:14px;
+    padding:11px 16px;
+    margin-bottom:16px;
+    font-size:13px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+  }
+  .now-banner b{font-size:14px;}
 
+  .search-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+  }
+  .search-box{
+    width:100%;
+    max-width:420px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--panel);
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    padding:12px 14px;
+  }
+  .search-box .mag{font-size:20px;color:var(--accent);}
+  .search-box input{
+    flex:1;
+    border:none;
+    outline:none;
+    background:transparent;
+    font-family:inherit;
+    font-size:17px;
+    color:var(--ink);
+  }
+  .search-hint{
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
+    padding:40px 20px;
+  }
+  .search-hint .big-mag{font-size:54px;display:block;margin-bottom:10px;}
+  .results-list{
+    width:100%;
+    max-width:420px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .result-item{
+    border:none;
+    border-radius:12px;
+    padding:15px 18px;
+    font-size:18px;
+    font-weight:800;
+    letter-spacing:.2px;
+    text-align:right;
+    color:#ffffff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 2px 5px rgba(0,0,0,.12);
+  }
+  .result-item:active{filter:brightness(0.92);}
+  .result-item .arrow{color:rgba(255,255,255,.85);font-size:15px;}
+  .empty-msg{
+    text-align:center;
+    color:var(--muted);
+    padding:30px 10px;
+    font-size:14px;
+  }
+
+  /* status popup (lightweight) */
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(28,25,23,.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:25;
+    padding:20px;
+  }
+  .overlay.open{display:flex;}
+  .status-card{
+    background:var(--paper);
+    border-radius:18px;
+    padding:22px 20px;
+    width:100%;
+    max-width:340px;
+    text-align:center;
+  }
+  .status-card .t-name{font-size:18px;font-weight:bold;color:var(--accent-dark);margin-bottom:6px;}
+  .status-card .day-line{font-size:12px;color:var(--muted);margin-bottom:14px;}
+  .status-pill{
+    display:inline-block;
+    padding:12px 18px;
+    border-radius:12px;
+    font-size:17px;
+    font-weight:bold;
+    background:#eef4f1;
+    color:var(--accent-dark);
+  }
+  .status-pill.wait{background:#fbeceb;color:var(--wait);}
+  .status-pill.none{background:#f1ede6;color:var(--muted);}
+  .status-btn-row{display:flex;gap:8px;margin-top:18px;}
+  .btn{
+    flex:1;
+    padding:11px;
+    border-radius:10px;
+    font-size:14px;
+    font-weight:bold;
+  }
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-ghost{background:var(--panel);border:1.5px solid var(--line);color:var(--ink);}
+  .btn-danger{background:#c0392b;color:#fff;}
+
+  .auth-card{
+    background:var(--paper);
+    border-radius:18px;
+    padding:22px 20px;
+    width:100%;
+    max-width:340px;
+    text-align:center;
+  }
+  .auth-card h3{margin:0 0 4px;font-size:17px;color:var(--accent-dark);}
+  .auth-card .auth-sub{font-size:12px;color:var(--muted);margin-bottom:14px;}
+  .auth-card input[type=text],
+  .auth-card input[type=password],
+  .auth-card input[type=email]{
+    font-family:inherit;font-size:15px;padding:11px 12px;margin-bottom:10px;
+    border:1.5px solid var(--line);border-radius:10px;
+    background:var(--panel);color:var(--ink);width:100%;text-align:center;
+  }
+  .auth-link{
+    background:none;color:var(--accent-dark);font-size:12.5px;
+    text-decoration:underline;padding:6px 0;
+  }
+  .auth-error{color:#c0392b;font-size:12px;margin-bottom:6px;min-height:14px;}
+  .auth-ok{color:var(--accent-dark);font-size:12px;margin-bottom:6px;min-height:14px;}
+  .divider-line{border:none;border-top:1px solid var(--line);margin:14px 0;}
+  .settings-section-title{font-size:13px;font-weight:bold;color:var(--accent-dark);margin:14px 0 6px;}
+
+  /* full edit sheet */
+  .sheet-overlay{
+    position:fixed;inset:0;
+    background:rgba(28,25,23,.55);
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+    z-index:30;
+  }
+  .sheet-overlay.open{display:flex;}
+  .sheet{
+    background:var(--paper);
+    width:100%;
+    max-width:720px;
+    max-height:92vh;
+    overflow-y:auto;
+    border-radius:18px 18px 0 0;
+    padding:16px 14px 24px;
+  }
+  .sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .sheet-head h2{margin:0;font-size:18px;color:var(--accent-dark);}
+  .close-x{background:none;font-size:22px;color:var(--muted);width:34px;height:34px;border-radius:8px;}
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:4px;}
+  input[type=text]{
+    font-family:inherit;font-size:15px;padding:10px 12px;
+    border:1.5px solid var(--line);border-radius:10px;
+    background:var(--paper);color:var(--ink);width:100%;
+  }
+  table.sched{width:100%;border-collapse:collapse;font-size:10.5px;margin-top:8px;}
+  table.sched th,table.sched td{border:1px solid var(--line);text-align:center;padding:0;}
+  table.sched th{background:var(--accent);color:#fff;padding:6px 1px;font-weight:normal;font-size:10.5px;}
+  table.sched td.period-cell{background:#f1ede6;color:var(--muted);width:22px;font-size:10px;}
+  table.sched td.cur{background:#eaf3ef;}
+  .cell-box{display:flex;flex-direction:column;align-items:center;padding:3px 1px;gap:2px;}
+  .cell-box input[type=text]{
+    width:100%;border:none;background:transparent;text-align:center;
+    font-size:10.5px;padding:2px 1px;font-family:inherit;color:var(--ink);
+    border-bottom:1px dashed var(--line);
+  }
+  .cell-box input[type=text]:focus{outline:none;border-bottom:1.5px solid var(--accent);}
+  .cell-box label{
+    display:flex;align-items:center;gap:2px;font-size:9px;color:var(--wait);
+  }
+  .cell-box input[type=checkbox]{width:11px;height:11px;}
+  .hint{
+    font-size:11.5px;color:var(--muted);background:#f1ede6;
+    border-radius:8px;padding:8px 10px;margin-top:10px;line-height:1.7;
+  }
+  .btn-row{display:flex;gap:8px;margin-top:14px;}
+  .period-times{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;}
+  .period-times div{display:flex;align-items:center;gap:6px;font-size:12px;}
+  .period-times input[type=time]{flex:1;padding:6px;border:1px solid var(--line);border-radius:6px;font-family:inherit;}
+  .loading{text-align:center;padding:40px;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>جدول المعلمين</h1>
+  <div class="head-actions">
+    <button class="icon-btn locked" id="lockBtn" title="دخول المسؤول">🔒</button>
+    <button class="icon-btn" id="addBtn" title="إضافة معلم">＋</button>
+    <button class="icon-btn secondary" id="settingsBtn" title="الإعدادات">⚙</button>
+  </div>
+</header>
+
+<main>
+  <div id="banner" class="now-banner" style="display:none;"></div>
+  <div class="search-wrap">
+    <div class="search-box">
+      <span class="mag">🔎</span>
+      <input type="text" id="searchBox" placeholder="اكتب أول حرف من اسم المعلم..." autocomplete="off">
+    </div>
+    <div id="grid" style="width:100%;display:flex;justify-content:center;">
+      <div class="search-hint"><span class="big-mag">🔎</span>اكتب أول حرف من اسم المعلم لعرض القائمة</div>
+    </div>
+  </div>
+</main>
+
+<!-- Quick status popup -->
+<div class="overlay" id="statusOverlay">
+  <div class="status-card">
+    <div class="t-name" id="statusName"></div>
+    <div class="day-line" id="statusDay"></div>
+    <div id="statusPill" class="status-pill">—</div>
+    <div class="status-btn-row">
+      <button class="btn btn-ghost" id="editFromStatusBtn">تعديل</button>
+      <button class="btn btn-primary" id="closeStatusBtn">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin auth overlay -->
+<div class="overlay" id="authOverlay">
+  <div class="auth-card" id="authCardInner"></div>
+</div>
+
+<!-- Full edit sheet -->
+<div class="sheet-overlay" id="overlay">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2 id="sheetTitle">المعلم</h2>
+      <button class="close-x" id="closeSheet">✕</button>
+    </div>
+
+    <div class="field">
+      <label>اسم المعلم</label>
+      <input type="text" id="nameInput">
+    </div>
+
+    <div id="tableWrap"></div>
+
+    <div class="hint">اكتب اسم/رقم الفصل في الخانة، وفعّل مربع <b>ح</b> إذا كانت حصة انتظار (حتى لو محدد فيها فصل). يُحفظ تلقائيًا.</div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="saveNameBtn">حفظ الاسم</button>
+      <button class="btn btn-danger" id="deleteBtn">حذف المعلم</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div class="sheet-overlay" id="settingsOverlay">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2>الإعدادات</h2>
+      <button class="close-x" id="closeSettings">✕</button>
+    </div>
+    <div class="hint">حدد وقت بداية كل حصة حتى يعرف البرنامج تلقائيًا أي حصة تجري الآن. المدة الافتراضية لكل حصة 45 دقيقة.</div>
+    <div class="period-times" id="periodTimesWrap"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="savePeriodsBtn">حفظ الأوقات</button>
+    </div>
+
+    <hr class="divider-line">
+    <div class="settings-section-title">حساب المسؤول</div>
+    <div class="field">
+      <label>تغيير الرقم السري</label>
+      <input type="text" id="newPassField" placeholder="رقم سري جديد">
+    </div>
+    <div class="field">
+      <label>البريد الإلكتروني المسجل (لاسترجاع الرقم السري)</label>
+      <input type="text" id="adminEmailField" placeholder="example@email.com">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="saveAccountBtn">حفظ بيانات الحساب</button>
+    </div>
+    <div id="accountMsg" class="auth-ok"></div>
+  </div>
+</div>
+
+<script>
+const DAYS = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس"];
+const JS_DAY_TO_NAME = {0:"الأحد",1:"الاثنين",2:"الثلاثاء",3:"الأربعاء",4:"الخميس"};
+const PERIODS = [1,2,3,4,5,6,7];
+const DEFAULT_START_TIMES = ["07:00","07:45","08:30","09:15","10:15","11:00","11:45"];
+const PERIOD_MIN = 45;
+
+const COLORS = [
+  "#E4572E","#F3A712","#2E86AB","#5EA85F","#8E44AD",
+  "#D64550","#1B998B","#F08A5D","#4059AD","#B5838D",
+  "#FF6B6B","#4ECDC4"
+];
+
+let teachers = [];
+let periodTimes = DEFAULT_START_TIMES.slice();
+let activeTeacherId = null;
+let adminAuth = null; // {password, email}
+let isUnlocked = false;
+let authMode = 'login'; // login | setup | recover | reset
+let pendingAction = null;
+
+const SEED_NAMES = [
+  "أحمد الشمراني","خالد الغامدي","فهد الشريف","محمد الحربي","محمد فطاني",
+  "تركي اللقماني","عبدالله الحربي","عبادي لبان","عبدالرحمن القحطاني","ناصر الصاعدي",
+  "نايف جمعان الصمري","حاتم مليباري","ياسر يلوذي","جميل المسمي","أنور اللقماني",
+  "مروان بيغوش","محمد بلجهني","هاشم الحجاجي","محمد الدربي","ساهر الزهراني",
+  "عثمان اللقمي","رياض البركاتي","أحمد التويجري","ساجد المسعودي","فهد السعودي",
+  "عبدالله محمد الحربي","خالد محمد الحربي","أحمد الزهراني","عبدالوهاب أحمد الزهراني",
+  "محمد الجود","فهد الحازمي","عمر باحضران","عبدالمنعم الصاعد","عبدالخالق الفندي",
+  "حسين بسلي","موسى الحربي","عبدالعزيز القطاس","سالم اللحياني","أحمد اللقوي"
+];
+
+function emptySchedule(){
+  const s = {};
+  DAYS.forEach(d=>{ s[d]={}; PERIODS.forEach(p=> s[d][p]={v:"",w:false} ); });
+  return s;
+}
+
+function uid(){ return 't_'+Math.random().toString(36).slice(2,10); }
+
+function colorForTeacher(t){
+  let h = 0;
+  for(let i=0;i<t.id.length;i++){ h = (h*31 + t.id.charCodeAt(i)) & 0xffffffff; }
+  const idx = Math.abs(h) % COLORS.length;
+  return COLORS[idx];
+}
+
+// migrate old string-based cells (from a previous version) into {v,w} objects
+function migrateSchedule(sch){
+  const out = {};
+  DAYS.forEach(d=>{
+    out[d] = {};
+    PERIODS.forEach(p=>{
+      const cell = sch && sch[d] ? sch[d][p] : undefined;
+      if(cell && typeof cell === 'object'){
+        out[d][p] = {v: cell.v||"", w: !!cell.w};
+      }else if(typeof cell === 'string'){
+        if(cell.trim()==='ح') out[d][p] = {v:"", w:true};
+        else out[d][p] = {v: cell||"", w:false};
+      }else{
+        out[d][p] = {v:"", w:false};
+      }
+    });
+  });
+  return out;
+}
+
+async function loadData(){
+  try{
+    const t = await window.storage.get('teachers', true);
+    teachers = t ? JSON.parse(t.value) : null;
+  }catch(e){ teachers = null; }
+
+  if(!teachers || !teachers.length){
+    teachers = SEED_NAMES.map(n=>({id:uid(), name:n, schedule: emptySchedule()}));
+    await saveTeachers();
+  }else{
+    teachers.forEach(t=> t.schedule = migrateSchedule(t.schedule));
+  }
+
+  try{
+    const pt = await window.storage.get('periodTimes', true);
+    periodTimes = pt ? JSON.parse(pt.value) : DEFAULT_START_TIMES.slice();
+  }catch(e){ periodTimes = DEFAULT_START_TIMES.slice(); }
+
+  try{
+    const a = await window.storage.get('adminAuth', true);
+    adminAuth = a ? JSON.parse(a.value) : null;
+  }catch(e){ adminAuth = null; }
+
+  renderGrid();
+  updateBanner();
+}
+
+async function saveTeachers(){
+  try{ await window.storage.set('teachers', JSON.stringify(teachers), true); }
+  catch(e){ console.error('save failed', e); }
+}
+async function savePeriodTimes(){
+  try{ await window.storage.set('periodTimes', JSON.stringify(periodTimes), true); }
+  catch(e){ console.error('save failed', e); }
+}
+async function saveAdminAuth(){
+  try{ await window.storage.set('adminAuth', JSON.stringify(adminAuth), true); }
+  catch(e){ console.error('save failed', e); }
+}
+
+function currentPeriodInfo(){
+  const now = new Date();
+  const dayName = JS_DAY_TO_NAME[now.getDay()];
+  if(!dayName) return {dayName:null, period:null};
+  const nowMin = now.getHours()*60 + now.getMinutes();
+  let period = null;
+  for(let i=0;i<periodTimes.length;i++){
+    const [h,m] = periodTimes[i].split(':').map(Number);
+    const startMin = h*60+m;
+    const endMin = startMin + PERIOD_MIN;
+    if(nowMin >= startMin && nowMin < endMin){ period = i+1; break; }
+  }
+  return {dayName, period};
+}
+
+function toArabicNum(n){
+  const map = {0:'٠',1:'١',2:'٢',3:'٣',4:'٤',5:'٥',6:'٦',7:'٧',8:'٨',9:'٩'};
+  return String(n).split('').map(c=>map[c]!==undefined?map[c]:c).join('');
+}
+
+function updateBanner(){
+  const {dayName, period} = currentPeriodInfo();
+  const banner = document.getElementById('banner');
+  if(!dayName){
+    banner.style.display='block';
+    banner.innerHTML = `<span>اليوم عطلة نهاية أسبوع</span>`;
+    return;
+  }
+  banner.style.display='flex';
+  banner.innerHTML = `<span>اليوم: <b>${dayName}</b></span><span>${period? 'الحصة الحالية: <b>'+toArabicNum(period)+'</b>' : 'خارج أوقات الحصص'}</span>`;
+}
+
+function escapeHtml(s){
+  const d = document.createElement('div');
+  d.innerText = s;
+  return d.innerHTML;
+}
+
+function renderGrid(){
+  const grid = document.getElementById('grid');
+  const raw = document.getElementById('searchBox').value.trim();
+
+  if(!raw){
+    grid.innerHTML = `<div class="search-hint"><span class="big-mag">🔎</span>اكتب أول حرف من اسم المعلم لعرض القائمة</div>`;
+    return;
+  }
+
+  const letter = raw.trim();
+  const matches = teachers
+    .filter(t=> t.name.trim().startsWith(letter))
+    .sort((a,b)=> a.name.localeCompare(b.name,'ar'));
+
+  if(!matches.length){
+    grid.innerHTML = `<div class="empty-msg">لا يوجد معلم يبدأ اسمه بهذا الحرف</div>`;
+    return;
+  }
+
+  grid.innerHTML = `<div class="results-list">` + matches.map(t=>`
+    <button class="result-item" style="background:${colorForTeacher(t)}" onclick="openStatusPopup('${t.id}')">
+      <span>${escapeHtml(t.name)}</span>
+      <span class="arrow">‹</span>
+    </button>
+  `).join('') + `</div>`;
+}
+
+function statusForTeacher(t){
+  const {dayName, period} = currentPeriodInfo();
+  if(!dayName) return {main:"عطلة نهاية الأسبوع", sub:"", cls:"none"};
+  if(!period) return {main:"خارج أوقات الحصص", sub:dayName, cls:"none"};
+  const cell = t.schedule[dayName][period];
+  const sub = `${dayName} — الحصة ${toArabicNum(period)}`;
+  if(!cell.v && !cell.w) return {main:"غير محدد", sub, cls:"none"};
+  if(cell.w && cell.v) return {main:`انتظار — في فصل ${cell.v}`, sub, cls:"wait"};
+  if(cell.w && !cell.v) return {main:"انتظار", sub, cls:"wait"};
+  return {main:`في فصل ${cell.v}`, sub, cls:"live"};
+}
+
+function openStatusPopup(id){
+  activeTeacherId = id;
+  const t = teachers.find(x=>x.id===id);
+  if(!t) return;
+  const st = statusForTeacher(t);
+  document.getElementById('statusName').textContent = t.name;
+  document.getElementById('statusDay').textContent = st.sub;
+  const pill = document.getElementById('statusPill');
+  pill.textContent = st.main;
+  pill.className = 'status-pill' + (st.cls!=='live' ? ' '+st.cls : '');
+  document.getElementById('statusOverlay').classList.add('open');
+}
+
+document.getElementById('closeStatusBtn').addEventListener('click', ()=>{
+  document.getElementById('statusOverlay').classList.remove('open');
+});
+document.getElementById('statusOverlay').addEventListener('click', (e)=>{
+  if(e.target.id==='statusOverlay') document.getElementById('statusOverlay').classList.remove('open');
+});
+
+// ===== Admin auth =====
+function openAuth(mode){
+  authMode = (mode==='login' && !adminAuth) ? 'setup' : mode;
+  renderAuthCard();
+  document.getElementById('authOverlay').classList.add('open');
+}
+function closeAuth(){
+  document.getElementById('authOverlay').classList.remove('open');
+  pendingAction = null;
+}
+function requireAuth(action){
+  if(isUnlocked){ action(); return; }
+  pendingAction = action;
+  openAuth(adminAuth ? 'login' : 'setup');
+}
+function unlockSuccess(){
+  isUnlocked = true;
+  const b = document.getElementById('lockBtn');
+  b.textContent = '🔓';
+  b.classList.remove('locked'); b.classList.add('unlocked');
+  document.getElementById('authOverlay').classList.remove('open');
+  if(pendingAction){ const a = pendingAction; pendingAction = null; a(); }
+}
+
+function renderAuthCard(){
+  const el = document.getElementById('authCardInner');
+  if(authMode==='setup'){
+    el.innerHTML = `
+      <h3>إعداد حساب المسؤول</h3>
+      <div class="auth-sub">أول استخدام — أنشئ رقمك السري وأدخل بريدك الإلكتروني لاسترجاعه لاحقًا عند فقدانه.</div>
+      <div class="auth-error" id="authErr"></div>
+      <input type="password" id="a_pw1" placeholder="رقم سري جديد">
+      <input type="password" id="a_pw2" placeholder="تأكيد الرقم السري">
+      <input type="email" id="a_email" placeholder="البريد الإلكتروني">
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitSetup()">حفظ</button>
+        <button class="btn btn-ghost" onclick="closeAuth()">إلغاء</button>
+      </div>`;
+  }else if(authMode==='login'){
+    el.innerHTML = `
+      <h3>دخول المسؤول</h3>
+      <div class="auth-sub">أدخل الرقم السري لتتمكن من التعديل</div>
+      <div class="auth-error" id="authErr"></div>
+      <input type="password" id="a_pw" placeholder="الرقم السري">
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitLogin()">دخول</button>
+        <button class="btn btn-ghost" onclick="closeAuth()">إلغاء</button>
+      </div>
+      <button class="auth-link" onclick="openAuth('recover')">نسيت الرقم السري؟</button>`;
+  }else if(authMode==='recover'){
+    el.innerHTML = `
+      <h3>استرجاع الرقم السري</h3>
+      <div class="auth-sub">أدخل بريدك الإلكتروني المسجل للتحقق منه.</div>
+      <div class="auth-error" id="authErr"></div>
+      <input type="email" id="a_recEmail" placeholder="البريد الإلكتروني المسجل">
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitRecover()">تحقق</button>
+        <button class="btn btn-ghost" onclick="openAuth('login')">رجوع</button>
+      </div>`;
+  }else if(authMode==='reset'){
+    el.innerHTML = `
+      <h3>تعيين رقم سري جديد</h3>
+      <div class="auth-sub">تم التحقق من بريدك بنجاح.</div>
+      <div class="auth-error" id="authErr"></div>
+      <input type="password" id="a_np1" placeholder="رقم سري جديد">
+      <input type="password" id="a_np2" placeholder="تأكيد الرقم السري">
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitReset()">حفظ</button>
+        <button class="btn btn-ghost" onclick="closeAuth()">إلغاء</button>
+      </div>`;
+  }
+}
+
+async function submitSetup(){
+  const pw1=document.getElementById('a_pw1').value.trim();
+  const pw2=document.getElementById('a_pw2').value.trim();
+  const email=document.getElementById('a_email').value.trim();
+  const err=document.getElementById('authErr');
+  if(!pw1 || pw1.length<4){ err.textContent='الرقم السري يجب ألا يقل عن 4 خانات'; return; }
+  if(pw1!==pw2){ err.textContent='الرقم السري غير متطابق'; return; }
+  if(!email || !email.includes('@')){ err.textContent='أدخل بريدًا إلكترونيًا صحيحًا'; return; }
+  adminAuth = {password:pw1, email:email};
+  await saveAdminAuth();
+  unlockSuccess();
+}
+function submitLogin(){
+  const pw=document.getElementById('a_pw').value.trim();
+  const err=document.getElementById('authErr');
+  if(!adminAuth){ openAuth('setup'); return; }
+  if(pw!==adminAuth.password){ err.textContent='الرقم السري غير صحيح'; return; }
+  unlockSuccess();
+}
+function submitRecover(){
+  const email=document.getElementById('a_recEmail').value.trim();
+  const err=document.getElementById('authErr');
+  if(!adminAuth){ err.textContent='لا يوجد حساب مسؤول مسجل بعد'; return; }
+  if(email !== adminAuth.email){ err.textContent='البريد غير مطابق للبريد المسجل'; return; }
+  authMode='reset';
+  renderAuthCard();
+}
+async function submitReset(){
+  const p1=document.getElementById('a_np1').value.trim();
+  const p2=document.getElementById('a_np2').value.trim();
+  const err=document.getElementById('authErr');
+  if(!p1 || p1.length<4){ err.textContent='الرقم السري يجب ألا يقل عن 4 خانات'; return; }
+  if(p1!==p2){ err.textContent='الرقم السري غير متطابق'; return; }
+  adminAuth.password = p1;
+  await saveAdminAuth();
+  unlockSuccess();
+}
+
+document.getElementById('lockBtn').addEventListener('click', ()=>{
+  if(isUnlocked){
+    isUnlocked = false;
+    const b = document.getElementById('lockBtn');
+    b.textContent = '🔒';
+    b.classList.remove('unlocked'); b.classList.add('locked');
+  }else{
+    openAuth(adminAuth ? 'login' : 'setup');
+  }
+});
+document.getElementById('authOverlay').addEventListener('click', (e)=>{
+  if(e.target.id==='authOverlay') closeAuth();
+});
+
+document.getElementById('editFromStatusBtn').addEventListener('click', ()=>{
+  document.getElementById('statusOverlay').classList.remove('open');
+  requireAuth(()=> openTeacher(activeTeacherId));
+});
+
+function openTeacher(id){
+  activeTeacherId = id;
+  const t = teachers.find(x=>x.id===id);
+  if(!t) return;
+  document.getElementById('sheetTitle').textContent = t.name;
+  document.getElementById('nameInput').value = t.name;
+  renderTable(t);
+  document.getElementById('overlay').classList.add('open');
+}
+
+function renderTable(t){
+  const {dayName, period} = currentPeriodInfo();
+  let html = '<table class="sched"><tr><th>الحصة</th>';
+  DAYS.forEach(d=> html += `<th>${d}</th>`);
+  html += '</tr>';
+  PERIODS.forEach(p=>{
+    html += `<tr><td class="period-cell">${toArabicNum(p)}</td>`;
+    DAYS.forEach(d=>{
+      const cur = (dayName===d && period===p) ? ' cur' : '';
+      const cell = t.schedule[d][p];
+      html += `<td class="${cur.trim()}"><div class="cell-box">
+        <input type="text" value="${escapeHtml(cell.v)}" placeholder="فصل" data-day="${d}" data-period="${p}" onchange="cellValueChanged(this)">
+        <label><input type="checkbox" ${cell.w?'checked':''} data-day="${d}" data-period="${p}" onchange="cellWaitChanged(this)"> ح</label>
+      </div></td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</table>';
+  document.getElementById('tableWrap').innerHTML = html;
+}
+
+function cellValueChanged(el){
+  const t = teachers.find(x=>x.id===activeTeacherId);
+  if(!t) return;
+  t.schedule[el.dataset.day][el.dataset.period].v = el.value;
+  saveTeachers();
+}
+function cellWaitChanged(el){
+  const t = teachers.find(x=>x.id===activeTeacherId);
+  if(!t) return;
+  t.schedule[el.dataset.day][el.dataset.period].w = el.checked;
+  saveTeachers();
+}
+
+async function deleteTeacher(id){
+  const t = teachers.find(x=>x.id===id);
+  if(!t) return;
+  if(!confirm(`هل تريد حذف "${t.name}"؟`)) return;
+  teachers = teachers.filter(x=>x.id!==id);
+  await saveTeachers();
+  renderGrid();
+  closeSheet();
+}
+
+document.getElementById('deleteBtn').addEventListener('click', ()=>{
+  if(activeTeacherId) deleteTeacher(activeTeacherId);
+});
+
+document.getElementById('saveNameBtn').addEventListener('click', async ()=>{
+  const t = teachers.find(x=>x.id===activeTeacherId);
+  if(!t) return;
+  const newName = document.getElementById('nameInput').value.trim();
+  if(!newName) return alert('الرجاء إدخال اسم صحيح');
+  t.name = newName;
+  await saveTeachers();
+  document.getElementById('sheetTitle').textContent = newName;
+  renderGrid();
+});
+
+document.getElementById('addBtn').addEventListener('click', ()=>{
+  requireAuth(async ()=>{
+    const name = prompt('اسم المعلم الجديد:');
+    if(!name || !name.trim()) return;
+    const t = {id:uid(), name:name.trim(), schedule:emptySchedule()};
+    teachers.push(t);
+    await saveTeachers();
+    renderGrid();
+    openTeacher(t.id);
+  });
+});
+
+document.getElementById('searchBox').addEventListener('input', renderGrid);
+
+document.getElementById('closeSheet').addEventListener('click', closeSheet);
+document.getElementById('overlay').addEventListener('click', (e)=>{
+  if(e.target.id==='overlay') closeSheet();
+});
+function closeSheet(){
+  document.getElementById('overlay').classList.remove('open');
+  activeTeacherId = null;
+}
+
+// Settings
+document.getElementById('settingsBtn').addEventListener('click', ()=>{
+  requireAuth(()=>{
+    const wrap = document.getElementById('periodTimesWrap');
+    wrap.innerHTML = PERIODS.map((p,i)=>`
+      <div><span>الحصة ${toArabicNum(p)}</span><input type="time" id="pt_${p}" value="${periodTimes[i]}"></div>
+    `).join('');
+    document.getElementById('newPassField').value = '';
+    document.getElementById('adminEmailField').value = adminAuth ? adminAuth.email : '';
+    document.getElementById('accountMsg').textContent = '';
+    document.getElementById('settingsOverlay').classList.add('open');
+  });
+});
+document.getElementById('closeSettings').addEventListener('click', ()=>{
+  document.getElementById('settingsOverlay').classList.remove('open');
+});
+document.getElementById('settingsOverlay').addEventListener('click', (e)=>{
+  if(e.target.id==='settingsOverlay') document.getElementById('settingsOverlay').classList.remove('open');
+});
+document.getElementById('savePeriodsBtn').addEventListener('click', async ()=>{
+  periodTimes = PERIODS.map(p=> document.getElementById('pt_'+p).value || DEFAULT_START_TIMES[p-1]);
+  await savePeriodTimes();
+  document.getElementById('settingsOverlay').classList.remove('open');
+  renderGrid();
+  updateBanner();
+});
+document.getElementById('saveAccountBtn').addEventListener('click', async ()=>{
+  const newPw = document.getElementById('newPassField').value.trim();
+  const newEmail = document.getElementById('adminEmailField').value.trim();
+  const msg = document.getElementById('accountMsg');
+  if(!adminAuth) adminAuth = {password:'', email:''};
+  if(newPw){
+    if(newPw.length<4){ msg.style.color='#c0392b'; msg.textContent='الرقم السري يجب ألا يقل عن 4 خانات'; return; }
+    adminAuth.password = newPw;
+  }
+  if(newEmail){
+    if(!newEmail.includes('@')){ msg.style.color='#c0392b'; msg.textContent='أدخل بريدًا إلكترونيًا صحيحًا'; return; }
+    adminAuth.email = newEmail;
+  }
+  await saveAdminAuth();
+  msg.style.color = 'var(--accent-dark)';
+  msg.textContent = 'تم حفظ بيانات الحساب بنجاح';
+  document.getElementById('newPassField').value = '';
+});
+
+// refresh "now" every 30s
+setInterval(()=>{ updateBanner(); }, 30000);
+
+loadData();
+</script>
+</body>
+</html>
