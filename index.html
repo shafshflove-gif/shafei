@@ -27,6 +27,7 @@ header p{color:#a8c4e0;font-size:.78rem;margin-top:3px;}
 .b-purple{background:#4a0080;color:#fff;}
 .b-orange{background:#b5451b;color:#fff;}
 .b-wa{background:#25d366;color:#fff;}
+.b-teal{background:#00695c;color:#fff;}
 .main{padding:16px;display:flex;flex-direction:column;gap:14px;}
 .day-summary{background:#fff;border-radius:14px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.06);}
 .day-summary h2{font-size:.9rem;font-weight:800;margin-bottom:10px;}
@@ -164,6 +165,28 @@ table.print-table th{background:#e8e8e8;font-weight:800;}
 table.print-table td.p-name{text-align:right;padding-right:10px;font-weight:700;}
 .print-class-title{font-weight:900;font-size:.9rem;margin:14px 0 4px;padding:5px 8px;background:#f0f0f0;}
 .print-foot{display:flex;justify-content:space-between;margin-top:30px;font-size:.85rem;font-weight:700;}
+
+/* ===== نموذج الغياب الرسمي (يومي/أسبوعي) ===== */
+.off-page{background:#fff;padding:14px 16px;font-family:'Tajawal',sans-serif;direction:rtl;}
+.off-page:not(:last-child){page-break-after:always;}
+.off-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #c62828;padding-bottom:8px;margin-bottom:6px;gap:8px;}
+.off-right{text-align:right;font-size:.72rem;font-weight:800;line-height:1.5;white-space:nowrap;}
+.off-center{text-align:center;flex:1;}
+.off-logo{font-size:1.6rem;line-height:1;}
+.off-logo-txt{font-size:.7rem;font-weight:800;color:#00695c;}
+.off-left{min-width:200px;}
+table.off-info{width:100%;border-collapse:collapse;font-size:.68rem;}
+table.off-info td{border:1px solid #000;padding:2px 6px;text-align:right;}
+table.off-info td:first-child{font-weight:800;background:#f2f2f2;width:38%;}
+.off-title{text-align:center;font-weight:900;font-size:1rem;margin:10px 0;}
+table.off-table{width:100%;border-collapse:collapse;table-layout:fixed;}
+table.off-table th,table.off-table td{border:1px solid #000;text-align:center;font-size:.68rem;padding:3px 2px;overflow:hidden;}
+table.off-table thead th{background:#dcdcdc;font-weight:900;}
+table.off-table td.off-name{text-align:right;padding-right:6px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+table.off-table col.col-m,table.off-table th.col-m{width:26px;}
+table.off-table th.col-name{width:auto;text-align:center;}
+table.off-table th.col-tot{width:70px;font-size:.62rem;}
+.off-legend{display:flex;gap:18px;justify-content:flex-end;margin-top:8px;font-size:.72rem;font-weight:700;}
 </style>
 </head>
 <body>
@@ -185,7 +208,8 @@ table.print-table td.p-name{text-align:right;padding-right:10px;font-weight:700;
   <button class="btn b-purple" onclick="exportWeekExcel()">📅 الأسبوع</button>
   <button class="btn b-orange" onclick="openPM()">📱 الأرقام</button>
   <button class="btn b-wa" onclick="openVCF()">📇 VCF واتساب</button>
-  <button class="btn b-blue" onclick="printDayReport()">🖨️ طباعة الكشف</button>
+  <button class="btn b-blue" onclick="printOfficialDay()">🖨️ طباعة يومي</button>
+  <button class="btn b-teal" onclick="printOfficialWeek()">🖨️ طباعة أسبوعي</button>
 </div>
 
 <div class="main">
@@ -779,6 +803,102 @@ window.printDayReport=function(){
 
   document.getElementById('printArea').innerHTML=html;
   setTimeout(()=>{ window.print(); }, 300);
+};
+
+// ===== طباعة نموذج الغياب الرسمي (نفس شكل كشف وزارة التعليم) - يومي/أسبوعي =====
+function offBuildClassTable(sg,cls,ci,isL,dates,dataByKey){
+  const ST=isL?STL:STU;
+  const sts=ST[sg.id]?ST[sg.id][`c${ci}`]||[]:[];
+  const dayHeaders=dates.map(d=>`<th>${d.getDate()}</th>`).join('');
+  let rows='';
+  sts.forEach((s,idx)=>{
+    let dayCells='';
+    let total=0;
+    dates.forEach(d=>{
+      const key=dk(d);
+      const dd=dataByKey[key]||{lower:{ATT:{}},upper:{ATT:{}}};
+      const att=isL?dd.lower.ATT:dd.upper.ATT;
+      const a=att[sg.id]?att[sg.id][`c${ci}`]||{}:{};
+      const absent=a[s.id]===true;
+      if(absent)total++;
+      dayCells+=`<td>${absent?'✕':''}</td>`;
+    });
+    rows+=`<tr><td>${idx+1}</td><td class="off-name">${s.name}</td>${dayCells}<td>0</td><td>${total}</td></tr>`;
+  });
+  if(!rows)rows='<tr><td colspan="99">لا يوجد طلاب مسجلين</td></tr>';
+  return{dayHeaders,rows,count:sts.length};
+}
+
+function offBuildPage(sg,cls,ci,isL,dates,dataByKey,title,monthLabel,hy){
+  const{dayHeaders,rows}=offBuildClassTable(sg,cls,ci,isL,dates,dataByKey);
+  return`
+  <div class="off-page">
+    <div class="off-header">
+      <div class="off-right">
+        <div>المملكة العربية السعودية</div>
+        <div>وزارة التعليم</div>
+        <div>الإدارة العامة للتعليم بمنطقة مكة المكرمة</div>
+        <div>مدرسة عمورية الابتدائية</div>
+      </div>
+      <div class="off-center">
+        <div class="off-logo">🏛️</div>
+        <div class="off-logo-txt">وزارة التعليم</div>
+      </div>
+      <div class="off-left">
+        <table class="off-info">
+          <tr><td>الصف</td><td>${cls}</td></tr>
+          <tr><td>القسم</td><td>التعليم العام</td></tr>
+          <tr><td>النظام الدراسي</td><td>منتظم</td></tr>
+          <tr><td>العام</td><td>${hy}هـ</td></tr>
+          <tr><td>الشهر</td><td>${monthLabel}</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="off-title">${title}</div>
+    <table class="off-table">
+      <colgroup><col class="col-m"><col></colgroup>
+      <thead><tr><th class="col-m">م</th><th class="col-name">اسم الطالب</th>${dayHeaders}<th class="col-tot">مجموع الغياب بعذر</th><th class="col-tot">مجموع الغياب بدون عذر</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="off-legend"><span>✕ = يعني غياب بدون عذر</span></div>
+  </div>`;
+}
+
+function offRender(dates,dataByKey,title){
+  const h=toH(dates[dates.length-1]);
+  const monthLabel=HM[h.m-1];
+  let body='';
+  [...SML,...SMU].forEach(sg=>{
+    const isL=!!SML.find(x=>x.id===sg.id);
+    sg.cls.forEach((cls,ci)=>{
+      body+=offBuildPage(sg,cls,ci,isL,dates,dataByKey,title,monthLabel,h.y);
+    });
+  });
+  document.getElementById('printArea').innerHTML=body;
+  setTimeout(()=>{window.print();},300);
+}
+
+window.printOfficialDay=function(){
+  const date=wDays[dIdx];
+  const dataByKey={};
+  dataByKey[dk(date)]=dayData;
+  offRender([date],dataByKey,'تقرير الغياب اليومي');
+};
+
+window.printOfficialWeek=async function(){
+  showT('جارٍ تجهيز الأسبوع...');
+  const dataByKey={};
+  for(const d of wDays){
+    const key=dk(d);
+    if(key===dk(wDays[dIdx])){dataByKey[key]=dayData;continue;}
+    try{
+      const[ls,us]=await Promise.all([
+        get(ref(db,`lower_d_${key}`)),get(ref(db,`upper_d_${key}`))
+      ]);
+      dataByKey[key]={lower:{ATT:ls.exists()?ls.val():{}},upper:{ATT:us.exists()?us.val():{}}};
+    }catch(e){dataByKey[key]={lower:{ATT:{}},upper:{ATT:{}}};}
+  }
+  offRender(wDays,dataByKey,'تقرير الغياب الأسبوعي');
 };
 
 // ===== تصدير Excel الأسبوعي مع نجمة ⭐ للغائب 3 مرات فأكثر =====
