@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة الغياب – المسؤول</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Tajawal',sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh;}
+header{background:linear-gradient(120deg,#1a1a2e,#0f3460);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+header h1{color:#fff;font-size:1.3rem;font-weight:900;}
+header p{color:#a8c4e0;font-size:.78rem;margin-top:3px;}
+.hd{background:rgba(255,255,255,.12);color:#ffd166;font-size:.78rem;font-weight:700;padding:3px 14px;border-radius:20px;}
+.top-bar{display:flex;gap:8px;padding:12px 16px;background:#fff;border-bottom:1.5px solid #eee;flex-wrap:wrap;align-items:center;}
+.status{display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;}
+.sd{width:8px;height:8px;border-radius:50%;background:#ccc;}
+.sd.synced{background:#2a9d8f;box-shadow:0 0 0 3px rgba(42,157,143,.2);}
+.sd.syncing{background:#f4a261;animation:bl 1s infinite;}
+.sd.live{background:#2a9d8f;box-shadow:0 0 0 3px rgba(42,157,143,.2);animation:pulse 2s infinite;}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(42,157,143,.2)}50%{box-shadow:0 0 0 6px rgba(42,157,143,.05)}}
+.btn{padding:7px 14px;border:none;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;}
+.b-blue{background:#0f3460;color:#fff;}
+.b-green{background:#1b5e20;color:#fff;}
+.b-purple{background:#4a0080;color:#fff;}
+.b-orange{background:#b5451b;color:#fff;}
+.b-wa{background:#25d366;color:#fff;}
+.main{padding:16px;display:flex;flex-direction:column;gap:14px;}
+.day-summary{background:#fff;border-radius:14px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.day-summary h2{font-size:.9rem;font-weight:800;margin-bottom:10px;}
+.stats-row{display:flex;gap:10px;flex-wrap:wrap;}
+.stat-card{border-radius:12px;padding:10px 16px;text-align:center;min-width:90px;}
+.sc-tot{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff;}
+.sc-low{background:linear-gradient(135deg,#fff0f1,#ffd6d8);color:#9d0208;}
+.sc-up{background:linear-gradient(135deg,#e8f5e9,#a5d6a7);color:#1b4332;}
+.stat-n{font-size:1.8rem;font-weight:900;line-height:1;}
+.stat-l{font-size:.68rem;font-weight:700;opacity:.75;margin-top:3px;}
+.send-banner{background:linear-gradient(90deg,#1b5e20,#2e7d32);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:#fff;}
+.send-banner .sb-text{flex:1;font-size:.85rem;font-weight:700;}
+.send-banner .sb-count{font-size:1.4rem;font-weight:900;color:#a5d6a7;}
+.week-nav{display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:9px 14px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.week-nav button{background:#f0f0f0;border:none;border-radius:8px;padding:5px 12px;font-family:'Tajawal',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;}
+.week-label{flex:1;text-align:center;font-size:.85rem;font-weight:800;}
+.day-tabs{display:flex;gap:5px;flex-wrap:wrap;}
+.day-tab{padding:6px 12px;border:none;border-radius:20px;font-family:'Tajawal',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;}
+.day-tab.active{background:#0f3460;color:#fff;}
+.sections{display:flex;flex-direction:column;gap:12px;}
+.sec-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.sec-head{padding:11px 14px;color:#fff;font-size:.9rem;font-weight:800;display:flex;justify-content:space-between;align-items:center;}
+.sh-low{background:linear-gradient(90deg,#9d0208,#e63946);}
+.sh-up{background:linear-gradient(90deg,#1b4332,#2d6a4f);}
+.sec-body{padding:10px;}
+.cls-block{margin-bottom:10px;}
+.cls-title{font-size:.8rem;font-weight:800;margin-bottom:5px;padding:4px 9px;background:#f5f5f5;border-radius:8px;display:flex;justify-content:space-between;}
+.cls-title span{color:#888;font-weight:600;}
+.confirmed-ok{color:#2a9d8f;font-size:.78rem;font-weight:700;padding:5px 9px;}
+.not-sent{color:#f4a261;font-size:.76rem;font-style:italic;padding:4px 9px;}
+.stu-item{padding:7px 9px;font-size:.8rem;border-bottom:1px solid #f5f5f5;display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;}
+.stu-item:last-child{border-bottom:none;}
+.stu-num{color:#ccc;font-size:.68rem;font-weight:700;min-width:16px;padding-top:2px;}
+.stu-name{font-weight:800;flex:1;min-width:80px;}
+.stu-acts{display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-top:2px;}
+.ph-tag{border-radius:6px;padding:2px 7px;font-size:.67rem;font-weight:700;}
+.ph-ok{background:#e8f5e9;color:#1b5e20;}
+.ph-no{background:#fff3e0;color:#e65100;}
+.xb{border:none;border-radius:7px;padding:4px 9px;font-size:.7rem;font-weight:700;cursor:pointer;font-family:'Tajawal',sans-serif;}
+.xb-sms{background:#0f3460;color:#fff;}
+.xb-wa{background:#25d366;color:#fff;}
+.xb-edit{background:#f0f0f0;color:#555;}
+.live-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(42,157,143,.12);color:#2a9d8f;border-radius:20px;padding:3px 10px;font-size:.72rem;font-weight:700;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#2a9d8f;animation:pulse 1.5s infinite;}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
+.ov.hidden{display:none;}
+.sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:560px;max-height:88vh;display:flex;flex-direction:column;}
+.sh-head{padding:14px 16px;background:linear-gradient(120deg,#1a1a2e,#0f3460);color:#fff;display:flex;justify-content:space-between;align-items:center;}
+.sh-head h3{font-size:.95rem;font-weight:900;}
+.x-btn{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:.9rem;}
+.sh-body{padding:12px;overflow-y:auto;flex:1;}
+.sh-foot{padding:10px 12px;border-top:1px solid #eee;display:flex;gap:8px;}
+.sh-foot button{flex:1;border:none;border-radius:10px;padding:11px;font-family:'Tajawal',sans-serif;font-size:.85rem;font-weight:900;cursor:pointer;}
+.f-wa{background:#25d366;color:#fff;}
+.f-sms{background:#0f3460;color:#fff;}
+.sa-item{display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px solid #f0f0f0;}
+.sa-item:last-child{border-bottom:none;}
+.sa-name{flex:1;font-size:.8rem;font-weight:700;}
+.sa-cls{font-size:.68rem;color:#999;}
+.sa-phone{font-size:.72rem;color:#333;direction:ltr;}
+.sa-noph{font-size:.7rem;color:#e65100;}
+.sa-wa{background:#25d366;color:#fff;border:none;border-radius:7px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Tajawal',sans-serif;}
+.sa-sms{background:#0f3460;color:#fff;border:none;border-radius:7px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Tajawal',sans-serif;}
+.pm-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:flex;align-items:center;justify-content:center;padding:14px;}
+.pm-ov.hidden{display:none;}
+.pm-box{background:#fff;border-radius:18px;width:100%;max-width:500px;max-height:88vh;display:flex;flex-direction:column;}
+.pm-search{width:100%;padding:8px 11px;border:1.5px solid #ddd;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:.83rem;margin-bottom:10px;outline:none;}
+.pm-search:focus{border-color:#0f3460;}
+.pm-row{display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid #f0f0f0;}
+.pm-row:last-child{border-bottom:none;}
+.pm-name{flex:1;font-size:.78rem;font-weight:700;}
+.pm-cls{background:#e3f2fd;color:#1565c0;border-radius:5px;padding:1px 5px;font-size:.65rem;font-weight:700;}
+.pm-inp{width:130px;padding:5px 7px;border:1.5px solid #ddd;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:.75rem;direction:ltr;outline:none;}
+.pm-inp:focus{border-color:#0f3460;}
+.pm-sv{background:#0f3460;color:#fff;border:none;border-radius:8px;padding:5px 11px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Tajawal',sans-serif;}
+.ed-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px;}
+.ed-ov.hidden{display:none;}
+.ed-box{background:#fff;border-radius:14px;padding:18px;width:100%;max-width:310px;}
+.ed-box h4{font-size:.92rem;font-weight:900;margin-bottom:2px;}
+.ed-box p{font-size:.74rem;color:#999;margin-bottom:11px;}
+.ed-box input{width:100%;padding:9px 11px;border:1.5px solid #ddd;border-radius:9px;font-family:'Tajawal',sans-serif;font-size:.88rem;direction:ltr;outline:none;margin-bottom:11px;}
+.ed-box input:focus{border-color:#0f3460;}
+.ed-btns{display:flex;gap:8px;}
+.ed-btns button{flex:1;padding:8px;border:none;border-radius:9px;font-family:'Tajawal',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;}
+.ed-save{background:#0f3460;color:#fff;}
+.ed-cancel{background:#f0f0f0;color:#555;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(70px);background:#1a1a2e;color:#fff;padding:9px 20px;border-radius:22px;font-size:.83rem;font-weight:600;z-index:9999;transition:transform .25s;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+@keyframes syncFlash{0%{background:rgba(42,157,143,.15)}100%{background:transparent}}
+.sync-flash{animation:syncFlash .8s ease-out;}
+.vcf-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;display:flex;align-items:flex-end;justify-content:center;}
+.vcf-ov.hidden{display:none;}
+.vcf-sheet{background:#fff;border-radius:22px 22px 0 0;width:100%;max-width:560px;max-height:90vh;display:flex;flex-direction:column;}
+.vcf-head{padding:16px;background:linear-gradient(120deg,#1b5e20,#2e7d32);color:#fff;display:flex;justify-content:space-between;align-items:center;border-radius:22px 22px 0 0;}
+.vcf-head h3{font-size:1rem;font-weight:900;}
+.vcf-body{padding:14px;overflow-y:auto;flex:1;}
+.vcf-info{background:#e8f5e9;border-radius:12px;padding:12px;margin-bottom:14px;font-size:.82rem;line-height:1.7;color:#1b4332;}
+.vcf-info strong{font-size:.9rem;color:#1b5e20;}
+.vcf-stats{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.vcf-stat{flex:1;min-width:80px;background:#f5f5f5;border-radius:10px;padding:10px;text-align:center;}
+.vcf-stat .vn{font-size:1.5rem;font-weight:900;color:#0f3460;}
+.vcf-stat .vl{font-size:.68rem;color:#888;font-weight:700;}
+.vcf-files{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.vcf-file{background:#f9f9f9;border:1.5px solid #e0e0e0;border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;}
+.vcf-file-info{flex:1;}
+.vcf-file-name{font-size:.82rem;font-weight:800;color:#1a1a2e;}
+.vcf-file-count{font-size:.72rem;color:#888;margin-top:2px;}
+.vcf-dl{background:#25d366;color:#fff;border:none;border-radius:9px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;}
+.vcf-msg-box{background:#fff3e0;border-radius:12px;padding:12px;margin-bottom:12px;}
+.vcf-msg-box p{font-size:.78rem;color:#e65100;font-weight:700;margin-bottom:6px;}
+.vcf-msg-text{font-size:.8rem;color:#333;line-height:1.6;background:#fff;border-radius:8px;padding:9px;border:1px solid #ffe0b2;}
+.vcf-copy{width:100%;background:#e65100;color:#fff;border:none;border-radius:9px;padding:9px;font-family:'Tajawal',sans-serif;font-size:.82rem;font-weight:900;cursor:pointer;margin-top:8px;}
+.vcf-steps{background:#e3f2fd;border-radius:12px;padding:12px;}
+.vcf-steps p{font-size:.8rem;font-weight:800;color:#1565c0;margin-bottom:6px;}
+.vcf-steps ol{padding-right:18px;}
+.vcf-steps li{font-size:.78rem;color:#333;margin-bottom:4px;line-height:1.5;}
+.vcf-steps li strong{color:#1565c0;}
+
+/* ===== طباعة الكشف اليومي ===== */
+#printArea{display:none;}
+@media print{
+  body *{visibility:hidden;}
+  #printArea, #printArea *{visibility:visible;}
+  #printArea{display:block;position:absolute;top:0;right:0;left:0;width:100%;}
+}
+.print-page{background:#fff;padding:18px;font-family:'Tajawal',sans-serif;direction:rtl;}
+.print-header{text-align:center;margin-bottom:14px;border-bottom:2px solid #000;padding-bottom:10px;}
+.print-header .p-kingdom{font-size:.85rem;font-weight:700;}
+.print-header h2{font-size:1.15rem;font-weight:900;margin-top:4px;}
+.print-header .p-sub{font-size:.85rem;font-weight:700;margin-top:4px;}
+.print-header .p-date{font-size:.8rem;color:#333;margin-top:2px;}
+table.print-table{width:100%;border-collapse:collapse;margin-top:10px;margin-bottom:22px;}
+table.print-table th,table.print-table td{border:1px solid #000;padding:5px 6px;text-align:center;font-size:.8rem;}
+table.print-table th{background:#e8e8e8;font-weight:800;}
+table.print-table td.p-name{text-align:right;padding-right:10px;font-weight:700;}
+.print-class-title{font-weight:900;font-size:.9rem;margin:14px 0 4px;padding:5px 8px;background:#f0f0f0;}
+.print-foot{display:flex;justify-content:space-between;margin-top:30px;font-size:.85rem;font-weight:700;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>📊 لوحة الغياب – المسؤول</h1>
+    <p>متابعة غياب المرحلة الدنيا والعليا</p>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
+    <div class="hd" id="hDate">...</div>
+    <div class="live-badge" id="liveBadge" style="display:none;"><div class="live-dot"></div>مباشر</div>
+  </div>
+</header>
+
+<div class="top-bar">
+  <div class="status"><div class="sd syncing" id="sDot"></div><span id="sTxt">جارٍ التحميل...</span></div>
+  <button class="btn b-green" onclick="exportTodayExcel()">📥 اليوم</button>
+  <button class="btn b-purple" onclick="exportWeekExcel()">📅 الأسبوع</button>
+  <button class="btn b-orange" onclick="openPM()">📱 الأرقام</button>
+  <button class="btn b-wa" onclick="openVCF()">📇 VCF واتساب</button>
+  <button class="btn b-blue" onclick="printDayReport()">🖨️ طباعة الكشف</button>
+</div>
+
+<div class="main">
+  <div class="day-summary">
+    <h2>📈 إجمالي اليوم</h2>
+    <div class="stats-row">
+      <div class="stat-card sc-tot"><div class="stat-n" id="gAll">0</div><div class="stat-l">إجمالي</div></div>
+      <div class="stat-card sc-low"><div class="stat-n" id="gLower">0</div><div class="stat-l">المرحلة الدنيا</div></div>
+      <div class="stat-card sc-up"><div class="stat-n" id="gUpper">0</div><div class="stat-l">المرحلة العليا</div></div>
+    </div>
+  </div>
+
+  <div class="send-banner" id="sendBanner" style="display:none;">
+    <div class="sb-text">📣 <span id="sbCount" class="sb-count">0</span> طالب غائب — أرسل إشعاراً لجميع أولياء الأمور</div>
+    <button class="btn b-wa" onclick="openSendAll()">🟢 إرسال للجميع</button>
+  </div>
+
+  <div class="week-nav">
+    <button onclick="changeWeek(-1)">◀ السابق</button>
+    <div class="week-label" id="weekLabel">...</div>
+    <button onclick="changeWeek(1)">التالي ▶</button>
+  </div>
+
+  <div class="day-tabs" id="dayTabs"></div>
+  <div class="sections" id="sections"><div style="text-align:center;padding:40px;color:#aaa">جارٍ التحميل...</div></div>
+</div>
+
+<!-- Send All Modal -->
+<div class="ov hidden" id="saModal">
+  <div class="sheet">
+    <div class="sh-head">
+      <h3>📣 إرسال إشعار الغياب</h3>
+      <button class="x-btn" onclick="document.getElementById('saModal').classList.add('hidden')">✕</button>
+    </div>
+    <div class="sh-body" id="saList"></div>
+    <div class="sh-foot">
+      <button class="f-wa" onclick="bulkSend('wa')">🟢 واتساب للجميع</button>
+      <button class="f-sms" onclick="bulkSend('sms')">💬 SMS للجميع</button>
+    </div>
+  </div>
+</div>
+
+<!-- Phone Manager -->
+<div class="pm-ov hidden" id="pmModal">
+  <div class="pm-box">
+    <div class="sh-head">
+      <h3>📱 إدارة الأرقام</h3>
+      <button class="x-btn" onclick="document.getElementById('pmModal').classList.add('hidden')">✕</button>
+    </div>
+    <div class="sh-body">
+      <input class="pm-search" id="pmQ" placeholder="🔍 ابحث باسم الطالب..." oninput="renderPM()">
+      <div id="pmList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Phone -->
+<div class="ed-ov hidden" id="edModal">
+  <div class="ed-box">
+    <h4 id="edName">تعديل الرقم</h4>
+    <p>أدخل الرقم مع رمز الدولة</p>
+    <input type="tel" id="edVal" placeholder="966XXXXXXXXX" dir="ltr">
+    <div class="ed-btns">
+      <button class="ed-save" onclick="saveEd()">💾 حفظ</button>
+      <button class="ed-cancel" onclick="document.getElementById('edModal').classList.add('hidden')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- VCF Modal -->
+<div class="vcf-ov hidden" id="vcfModal">
+  <div class="vcf-sheet">
+    <div class="vcf-head">
+      <h3>📇 تصدير VCF للواتساب</h3>
+      <button class="x-btn" onclick="document.getElementById('vcfModal').classList.add('hidden')">✕</button>
+    </div>
+    <div class="vcf-body">
+      <div class="vcf-info">
+        <strong>📋 كيف تعمل؟</strong><br>
+        يُنشئ هذا الزر ملف جهات اتصال <b>VCF</b> لأولياء أمور الغائبين فقط.<br>
+        بعد التنزيل → افتح الملف على الجوال → أضف الأرقام → افتح <b>WhatsApp Business</b> → قائمة بث جديدة → اختر الجميع → الصق الرسالة → أرسل 🚀
+      </div>
+      <div class="vcf-stats" id="vcfStats"></div>
+      <div class="vcf-msg-box">
+        <p>📝 نص رسالة الغياب (انسخه بعد إضافة الأرقام):</p>
+        <div class="vcf-msg-text" id="vcfMsgPreview"></div>
+        <button class="vcf-copy" onclick="copyVcfMsg()">📋 نسخ الرسالة</button>
+      </div>
+      <div class="vcf-files" id="vcfFilesList"></div>
+      <div class="vcf-steps">
+        <p>📌 خطوات الإرسال عبر WhatsApp Business:</p>
+        <ol>
+          <li>نزّل ملف (أو ملفات) VCF أدناه</li>
+          <li>افتح الملف من التنزيلات ← <strong>أضف الجهات للجوال</strong></li>
+          <li>افتح <strong>WhatsApp Business</strong></li>
+          <li>اضغط ⋮ ← <strong>قائمة بث جديدة</strong></li>
+          <li>اختر الجهات التي أضفتها للتو</li>
+          <li>اضغط <strong>نسخ الرسالة</strong> أعلاه ← الصقها ← أرسل 🚀</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="tst"></div>
+
+<div id="printArea"></div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getDatabase,ref,get,set,onValue,off}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const app=initializeApp({
+  apiKey:"AIzaSyExample",
+  databaseURL:"https://school-attendance-24215-default-rtdb.firebaseio.com",
+  projectId:"school-attendance-24215"
+});
+const db=getDatabase(app);
+
+// ملاحظة: تم تفريغ جدول أرقام أولياء الأمور (PP) لأن ترتيب الطلاب في كل فصل تغيّر بالكامل
+// هذا العام الدراسي 1447-1448هـ، والأرقام القديمة كانت مرتبطة بموضع الطالب في القائمة القديمة.
+// أرقام أولياء الأمور تُدخل الآن من جديد عبر زر "📱 الأرقام" لكل طالب.
+const PP={};
+
+const SML=[
+  {id:'s1',name:'الأول',cls:['الصف الأول / 1','الصف الأول / 2','الصف الأول / 3','الصف الأول / 4']},
+  {id:'s2',name:'الثاني',cls:['الصف الثاني / 1','الصف الثاني / 2','الصف الثاني / 3','الصف الثاني / 4']},
+  {id:'s3',name:'الثالث',cls:['الصف الثالث / 1','الصف الثالث / 2','الصف الثالث / 3','الصف الثالث / 4']}
+];
+const SMU=[
+  {id:'s4',name:'الرابع',cls:['الصف الرابع / 1','الصف الرابع / 2','الصف الرابع / 3','الصف الرابع / 4']},
+  {id:'s5',name:'الخامس',cls:['الصف الخامس / 1','الصف الخامس / 2','الصف الخامس / 3','الصف الخامس / 4','الصف الخامس / 5']},
+  {id:'s6',name:'السادس',cls:['الصف السادس / 1','الصف السادس / 2','الصف السادس / 3','الصف السادس / 4']}
+];
+const DN=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس'];
+const HM=['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
+
+let wOff=0,dIdx=0,wDays=[],STL={},STU={};
+let ov={};
+let absentToday=[];
+// غيابات الأسبوع لكل طالب: weekAbsCount['gid_ci_idx'] = عدد أيام الغياب
+let weekAbsCount={};
+let activeListeners=[];
+
+function clearListeners(){
+  activeListeners.forEach(({r,fn})=>off(r,'value',fn));
+  activeListeners=[];
+}
+
+const ovRef=ref(db,'phone_overrides');
+const ovFn=onValue(ovRef,(snap)=>{
+  const prev=JSON.stringify(ov);
+  ov=snap.exists()?snap.val():{};
+  if(JSON.stringify(ov)!==prev && wDays.length){
+    renderDay(dIdx);
+    showT('📱 تم تحديث الأرقام من جهاز آخر');
+  }
+});
+
+const stlRef=ref(db,'lower_students_v2');
+onValue(stlRef,(snap)=>{
+  if(snap.exists()){STL=snap.val();if(wDays.length)calcWeekAbsCount().then(()=>renderDay(dIdx));}
+});
+const stuRef=ref(db,'upper_students_v2');
+onValue(stuRef,(snap)=>{
+  if(snap.exists()){STU=snap.val();if(wDays.length)calcWeekAbsCount().then(()=>renderDay(dIdx));}
+});
+
+let dayData={lower:{ATT:{},noA:{}},upper:{ATT:{},noA:{}}};
+
+// حساب غيابات الأسبوع كله لكل طالب
+async function calcWeekAbsCount(){
+  weekAbsCount={};
+  for(const d of wDays){
+    const key=dk(d);
+    let lATT={},uATT={};
+    if(key===dk(wDays[dIdx])){
+      lATT=dayData.lower.ATT;
+      uATT=dayData.upper.ATT;
+    }else{
+      try{
+        const[ls,us]=await Promise.all([
+          get(ref(db,`lower_d_${key}`)),
+          get(ref(db,`upper_d_${key}`))
+        ]);
+        lATT=ls.exists()?ls.val():{};
+        uATT=us.exists()?us.val():{};
+      }catch(e){}
+    }
+    // المرحلة الدنيا
+    SML.forEach(sg=>{
+      sg.cls.forEach((_,ci)=>{
+        const a=lATT[sg.id]?lATT[sg.id][`c${ci}`]||{}:{};
+        const sts=STL[sg.id]?STL[sg.id][`c${ci}`]||[]:[];
+        sts.forEach((s,idx)=>{
+          if(a[s.id]===true){
+            const k=`${sg.id}_${ci}_${idx}`;
+            weekAbsCount[k]=(weekAbsCount[k]||0)+1;
+          }
+        });
+      });
+    });
+    // المرحلة العليا
+    SMU.forEach(sg=>{
+      sg.cls.forEach((_,ci)=>{
+        const a=uATT[sg.id]?uATT[sg.id][`c${ci}`]||{}:{};
+        const sts=STU[sg.id]?STU[sg.id][`c${ci}`]||[]:[];
+        sts.forEach((s,idx)=>{
+          if(a[s.id]===true){
+            const k=`${sg.id}_${ci}_${idx}`;
+            weekAbsCount[k]=(weekAbsCount[k]||0)+1;
+          }
+        });
+      });
+    });
+  }
+}
+
+function listenToDay(date){
+  clearListeners();
+  const key=dk(date);
+  const paths=[
+    {r:ref(db,`lower_d_${key}`),       target:'lower', sub:'ATT'},
+    {r:ref(db,`upper_d_${key}`),       target:'upper', sub:'ATT'},
+    {r:ref(db,`lower_no_absent_${key}`),target:'lower', sub:'noA'},
+    {r:ref(db,`upper_no_absent_${key}`),target:'upper', sub:'noA'},
+  ];
+  paths.forEach(({r:dbRef,target,sub})=>{
+    const fn=onValue(dbRef,(snap)=>{
+      dayData[target][sub]=snap.exists()?snap.val():{};
+      if(wDays.length){
+        calcWeekAbsCount().then(()=>{renderDay(dIdx);flashSync();});
+      }
+    });
+    activeListeners.push({r:dbRef,fn});
+  });
+  document.getElementById('liveBadge').style.display='inline-flex';
+  setSUI('live','مباشر 🟢');
+}
+
+function flashSync(){
+  const sec=document.getElementById('sections');
+  sec.classList.remove('sync-flash');
+  void sec.offsetWidth;
+  sec.classList.add('sync-flash');
+}
+
+function gph(gid,ci,idx){
+  const ok=ov[`${gid}_${ci}_${idx}`];
+  if(ok)return ok;
+  const p=PP[`${gid}_${ci}`];
+  return p?p[String(idx)]||null:null;
+}
+async function sph(gid,ci,idx,val){
+  const k=`${gid}_${ci}_${idx}`;
+  const newOv={...ov};
+  if(val&&val.trim())newOv[k]=val.trim(); else delete newOv[k];
+  try{await set(ovRef,newOv);}catch(e){showT('خطأ في الحفظ');}
+}
+
+function toH(dt){
+  const y=dt.getFullYear(),m=dt.getMonth()+1,d=dt.getDate();
+  const jd=Math.floor((1461*(y+4800+Math.floor((m-14)/12)))/4)+Math.floor((367*(m-2-12*(Math.floor((m-14)/12))))/12)-Math.floor((3*(Math.floor((y+4900+Math.floor((m-14)/12))/100)))/4)+d-32075;
+  let l=jd-1948440+10632;
+  const n=Math.floor((l-1)/10631);l=l-10631*n+354;
+  const j=(Math.floor((10985-l)/5316))*(Math.floor((50*l)/17719))+(Math.floor(l/5670))*(Math.floor((43*l)/15238));
+  l=l-(Math.floor((30-j)/15))*(Math.floor((17719*j)/50))-(Math.floor(j/16))*(Math.floor((15238*j)/43))+29;
+  const hm=Math.floor((24*l)/709);const hd=l-Math.floor((709*hm)/24)-2;
+  return{y:30*n+j-30,m:hm,d:hd<1?1:hd};
+}
+function dlbl(dt){const h=toH(dt);return`${DN[dt.getDay()]} ${h.d} ${HM[h.m-1]} ${h.y}هـ`;}
+function buildMsg(name,dt){return`السلام عليكم،\nابنكم *${name}* غائب اليوم\n📅 ${dlbl(dt)}\n\nمدرسة عمورية الابتدائية`;}
+function dk(d){return`${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;}
+function gwd(off){
+  const now=new Date(),sun=new Date(now);
+  sun.setDate(now.getDate()-now.getDay()+(off*7));
+  return Array.from({length:5},(_,i)=>{const d=new Date(sun);d.setDate(sun.getDate()+i);return d;});
+}
+function setSUI(s,m){document.getElementById('sDot').className='sd '+s;document.getElementById('sTxt').textContent=m;}
+
+function getAbs(ST,ATT,sm){
+  const r={};
+  sm.forEach(sg=>{
+    r[sg.id]={cls:{}};
+    sg.cls.forEach((c,ci)=>{
+      const k=`c${ci}`,sts=ST[sg.id]?ST[sg.id][k]||[]:[];
+      const att=ATT[sg.id]?ATT[sg.id][k]||{}:{};
+      r[sg.id].cls[k]={name:c,sts:sts.map((s,i)=>({...s,_i:i})).filter(s=>att[s.id]===true)};
+    });
+  });
+  return r;
+}
+
+window.loadAll=async function(){
+  setSUI('syncing','جارٍ التحميل...');
+  wDays=gwd(wOff);
+  const tk=dk(new Date());
+  const ti=wDays.findIndex(d=>dk(d)===tk);
+  if(wOff===0&&ti>=0)dIdx=ti; else if(dIdx>=wDays.length)dIdx=0;
+  listenToDay(wDays[dIdx]);
+  rwn();rdt();rh();
+  // احسب غيابات الأسبوع بعد ثانيتين (بعد تحميل البيانات)
+  setTimeout(()=>calcWeekAbsCount().then(()=>{if(wDays.length)renderDay(dIdx);}),2000);
+};
+
+function rh(){const now=new Date(),h=toH(now);document.getElementById('hDate').textContent=`${DN[now.getDay()]} ${h.d} ${HM[h.m-1]} ${h.y}هـ`;}
+function rwn(){
+  const[f,l]=[wDays[0],wDays[4]];
+  const fmt=d=>`${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+  document.getElementById('weekLabel').textContent=
+    wOff===0?`الأسبوع الحالي (${fmt(f)} – ${fmt(l)})`:
+    wOff<0?`أسبوع سابق (${fmt(f)} – ${fmt(l)})`:
+    `أسبوع قادم (${fmt(f)} – ${fmt(l)})`;
+}
+function rdt(){
+  const t=document.getElementById('dayTabs');t.innerHTML='';
+  wDays.forEach((d,i)=>{
+    const b=document.createElement('button');
+    b.className=`day-tab${i===dIdx?' active':''}`;
+    b.textContent=`${DN[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`;
+    b.onclick=()=>{
+      dIdx=i;
+      dayData={lower:{ATT:{},noA:{}},upper:{ATT:{},noA:{}}};
+      listenToDay(wDays[dIdx]);
+      rdt();
+    };
+    t.appendChild(b);
+  });
+}
+
+function renderDay(idx){
+  const date=wDays[idx];
+  const lA=getAbs(STL,dayData.lower.ATT,SML);
+  const uA=getAbs(STU,dayData.upper.ATT,SMU);
+  let tl=0,tu=0;
+  absentToday=[];
+
+  SML.forEach(sg=>sg.cls.forEach((cls,ci)=>{
+    const sts=lA[sg.id].cls[`c${ci}`].sts;
+    tl+=sts.length;
+    sts.forEach(s=>absentToday.push({name:s.name,phone:gph(sg.id,ci,s._i),gid:sg.id,ci,idx:s._i,cls,date}));
+  }));
+  SMU.forEach(sg=>sg.cls.forEach((cls,ci)=>{
+    const sts=uA[sg.id].cls[`c${ci}`].sts;
+    tu+=sts.length;
+    sts.forEach(s=>absentToday.push({name:s.name,phone:gph(sg.id,ci,s._i),gid:sg.id,ci,idx:s._i,cls,date}));
+  }));
+
+  document.getElementById('gAll').textContent=tl+tu;
+  document.getElementById('gLower').textContent=tl;
+  document.getElementById('gUpper').textContent=tu;
+
+  const banner=document.getElementById('sendBanner');
+  if(tl+tu>0){banner.style.display='flex';document.getElementById('sbCount').textContent=tl+tu;}
+  else banner.style.display='none';
+
+  const cont=document.getElementById('sections');cont.innerHTML='';
+
+  function buildSec(sm,aMap,noAData,isL){
+    const card=document.createElement('div');card.className='sec-card';
+    const tot=isL?tl:tu;
+    const lbl=isL?'المرحلة الدنيا (1-3)':'المرحلة العليا (4-6)';
+    const hc=isL?'sh-low':'sh-up';
+    let b='';
+    sm.forEach(sg=>{
+      b+=`<div class="cls-block">`;
+      sg.cls.forEach((cls,ci)=>{
+        const k=`c${ci}`,info=aMap[sg.id].cls[k];
+        const noAbs=noAData&&noAData[sg.id]&&noAData[sg.id][k];
+        b+=`<div class="cls-title">${cls}<span>غياب: ${info.sts.length}</span></div>`;
+        if(noAbs){
+          b+=`<div class="confirmed-ok">✅ لا يوجد غياب (مؤكد)</div>`;
+        }else if(!info.sts.length){
+          b+=`<div class="not-sent">لم يُرسل بعد</div>`;
+        }else{
+          info.sts.forEach((s,i)=>{
+            const ph=gph(sg.id,ci,s._i);
+            const ptag=ph?`<span class="ph-tag ph-ok">📱 ${ph}</span>`:`<span class="ph-tag ph-no">لا يوجد رقم</span>`;
+            const wa=ph?`<button class="xb xb-wa" data-ph="${ph}" data-name="${s.name.replace(/"/g,'&quot;')}" data-act="wa">🟢 WA</button>`:'';
+            const sms=ph?`<button class="xb xb-sms" data-ph="${ph}" data-name="${s.name.replace(/"/g,'&quot;')}" data-act="sms">💬 SMS</button>`:'';
+            const ed=`<button class="xb xb-edit" data-gid="${sg.id}" data-ci="${ci}" data-idx="${s._i}" data-name="${s.name.replace(/"/g,'&quot;')}" data-ph="${ph||''}" data-act="edit">✏️</button>`;
+            const wk=weekAbsCount[`${sg.id}_${ci}_${s._i}`]||0;
+            const starBadge=wk>=3
+              ?`<span title="غاب ${wk} مرات هذا الأسبوع" style="font-size:1rem;filter:none;opacity:1;cursor:default;" >⭐</span>`
+              :`<span title="لم يتجاوز 3 غيابات" style="font-size:1rem;filter:grayscale(1);opacity:0.35;cursor:default;">⭐</span>`;
+            b+=`<div class="stu-item"><span class="stu-num">${i+1}</span><span class="stu-name">${s.name}</span><div class="stu-acts">${ptag}${wa}${sms}${ed}${starBadge}</div></div>`;
+          });
+        }
+      });
+      b+=`</div>`;
+    });
+    card.innerHTML=`<div class="sec-head ${hc}">📚 ${lbl}<span>غياب: ${tot}</span></div><div class="sec-body">${b}</div>`;
+    card.querySelectorAll('[data-act]').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const act=btn.dataset.act;
+        if(act==='wa'){
+          const msg=buildMsg(btn.dataset.name,wDays[dIdx]);
+          location.href=`https://wa.me/${btn.dataset.ph}?text=${encodeURIComponent(msg)}`;
+        }else if(act==='sms'){
+          const msg=buildMsg(btn.dataset.name,wDays[dIdx]);
+          location.href=`sms:${btn.dataset.ph}?body=${encodeURIComponent(msg)}`;
+        }else if(act==='edit'){
+          openEd(btn.dataset.gid,+btn.dataset.ci,+btn.dataset.idx,btn.dataset.name,btn.dataset.ph);
+        }
+      });
+    });
+    cont.appendChild(card);
+  }
+
+  buildSec(SML,lA,dayData.lower.noA,true);
+  buildSec(SMU,uA,dayData.upper.noA,false);
+}
+
+window.changeWeek=function(d){
+  wOff+=d;dIdx=0;
+  dayData={lower:{ATT:{},noA:{}},upper:{ATT:{},noA:{}}};
+  weekAbsCount={};
+  wDays=gwd(wOff);
+  listenToDay(wDays[dIdx]);
+  rwn();rdt();rh();
+};
+
+// ===== Send All =====
+window.openSendAll=function(){
+  document.getElementById('saModal').classList.remove('hidden');
+  const list=document.getElementById('saList');
+  if(!absentToday.length){list.innerHTML='<div style="text-align:center;padding:20px;color:#aaa">لا يوجد غياب</div>';return;}
+  let h='';
+  absentToday.forEach((s,i)=>{
+    const ph=s.phone?`<span class="sa-phone">${s.phone}</span>`:`<span class="sa-noph">لا يوجد رقم</span>`;
+    const wa=s.phone?`<button class="sa-wa" data-i="${i}">🟢 WA</button>`:'';
+    const sms=s.phone?`<button class="sa-sms" data-i="${i}">💬 SMS</button>`:'';
+    h+=`<div class="sa-item"><div style="flex:1"><div class="sa-name">${s.name}</div><div class="sa-cls">${s.cls}</div></div>${ph}${wa}${sms}</div>`;
+  });
+  list.innerHTML=h;
+  list.querySelectorAll('.sa-wa').forEach(b=>b.addEventListener('click',()=>{
+    const s=absentToday[+b.dataset.i];
+    location.href=`https://wa.me/${s.phone}?text=${encodeURIComponent(buildMsg(s.name,s.date))}`;
+  }));
+  list.querySelectorAll('.sa-sms').forEach(b=>b.addEventListener('click',()=>{
+    const s=absentToday[+b.dataset.i];
+    location.href=`sms:${s.phone}?body=${encodeURIComponent(buildMsg(s.name,s.date))}`;
+  }));
+};
+
+let bulkList=[],bulkIdx=0,bulkType='wa';
+window.bulkSend=function(type){
+  const list=absentToday.filter(s=>s.phone);
+  if(!list.length){showT('لا يوجد أرقام مسجلة!');return;}
+  bulkList=list;bulkIdx=0;bulkType=type;
+  document.getElementById('saModal').classList.add('hidden');
+  showBulkStep();
+};
+function showBulkStep(){
+  if(bulkIdx>=bulkList.length){showT(`✅ تم الإرسال لـ ${bulkList.length} طالب`);return;}
+  const s=bulkList[bulkIdx];
+  const msg=buildMsg(s.name,s.date);
+  const url=bulkType==='wa'?`https://wa.me/${s.phone}?text=${encodeURIComponent(msg)}`:`sms:${s.phone}?body=${encodeURIComponent(msg)}`;
+  location.href=url;
+  bulkIdx++;
+  showBulkNav();
+}
+function showBulkNav(){
+  const rem=bulkList.length-bulkIdx;
+  const existing=document.getElementById('bulkNav');
+  if(existing)existing.remove();
+  if(bulkIdx>=bulkList.length){showT(`✅ تم الإرسال لجميع الطلاب (${bulkList.length})`);return;}
+  const div=document.createElement('div');
+  div.id='bulkNav';
+  div.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:#fff;padding:12px 20px;border-radius:16px;z-index:9999;display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.4);';
+  div.innerHTML=`<span style="font-family:Tajawal,sans-serif;font-size:.85rem">متبقي <b>${rem}</b> طالب</span>
+  <button onclick="showBulkStep()" style="background:#25d366;color:#fff;border:none;border-radius:10px;padding:8px 16px;font-family:Tajawal,sans-serif;font-size:.85rem;font-weight:900;cursor:pointer;">التالي ▶</button>
+  <button onclick="document.getElementById('bulkNav').remove();showT('تم الإيقاف')" style="background:#e63946;color:#fff;border:none;border-radius:10px;padding:8px 12px;font-family:Tajawal,sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;">إيقاف</button>`;
+  document.body.appendChild(div);
+}
+
+let edT=null;
+function openEd(gid,ci,idx,name,ph){
+  edT={gid,ci,idx};
+  document.getElementById('edName').textContent=`✏️ ${name}`;
+  document.getElementById('edVal').value=ph||'966';
+  document.getElementById('edModal').classList.remove('hidden');
+  setTimeout(()=>{document.getElementById('edVal').focus();document.getElementById('edVal').select();},100);
+}
+window.saveEd=async function(){
+  if(!edT)return;
+  await sph(edT.gid,edT.ci,edT.idx,document.getElementById('edVal').value);
+  document.getElementById('edModal').classList.add('hidden');
+  edT=null;showT('تم الحفظ ✅ (مزامنة فورية)');
+};
+
+window.openPM=function(){
+  document.getElementById('pmModal').classList.remove('hidden');
+  document.getElementById('pmQ').value='';renderPM();
+};
+window.renderPM=function(){
+  const q=document.getElementById('pmQ').value.trim();
+  let h='';
+  [...SML,...SMU].forEach(sg=>{
+    sg.cls.forEach((cls,ci)=>{
+      const ST=SML.find(s=>s.id===sg.id)?STL:STU;
+      const sts=ST[sg.id]?ST[sg.id][`c${ci}`]||[]:[];
+      sts.forEach((s,idx)=>{
+        if(q&&!s.name.includes(q))return;
+        const ph=gph(sg.id,ci,idx)||'';
+        h+=`<div class="pm-row">
+          <div><div class="pm-name">${s.name}</div><span class="pm-cls">${cls}</span></div>
+          <input class="pm-inp" type="tel" value="${ph}" placeholder="966XXXXXXXXX" id="pi_${sg.id}_${ci}_${idx}" dir="ltr">
+          <button class="pm-sv" onclick="savePM('${sg.id}',${ci},${idx})">حفظ</button>
+        </div>`;
+      });
+    });
+  });
+  document.getElementById('pmList').innerHTML=h||'<div style="text-align:center;color:#aaa;padding:20px">لا توجد نتائج</div>';
+};
+window.savePM=async function(gid,ci,idx){
+  const el=document.getElementById(`pi_${gid}_${ci}_${idx}`);
+  if(el){await sph(gid,ci,idx,el.value);showT('تم ✅ (مزامنة فورية)');}
+};
+
+window.exportTodayExcel=function(){
+  const date=wDays[dIdx];
+  const wb=XLSX.utils.book_new();
+  [...SML,...SMU].forEach(sg=>{
+    const isL=!!SML.find(s=>s.id===sg.id);
+    const ST=isL?STL:STU,ATT=isL?dayData.lower.ATT:dayData.upper.ATT,noA=isL?dayData.lower.noA:dayData.upper.noA;
+    sg.cls.forEach((cls,ci)=>{
+      const k=`c${ci}`,sts=ST[sg.id]?ST[sg.id][k]||[]:[];
+      const att=ATT[sg.id]?ATT[sg.id][k]||{}:{};
+      const noa=noA&&noA[sg.id]&&noA[sg.id][k];
+      const abs=sts.map((s,i)=>({...s,_i:i})).filter(s=>att[s.id]===true);
+      const rows=[['#','اسم الطالب','رقم الجوال','التاريخ']];
+      if(noa)rows.push(['—','لا يوجد غياب','','مؤكد']);
+      else if(!abs.length)rows.push(['—','لا يوجد غياب مسجل','','']);
+      else abs.forEach((s,i)=>rows.push([i+1,s.name,gph(sg.id,ci,s._i)||'—',dlbl(date)]));
+      const ws=XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols']=[{wch:5},{wch:40},{wch:16},{wch:24}];
+      XLSX.utils.book_append_sheet(wb,ws,cls.replace(/\//g,'-').slice(0,31));
+    });
+  });
+  XLSX.writeFile(wb,`غياب_${DN[date.getDay()]}_${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}.xlsx`);
+  showT('تم تصدير Excel ✅');
+};
+
+// ===== طباعة الكشف اليومي (نفس شكل الكشف الرسمي) =====
+window.printDayReport=function(){
+  const date=wDays[dIdx];
+  let body='';
+
+  [...SML,...SMU].forEach(sg=>{
+    const isL=!!SML.find(s=>s.id===sg.id);
+    const ST=isL?STL:STU,ATT=isL?dayData.lower.ATT:dayData.upper.ATT,noA=isL?dayData.lower.noA:dayData.upper.noA;
+    sg.cls.forEach((cls,ci)=>{
+      const k=`c${ci}`,sts=ST[sg.id]?ST[sg.id][k]||[]:[];
+      const att=ATT[sg.id]?ATT[sg.id][k]||{}:{};
+      const noa=noA&&noA[sg.id]&&noA[sg.id][k];
+      const abs=sts.map((s,i)=>({...s,_i:i})).filter(s=>att[s.id]===true);
+      let rows='';
+      if(noa){
+        rows='<tr><td colspan="3">✅ لا يوجد غياب (مؤكد)</td></tr>';
+      }else if(!abs.length){
+        rows='<tr><td colspan="3">لم يُرسل بعد</td></tr>';
+      }else{
+        abs.forEach((s,i)=>{
+          rows+=`<tr><td>${i+1}</td><td class="p-name">${s.name}</td><td>${gph(sg.id,ci,s._i)||'—'}</td></tr>`;
+        });
+      }
+      body+=`
+      <div class="print-class-title">${cls} — عدد الغياب: ${abs.length}</div>
+      <table class="print-table">
+        <thead><tr><th>م</th><th>اسم الطالب</th><th>رقم الجوال</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    });
+  });
+
+  const html=`
+  <div class="print-page">
+    <div class="print-header">
+      <div class="p-kingdom">المملكة العربية السعودية — وزارة التعليم</div>
+      <h2>كشف الغياب اليومي</h2>
+      <div class="p-sub">مدرسة عمورية الابتدائية</div>
+      <div class="p-date">${dlbl(date)}</div>
+    </div>
+    ${body}
+    <div class="print-foot">
+      <div>توقيع المعلم/ة: ...........................</div>
+      <div>توقيع مدير المدرسة: ...........................</div>
+    </div>
+  </div>`;
+
+  document.getElementById('printArea').innerHTML=html;
+  setTimeout(()=>{ window.print(); }, 300);
+};
+
+// ===== تصدير Excel الأسبوعي مع نجمة ⭐ للغائب 3 مرات فأكثر =====
+window.exportWeekExcel=async function(){
+  showT('جارٍ تجهيز الأسبوع...');
+  const allData={};
+  for(const d of wDays){
+    const key=dk(d);
+    if(key===dk(wDays[dIdx])){allData[key]=dayData;continue;}
+    try{
+      const[ls,us,ln,un]=await Promise.all([
+        get(ref(db,`lower_d_${key}`)),get(ref(db,`upper_d_${key}`)),
+        get(ref(db,`lower_no_absent_${key}`)),get(ref(db,`upper_no_absent_${key}`))
+      ]);
+      allData[key]={
+        lower:{ATT:ls.exists()?ls.val():{},noA:ln.exists()?ln.val():{}},
+        upper:{ATT:us.exists()?us.val():{},noA:un.exists()?un.val():{}}
+      };
+    }catch(e){allData[key]={lower:{ATT:{},noA:{}},upper:{ATT:{},noA:{}}};}
+  }
+  const wb=XLSX.utils.book_new();
+  [...SML,...SMU].forEach(sg=>{
+    sg.cls.forEach((cls,ci)=>{
+      const isL=!!SML.find(s=>s.id===sg.id);
+      const ST=isL?STL:STU,sts=ST[sg.id]?ST[sg.id][`c${ci}`]||[]:[];
+      const hdr=['#','اسم الطالب','رقم الجوال',...wDays.map(d=>`${DN[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`),'إجمالي'];
+      const rows=[hdr];
+      sts.forEach((s,idx)=>{
+        const row=[idx+1,null,gph(sg.id,ci,idx)||'—'];
+        let tot=0;
+        wDays.forEach(d=>{
+          const dd=allData[dk(d)]||{lower:{ATT:{}},upper:{ATT:{}}};
+          const att=(isL?dd.lower.ATT:dd.upper.ATT);
+          const a=att[sg.id]?att[sg.id][`c${ci}`]||{}:{};
+          const ab=a[s.id]===true;
+          if(ab)tot++;
+          row.push(ab?'غ':'');
+        });
+        // ⭐ نجمة أمام اسم الطالب إذا غاب 3 مرات أو أكثر في الأسبوع
+        row[1] = tot >= 3 ? `⭐ ${s.name}` : s.name;
+        row.push(tot);
+        rows.push(row);
+      });
+      const ws=XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols']=[{wch:5},{wch:42},{wch:16},...wDays.map(()=>({wch:13})),{wch:9}];
+      XLSX.utils.book_append_sheet(wb,ws,cls.replace(/\//g,'-').slice(0,31));
+    });
+  });
+  const[f,l]=[wDays[0],wDays[4]];
+  XLSX.writeFile(wb,`غياب_أسبوعي_${f.getDate()}-${f.getMonth()+1}_إلى_${l.getDate()}-${l.getMonth()+1}.xlsx`);
+  showT('تم تصدير الأسبوع ✅');
+};
+
+// ===== VCF Export =====
+const VCF_LIMIT=256;
+function buildVcfContent(contacts){
+  return contacts.map((c)=>{
+    const name=c.name.replace(/;/g,' ').replace(/:/g,' ');
+    const phone=c.phone.startsWith('+')?c.phone:`+${c.phone}`;
+    return `BEGIN:VCARD\nVERSION:3.0\nFN:🔔غياب | ${name}\nN:🔔غياب | ${name};;;\nTEL;TYPE=CELL:${phone}\nEND:VCARD`;
+  }).join('\n');
+}
+async function shareVCF(vcfText,filename){
+  const file=new File([vcfText],filename,{type:'text/vcard'});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    try{await navigator.share({files:[file],title:'جهات اتصال أولياء أمور الغائبين'});return;}
+    catch(e){if(e.name==='AbortError')return;}
+  }
+  const url=URL.createObjectURL(file);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;a.click();
+  URL.revokeObjectURL(url);
+}
+function downloadVcf(content,filename){shareVCF(content,filename);}
+
+window.openVCF=function(){
+  const contacts=absentToday.filter(s=>{
+    if(!s.phone)return false;
+    const digits=s.phone.replace(/\D/g,'');
+    return digits.length>8;
+  }).map(s=>({name:s.name,phone:s.phone,cls:s.cls}));
+  const total=contacts.length;
+  const noPhone=absentToday.length-total;
+  const filesCount=Math.ceil(total/VCF_LIMIT);
+  const date=wDays[dIdx];
+  document.getElementById('vcfStats').innerHTML=`
+    <div class="vcf-stat"><div class="vn">${absentToday.length}</div><div class="vl">إجمالي الغائبين</div></div>
+    <div class="vcf-stat"><div class="vn" style="color:#25d366">${total}</div><div class="vl">لديهم أرقام</div></div>
+    <div class="vcf-stat"><div class="vn" style="color:#e65100">${noPhone}</div><div class="vl">بدون رقم</div></div>
+    <div class="vcf-stat"><div class="vn" style="color:#4a0080">${filesCount}</div><div class="vl">ملف VCF</div></div>
+  `;
+  const dateStr=dlbl(date);
+  const msgText=`السلام عليكم ورحمة الله وبركاته\nنُحيطكم علماً بأن ابنكم الطالب غائب اليوم\n📅 ${dateStr}\nنرجو التواصل مع إدارة المدرسة.\n\nمدرسة عمورية الابتدائية 🏫`;
+  document.getElementById('vcfMsgPreview').innerText=msgText;
+  window._vcfMsg=msgText;
+  let filesHtml='';
+  if(total===0){
+    filesHtml='<div style="text-align:center;color:#aaa;padding:20px;font-size:.85rem">لا يوجد أرقام مسجلة للغائبين اليوم</div>';
+  }else if(filesCount===1){
+    filesHtml=`<div class="vcf-file">
+      <div class="vcf-file-info">
+        <div class="vcf-file-name">📇 غياب_${date.getDate()}-${date.getMonth()+1}.vcf</div>
+        <div class="vcf-file-count">${total} جهة اتصال</div>
+      </div>
+      <button class="vcf-dl" onclick="downloadVcfPart(0)">⬇️ تنزيل</button>
+    </div>`;
+  }else{
+    for(let i=0;i<filesCount;i++){
+      const from=i*VCF_LIMIT+1;
+      const to=Math.min((i+1)*VCF_LIMIT,total);
+      filesHtml+=`<div class="vcf-file">
+        <div class="vcf-file-info">
+          <div class="vcf-file-name">📇 غياب_جزء${i+1}_${date.getDate()}-${date.getMonth()+1}.vcf</div>
+          <div class="vcf-file-count">${from} – ${to} (${to-from+1} جهة)</div>
+        </div>
+        <button class="vcf-dl" onclick="downloadVcfPart(${i})">⬇️ تنزيل</button>
+      </div>`;
+    }
+    filesHtml+=`<button style="width:100%;background:#0f3460;color:#fff;border:none;border-radius:10px;padding:10px;font-family:Tajawal,sans-serif;font-size:.85rem;font-weight:900;cursor:pointer;margin-top:4px;" onclick="downloadAllVcf()">⬇️ تنزيل جميع الملفات (${filesCount})</button>`;
+  }
+  document.getElementById('vcfFilesList').innerHTML=filesHtml;
+  window._vcfContacts=contacts;
+  window._vcfDate=date;
+  document.getElementById('vcfModal').classList.remove('hidden');
+};
+
+window.downloadVcfPart=function(partIdx){
+  const contacts=window._vcfContacts||[];
+  const date=window._vcfDate||wDays[dIdx];
+  const chunk=contacts.slice(partIdx*VCF_LIMIT,(partIdx+1)*VCF_LIMIT);
+  const content=buildVcfContent(chunk);
+  const suffix=Math.ceil(contacts.length/VCF_LIMIT)>1?`_جزء${partIdx+1}`:'';
+  downloadVcf(content,`غياب${suffix}_${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}.vcf`);
+  showT(`✅ تم تنزيل الجزء ${partIdx+1} (${chunk.length} جهة)`);
+};
+window.downloadAllVcf=function(){
+  const contacts=window._vcfContacts||[];
+  const date=window._vcfDate||wDays[dIdx];
+  const filesCount=Math.ceil(contacts.length/VCF_LIMIT);
+  for(let i=0;i<filesCount;i++){setTimeout(()=>downloadVcfPart(i),i*600);}
+  showT(`⬇️ جارٍ تنزيل ${filesCount} ملفات...`);
+};
+window.copyVcfMsg=function(){
+  const msg=window._vcfMsg||'';
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(msg).then(()=>showT('✅ تم نسخ الرسالة!'));
+  }else{
+    const ta=document.createElement('textarea');
+    ta.value=msg;document.body.appendChild(ta);
+    ta.select();document.execCommand('copy');
+    document.body.removeChild(ta);
+    showT('✅ تم نسخ الرسالة!');
+  }
+};
+
+function showT(msg){
+  const t=document.getElementById('tst');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+loadAll();
+</script>
+</body>
+</html>
