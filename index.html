@@ -144,6 +144,26 @@ header p{color:#a8c4e0;font-size:.78rem;margin-top:3px;}
 .vcf-steps ol{padding-right:18px;}
 .vcf-steps li{font-size:.78rem;color:#333;margin-bottom:4px;line-height:1.5;}
 .vcf-steps li strong{color:#1565c0;}
+
+/* ===== طباعة الكشف اليومي ===== */
+#printArea{display:none;}
+@media print{
+  body *{visibility:hidden;}
+  #printArea, #printArea *{visibility:visible;}
+  #printArea{display:block;position:absolute;top:0;right:0;left:0;width:100%;}
+}
+.print-page{background:#fff;padding:18px;font-family:'Tajawal',sans-serif;direction:rtl;}
+.print-header{text-align:center;margin-bottom:14px;border-bottom:2px solid #000;padding-bottom:10px;}
+.print-header .p-kingdom{font-size:.85rem;font-weight:700;}
+.print-header h2{font-size:1.15rem;font-weight:900;margin-top:4px;}
+.print-header .p-sub{font-size:.85rem;font-weight:700;margin-top:4px;}
+.print-header .p-date{font-size:.8rem;color:#333;margin-top:2px;}
+table.print-table{width:100%;border-collapse:collapse;margin-top:10px;margin-bottom:22px;}
+table.print-table th,table.print-table td{border:1px solid #000;padding:5px 6px;text-align:center;font-size:.8rem;}
+table.print-table th{background:#e8e8e8;font-weight:800;}
+table.print-table td.p-name{text-align:right;padding-right:10px;font-weight:700;}
+.print-class-title{font-weight:900;font-size:.9rem;margin:14px 0 4px;padding:5px 8px;background:#f0f0f0;}
+.print-foot{display:flex;justify-content:space-between;margin-top:30px;font-size:.85rem;font-weight:700;}
 </style>
 </head>
 <body>
@@ -165,6 +185,7 @@ header p{color:#a8c4e0;font-size:.78rem;margin-top:3px;}
   <button class="btn b-purple" onclick="exportWeekExcel()">📅 الأسبوع</button>
   <button class="btn b-orange" onclick="openPM()">📱 الأرقام</button>
   <button class="btn b-wa" onclick="openVCF()">📇 VCF واتساب</button>
+  <button class="btn b-blue" onclick="printDayReport()">🖨️ طباعة الكشف</button>
 </div>
 
 <div class="main">
@@ -270,6 +291,8 @@ header p{color:#a8c4e0;font-size:.78rem;margin-top:3px;}
 </div>
 
 <div class="toast" id="tst"></div>
+
+<div id="printArea"></div>
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -705,6 +728,57 @@ window.exportTodayExcel=function(){
   });
   XLSX.writeFile(wb,`غياب_${DN[date.getDay()]}_${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}.xlsx`);
   showT('تم تصدير Excel ✅');
+};
+
+// ===== طباعة الكشف اليومي (نفس شكل الكشف الرسمي) =====
+window.printDayReport=function(){
+  const date=wDays[dIdx];
+  let body='';
+
+  [...SML,...SMU].forEach(sg=>{
+    const isL=!!SML.find(s=>s.id===sg.id);
+    const ST=isL?STL:STU,ATT=isL?dayData.lower.ATT:dayData.upper.ATT,noA=isL?dayData.lower.noA:dayData.upper.noA;
+    sg.cls.forEach((cls,ci)=>{
+      const k=`c${ci}`,sts=ST[sg.id]?ST[sg.id][k]||[]:[];
+      const att=ATT[sg.id]?ATT[sg.id][k]||{}:{};
+      const noa=noA&&noA[sg.id]&&noA[sg.id][k];
+      const abs=sts.map((s,i)=>({...s,_i:i})).filter(s=>att[s.id]===true);
+      let rows='';
+      if(noa){
+        rows='<tr><td colspan="3">✅ لا يوجد غياب (مؤكد)</td></tr>';
+      }else if(!abs.length){
+        rows='<tr><td colspan="3">لم يُرسل بعد</td></tr>';
+      }else{
+        abs.forEach((s,i)=>{
+          rows+=`<tr><td>${i+1}</td><td class="p-name">${s.name}</td><td>${gph(sg.id,ci,s._i)||'—'}</td></tr>`;
+        });
+      }
+      body+=`
+      <div class="print-class-title">${cls} — عدد الغياب: ${abs.length}</div>
+      <table class="print-table">
+        <thead><tr><th>م</th><th>اسم الطالب</th><th>رقم الجوال</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    });
+  });
+
+  const html=`
+  <div class="print-page">
+    <div class="print-header">
+      <div class="p-kingdom">المملكة العربية السعودية — وزارة التعليم</div>
+      <h2>كشف الغياب اليومي</h2>
+      <div class="p-sub">مدرسة عمورية الابتدائية</div>
+      <div class="p-date">${dlbl(date)}</div>
+    </div>
+    ${body}
+    <div class="print-foot">
+      <div>توقيع المعلم/ة: ...........................</div>
+      <div>توقيع مدير المدرسة: ...........................</div>
+    </div>
+  </div>`;
+
+  document.getElementById('printArea').innerHTML=html;
+  setTimeout(()=>{ window.print(); }, 300);
 };
 
 // ===== تصدير Excel الأسبوعي مع نجمة ⭐ للغائب 3 مرات فأكثر =====
